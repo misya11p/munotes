@@ -1,3 +1,3 @@
-# muchord
+# munotes
 
-musical-chord
+musical-notes
