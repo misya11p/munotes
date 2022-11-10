@@ -1,25 +1,40 @@
 from typing import Optional, Union
 
 
-def check_note_name(text: str) -> None:
-    assert text, "Note name is empty"
-    assert len(text) <= 2, "Note name is too long"
+def check_nname(nname: str, return_nname: bool = False) -> Optional[str]:
+    """
+    Check if the note name string is valid.
+        if valid: return None or formatted note name
+        if invalid: return error
 
-    if len(text) == 1:
-        text = text.upper()
-        assert text in "ABCDEFG", f"One letter note name must be in {list('ABCDEFG')}"
+    Args:
+        nname (str): note name
+        return_nname (bool, optional): Whether to return formatted note name.
 
-    elif len(text) == 2:
-        assert text[0] in "ABCDEFG", f"First letter of note name must be in {list('ABCDEFG')}"
-        assert text[1] in "♭♯", f"Second letter of note name must be in {list('+-b♭♯')}"
+    Returns:
+        Optional[str]: formatted note name
+    """
+    assert nname, "Note name is empty"
+    assert len(nname) <= 2, "Note name is too long"
+    nname = nname_formatting(nname)
+
+    if len(nname) == 1:
+        assert nname in "ABCDEFG", f"One letter note name must be in {list('ABCDEFG')}"
+
+    elif len(nname) == 2:
+        assert nname[0] in "ABCDEFG", f"First letter of note name must be in {list('ABCDEFG')}"
+        assert nname[1] in "♭♯", f"Second letter of note name must be in {list('+-b♭♯')}"
+
+    if return_nname:
+        return nname
 
 
-def shaping_note_name(name: str) -> str:
-    name = name.upper()
-    name = name.replace('-', '♭')
-    name = name.replace('b', '♭')
-    name = name.replace('+', '♯')
-    return name
+def nname_formatting(nname: str) -> str:
+    nname = nname.upper()
+    nname = nname.replace('-', '♭')
+    nname = nname.replace('b', '♭')
+    nname = nname.replace('+', '♯')
+    return nname
 
 
 NUM_C0 = 12
@@ -55,7 +70,6 @@ class Note:
             notename = shaping_note_name(query)
             check_note_name(notename)
             notenum = _name2num(notename, octave) if octave else None
-
         else:
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
             notename = _num2name(query)
