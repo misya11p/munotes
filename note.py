@@ -23,7 +23,7 @@ def check_nname(nname: str, return_nname: bool = False) -> Optional[str]:
 
     elif len(nname) == 2:
         assert nname[0] in "ABCDEFG", f"First letter of note name must be in {list('ABCDEFG')}"
-        assert nname[1] in "♭♯", f"Second letter of note name must be in {list('+-b♭♯')}"
+        assert nname[1] in "♭♯", f"Second letter of note name must be in {list('+♯#-♭b')}"
 
     if return_nname:
         return nname
@@ -40,15 +40,16 @@ def nname_formatting(nname: str) -> str:
         str: formatted note name
     """
     nname = nname.upper()
-    nname = nname.replace('-', '♭')
-    nname = nname.replace('b', '♭')
-    nname = nname.replace('+', '♯')
+    nname = nname.replace('+', '#')
+    nname = nname.replace('♯', '#')
+    nname = nname.replace('-', 'b')
+    nname = nname.replace('♭', 'b')
     return nname
 
 
 NUM_C0 = 12
 NUM_A4 = 69
-KEY_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B']
+KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
 class Note:
     def __init__(
@@ -101,7 +102,7 @@ class Note:
 
     def _name2num(self, name: str, octave: int) -> int:
         idx = KEY_NAMES.index(name[0])
-        pitch = idx + ('♯' in name) - ('♭' in name)
+        pitch = idx + ('#' in name) - ('b' in name)
         num = NUM_C0 + 12*octave + pitch
         return num
 
