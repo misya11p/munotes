@@ -79,11 +79,14 @@ class Note:
             notename = self._num2name(query)
             octave = self._num2octave(query)
         freq = self._num2freq(notenum, A4) if notenum else None
+        idx = KEY_NAMES.index(notename[0])
+        idx = (idx + ('#' in notename) - ('b' in notename)) % 12
 
         self.name = notename
         self.num = notenum
         self.ocatave = octave
         self.freq = freq
+        self.idx = idx
         self.A4 = A4
 
 
