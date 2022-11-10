@@ -1,8 +1,8 @@
+from note import Note, KEY_NAMES
 import re
-from note import nname_formatting
 
 
-INTERVALS = {
+chords = {
     "": (0,4,7),
     "m": (0,3,7),
     "7": (0,4,7,10),
@@ -18,30 +18,48 @@ INTERVALS = {
     "sus2": (0,2,7)
 }
 
-chord_names = list(INTERVALS.keys())
+chord_names = list(chords.keys())
 
 
 PITCH_PATTERN = '[A-G][#, b]*'
 
-class Chord(str):
+class Chord:
     def __init__(
         self,
         cname: str,
     ):
         pitch_search = re.match(PITCH_PATTERN, cname)
         assert pitch_search, f"'{cname}' is an invalid string"
-    
+
         # first = pitch_search.start()
         border = pitch_search.end()
-        root, type = cname[:border], cname[border:]
-    
-        root = nname_formatting(root)
-        name = root + type
-        interval = INTERVALS[type]
+        root_name, type = cname[:border], cname[border:]
+        root = Note(root_name)
+        name = root.name + type
+        interval = chords[type]
 
         self.name = name
         self.root = root
-        # self.notes = []
         self.interval = interval
         self.bass = None
         self.type = type
+        self._compose(root)
+
+
+    def transpose(self, semitones: int):
+        self.root.transpose(semitones)
+        self._compose(self.root.idx, self.interval)
+
+
+    def _compose(self, root: Note):
+        self.root_idx = root.idx
+        self.idx = [(self.root_idx + i) % 12 for i in self.interval]
+        self.note_names = [KEY_NAMES[i] for i in self.idx]
+        self.notes = [Note(name) for name in self.note_names]
+
+
+    def __repr__(self):
+        return f'chord.Chord {self.name}'
+
+    def __str__(self):
+        return self.name
