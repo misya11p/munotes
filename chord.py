@@ -1,6 +1,8 @@
+import re
+from note import nname_formatting
 
 
-interval_dict = {
+INTERVALS = {
     "": (0,4,7),
     "m": (0,3,7),
     "7": (0,4,7,10),
@@ -16,15 +18,30 @@ interval_dict = {
     "sus2": (0,2,7)
 }
 
+chord_names = list(INTERVALS.keys())
+
+
+PITCH_PATTERN = '[A-G][#, b]*'
 
 class Chord(str):
     def __init__(
         self,
         cname: str,
     ):
-        self.name = ""
-        self.root = ""
-        self.notes = []
-        self.interval = []
+        pitch_search = re.match(PITCH_PATTERN, cname)
+        assert pitch_search, f"'{cname}' is an invalid string"
+    
+        # first = pitch_search.start()
+        border = pitch_search.end()
+        root, type = cname[:border], cname[border:]
+    
+        root = nname_formatting(root)
+        name = root + type
+        interval = INTERVALS[type]
+
+        self.name = name
+        self.root = root
+        # self.notes = []
+        self.interval = interval
         self.bass = None
-        self.type = ""
+        self.type = type
