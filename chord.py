@@ -31,7 +31,6 @@ class Chord:
         pitch_search = re.match(PITCH_PATTERN, cname)
         assert pitch_search, f"'{cname}' is an invalid string"
 
-        # first = pitch_search.start()
         border = pitch_search.end()
         root_name, type = cname[:border], cname[border:]
         root = Note(root_name)
@@ -52,6 +51,7 @@ class Chord:
 
 
     def _compose(self):
+        self.name = self.root.name + self.type
         self.root_idx = self.root.idx
         self.idx = [(self.root_idx + i) % 12 for i in self.interval]
         self.note_names = [KEY_NAMES[i] for i in self.idx]

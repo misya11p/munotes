@@ -39,7 +39,7 @@ def nname_formatting(nname: str) -> str:
     Returns:
         str: formatted note name
     """
-    nname = nname.upper()
+    nname = nname[0].upper() + nname[1:]
     nname = nname.replace('+', '#')
     nname = nname.replace('♯', '#')
     nname = nname.replace('-', 'b')
