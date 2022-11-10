@@ -49,22 +49,6 @@ def nname_formatting(nname: str) -> str:
 NUM_C0 = 12
 NUM_A4 = 69
 KEY_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B']
-def _name2num(name: str, octave: int) -> int:
-    idx = KEY_NAMES.index(name[0])
-    pitch = idx + ('♯' in name) - ('♭' in name)
-    num = NUM_C0 + 12*octave + pitch
-    return num
-
-def _num2name(num: int) -> str:
-    name = KEY_NAMES[(num - NUM_C0) % 12]
-    return name
-
-def _num2octave(num: int) -> int:
-    return (num - NUM_C0) // 12
-
-def _num2freq(num: int, FREQ_A4: float) -> float:
-    return FREQ_A4 * 2**((num - NUM_A4)/12)
-
 
 class Note:
     def __init__(
@@ -85,16 +69,58 @@ class Note:
 
         if isinstance(query, str):
             notename = check_nname(query, return_nname=True)
-            notenum = _name2num(notename, octave) if octave else None
+            notenum = self._name2num(notename, octave) if octave else None
         else:
             if octave:
                 warnings.warn("octave is ignored when query is an integer")
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
-            notename = _num2name(query)
-            octave = _num2octave(query)
+            notenum = query
+            notename = self._num2name(query)
+            octave = self._num2octave(query)
+        freq = self._num2freq(notenum, A4) if notenum else None
 
         self.name = notename
         self.num = notenum
         self.ocatave = octave
-        self.freq = _num2freq(notenum, A4) if notenum else None
+        self.freq = freq
         self.A4 = A4
+
+
+    def transpose(self, semitone: int) -> None:
+        """
+        transpose note by semitone.
+
+        Args:
+            semitone (int): semitone
+        """
+        self.num += semitone
+        self.name = self._num2name(self.num)
+        self.ocatave = self._num2octave(self.num)
+        self.freq = self._num2freq(self.num, self.A4)
+
+
+    def _name2num(self, name: str, octave: int) -> int:
+        idx = KEY_NAMES.index(name[0])
+        pitch = idx + ('♯' in name) - ('♭' in name)
+        num = NUM_C0 + 12*octave + pitch
+        return num
+
+    def _num2name(self, num: int) -> str:
+        name = KEY_NAMES[(num - NUM_C0) % 12]
+        return name
+
+    def _num2octave(self, num: int) -> int:
+        return (num - NUM_C0) // 12
+
+    def _num2freq(self, num: int, FREQ_A4: float) -> float:
+        return FREQ_A4 * 2**((num - NUM_A4)/12)
+
+
+    def __str__(self) -> str:
+        return f'{self.name}{self.ocatave}'
+
+    def __repr__(self):
+        return f'note.Note {self.name}{self.ocatave}'
+
+    def __int__(self) -> int:
+        return self.num
