@@ -43,16 +43,16 @@ class Chord:
         self.interval = interval
         self.bass = None
         self.type = type
-        self._compose(root)
+        self._compose()
 
 
     def transpose(self, semitones: int):
         self.root.transpose(semitones)
-        self._compose(self.root.idx, self.interval)
+        self._compose()
 
 
-    def _compose(self, root: Note):
-        self.root_idx = root.idx
+    def _compose(self):
+        self.root_idx = self.root.idx
         self.idx = [(self.root_idx + i) % 12 for i in self.interval]
         self.note_names = [KEY_NAMES[i] for i in self.idx]
         self.notes = [Note(name) for name in self.note_names]

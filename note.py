@@ -69,24 +69,25 @@ class Note:
         assert isinstance(query, (str, int)), "input must be a string or an integer"
 
         if isinstance(query, str):
-            notename = check_nname(query, return_nname=True)
-            notenum = self._name2num(notename, octave) if octave else None
+            self.name = check_nname(query, return_nname=True)
+            self.idx = self._return_idx()
+            self.octave = octave
+            if self.octave:
+                self.num = NUM_C0 + 12*self.octave + self.idx
+                self.freq = A4 * 2**((self.num - NUM_A4)/12)
+            else:
+                self.num = None
+                self.freq = None
         else:
             if octave:
                 warnings.warn("octave is ignored when query is an integer")
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
-            notenum = query
-            notename = self._num2name(query)
-            octave = self._num2octave(query)
-        freq = self._num2freq(notenum, A4) if notenum else None
-        idx = KEY_NAMES.index(notename[0])
-        idx = (idx + ('#' in notename) - ('b' in notename)) % 12
+            self.num = query
+            self.name = KEY_NAMES[(self.num - NUM_C0) % 12]
+            self.idx = self._return_idx()
+            self.octave = (self.num - NUM_C0) // 12
+            self.freq = A4 * 2**((self.num - NUM_A4)/12)
 
-        self.name = notename
-        self.num = notenum
-        self.ocatave = octave
-        self.freq = freq
-        self.idx = idx
         self.A4 = A4
 
 
@@ -97,34 +98,25 @@ class Note:
         Args:
             semitone (int): semitone
         """
-        self.num += semitone
-        self.name = self._num2name(self.num)
-        self.ocatave = self._num2octave(self.num)
-        self.freq = self._num2freq(self.num, self.A4)
+        self.idx = (self.idx + semitone) % 12
+        self.name = KEY_NAMES[self.idx]
+        if self.octave:
+            self.num += semitone
+            self.octave = (self.num - NUM_C0) // 12
+            self.freq = self.A4 * 2**((self.num - NUM_A4)/12)
 
 
-    def _name2num(self, name: str, octave: int) -> int:
-        idx = KEY_NAMES.index(name[0])
-        pitch = idx + ('#' in name) - ('b' in name)
-        num = NUM_C0 + 12*octave + pitch
-        return num
-
-    def _num2name(self, num: int) -> str:
-        name = KEY_NAMES[(num - NUM_C0) % 12]
-        return name
-
-    def _num2octave(self, num: int) -> int:
-        return (num - NUM_C0) // 12
-
-    def _num2freq(self, num: int, FREQ_A4: float) -> float:
-        return FREQ_A4 * 2**((num - NUM_A4)/12)
+    def _return_idx(self):
+        idx = KEY_NAMES.index(self.name[0])
+        idx = (idx + ('#' in self.name) - ('b' in self.name)) % 12
+        return idx
 
 
     def __str__(self) -> str:
-        return f'{self.name}{self.ocatave}'
+        return f'{self.name}{self.octave}' if self.octave else self.name
 
     def __repr__(self):
-        return f'note.Note {self.name}{self.ocatave}'
+        return f'note.Note {self.name}{self.octave}' if self.octave else f'note.Note {self.name}'
 
     def __int__(self) -> int:
         return self.num
