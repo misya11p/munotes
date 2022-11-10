@@ -1,5 +1,5 @@
 from typing import Optional, Union
-
+import warnings
 
 def check_nname(nname: str, return_nname: bool = False) -> Optional[str]:
     """
@@ -30,6 +30,15 @@ def check_nname(nname: str, return_nname: bool = False) -> Optional[str]:
 
 
 def nname_formatting(nname: str) -> str:
+    """
+    Format note name string.
+
+    Args:
+        nname (str): note name
+
+    Returns:
+        str: formatted note name
+    """
     nname = nname.upper()
     nname = nname.replace('-', '♭')
     nname = nname.replace('b', '♭')
@@ -64,13 +73,22 @@ class Note:
         octave: Optional[int] = None,
         A4: float = 440.,
     ):
+        """
+        Note class.
+
+        Args:
+            query (Union[str, int]): string of note name or midi note number.
+            octave (Optional[int], optional): octave.
+            A4 (float, optional): tuning. freqency of A4. Defaults to 440.
+        """
         assert isinstance(query, (str, int)), "input must be a string or an integer"
 
         if isinstance(query, str):
-            notename = shaping_note_name(query)
-            check_note_name(notename)
+            notename = check_nname(query, return_nname=True)
             notenum = _name2num(notename, octave) if octave else None
         else:
+            if octave:
+                warnings.warn("octave is ignored when query is an integer")
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
             notename = _num2name(query)
             octave = _num2octave(query)
