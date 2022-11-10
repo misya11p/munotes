@@ -45,38 +45,24 @@ def _num2freq(num: int, FREQ_A4: float) -> float:
 class Note:
     def __init__(
         self,
-        name: Optional[str] = None,
-        num: Optional[int] = None,
+        query: Union[str, int],
         octave: Optional[int] = None,
         A4: float = 440.,
     ):
-        self.name = name
-        self.num = num
+        assert isinstance(query, (str, int)), "input must be a string or an integer"
+
+        if isinstance(query, str):
+            notename = shaping_note_name(query)
+            check_note_name(notename)
+            notenum = _name2num(notename, octave) if octave else None
+
+        else:
+            assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
+            notename = _num2name(query)
+            octave = _num2octave(query)
+
+        self.name = notename
+        self.num = notenum
         self.ocatave = octave
-        self.freqency = _num2freq(num, A4) if num else None
-
-
-def note(query: Union[str, int], octave: Optional[int] = None, A4: float = 440.) -> Note:
-    assert isinstance(query, (str, int)), "input must be a string or an integer"
-
-    if isinstance(query, str):
-        notename = shaping_note_name(query)
-        check_note_name(notename)
-        notenum = _name2num(notename, octave) if octave else None
-        return Note(
-            name=notename,
-            num=notenum,
-            octave=octave,
-            A4=A4,
-            )
-
-    else:
-        assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
-        notename = _num2name(query)
-        octave = _num2octave(query)
-        return Note(
-            name=notename,
-            num=query,
-            octave=octave,
-            A4=A4,
-            )
+        self.freq = _num2freq(notenum, A4) if notenum else None
+        self.A4 = A4
