@@ -23,7 +23,7 @@ def check_nname(nname: str, return_nname: bool = False) -> Optional[str]:
 
     elif len(nname) == 2:
         assert nname[0] in "ABCDEFG", f"First letter of note name must be in {list('ABCDEFG')}"
-        assert nname[1] in "♭♯", f"Second letter of note name must be in {list('+♯#-♭b')}"
+        assert nname[1] in "#b", f"Second letter of note name must be in {list('+♯#-♭b')}"
 
     if return_nname:
         return nname
