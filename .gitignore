@@ -1,0 +1,6 @@
+.*
+__pycache__
+!.gitignore
+dist
+munotes.egg-info
+build
