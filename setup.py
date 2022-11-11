@@ -1,14 +1,17 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+
 setup(
-    name='munotes',
+    name="munotes",
     version="0.1.0",
-    description="",
+    description="Handle musical note and chord in Python",
     long_description="",
-    # url='',
-    # author='',
-    # author_email='',
-    # license='',
-    # classifiers=[],
-    # keywords='',
-    install_requires=[],
+    packages=["munotes"],
+    package_dir={"munotes": "src/munotes"},
+    url="https://github.com/misya11p/munotes",
+    author="misya11p",
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+    ],
 )
