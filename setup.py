@@ -1,12 +1,16 @@
 from setuptools import setup
 
+with open('README.md', 'r', encoding='utf-8') as fp:
+    readme = fp.read()
+
 setup(
     name="munotes",
     version="0.1.0",
     description="Handle musical note and chord in Python",
-    long_description="",
+    long_description=readme,
+    long_description_content_type="text/markdown",
     packages=["munotes"],
-    package_dir={"munotes": "src/munotes"},
+    package_dir={"munotes": "munotes"},
     url="https://github.com/misya11p/munotes",
     author="misya11p",
     classifiers=[
@@ -14,4 +18,6 @@ setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
     ],
+    keywords="music note chord",
+    license="MIT",
 )
