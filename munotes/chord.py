@@ -24,10 +24,13 @@ chords = list(chord_intervals.keys())
 PITCH_PATTERN = '[A-G][#, b]*'
 
 class Chord:
-    def __init__(
-        self,
-        cname: str,
-    ):
+    def __init__(self, cname: str):
+        """
+        Chord class.
+
+        Args:
+            cname (str): chord name string
+        """
         cname = nname_formatting(cname)
         pitch_search = re.match(PITCH_PATTERN, cname)
         assert pitch_search, f"'{cname}' is an invalid string"
@@ -46,12 +49,19 @@ class Chord:
         self._compose()
 
 
-    def transpose(self, semitones: int):
-        self.root.transpose(semitones)
+    def transpose(self, n_semitones: int):
+        """
+        transpose chord
+
+        Args:
+            n_semitones (int): number of semitones to transpose
+        """
+        self.root.transpose(n_semitones)
         self._compose()
 
 
     def _compose(self):
+        """Define other attributes based on note name"""
         self.name = self.root.name + self.type
         self.root_idx = self.root.idx
         self.idx = [(self.root_idx + i) % 12 for i in self.interval]

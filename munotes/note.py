@@ -91,17 +91,17 @@ class Note:
         self.A4 = A4
 
 
-    def transpose(self, semitone: int) -> None:
+    def transpose(self, n_semitones: int) -> None:
         """
-        transpose note by semitone.
+        transpose note
 
         Args:
-            semitone (int): semitone
+            n_semitones (int): number of semitones to transpose
         """
-        self.idx = (self.idx + semitone) % 12
+        self.idx = (self.idx + n_semitones) % 12
         self.name = KEY_NAMES[self.idx]
         if self.octave:
-            self.num += semitone
+            self.num += n_semitones
             self.octave = (self.num - NUM_C0) // 12
             self.freq = self.A4 * 2**((self.num - NUM_A4)/12)
 
