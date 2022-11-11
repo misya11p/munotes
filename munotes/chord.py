@@ -63,8 +63,7 @@ class Chord:
     def _compose(self):
         """Define other attributes based on note name"""
         self.name = self.root.name + self.type
-        self.root_idx = self.root.idx
-        self.idx = [(self.root_idx + i) % 12 for i in self.interval]
+        self.idx = [(self.root.idx + i) % 12 for i in self.interval]
         self.note_names = [KEY_NAMES[i] for i in self.idx]
         self.notes = [Note(name) for name in self.note_names]
 
