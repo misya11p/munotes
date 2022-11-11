@@ -60,7 +60,7 @@ class Chord:
 
 
     def __repr__(self):
-        return f'<Chord> {self.name}'
+        return f'Chord {self.name}'
 
     def __str__(self):
         return self.name
