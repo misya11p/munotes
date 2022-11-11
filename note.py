@@ -116,7 +116,7 @@ class Note:
         return f'{self.name}{self.octave}' if self.octave else self.name
 
     def __repr__(self):
-        return f'note.Note {self.name}{self.octave}' if self.octave else f'note.Note {self.name}'
+        return f'<Note> {self.name}{self.octave}' if self.octave else f'<Note> {self.name}'
 
     def __int__(self) -> int:
         return self.num

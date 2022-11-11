@@ -1,8 +1,8 @@
-from note import Note, KEY_NAMES
+from note import Note, KEY_NAMES, nname_formatting
 import re
 
 
-chords = {
+chord_intervals = {
     "": (0,4,7),
     "m": (0,3,7),
     "7": (0,4,7,10),
@@ -18,7 +18,7 @@ chords = {
     "sus2": (0,2,7)
 }
 
-chord_names = list(chords.keys())
+chords = list(chord_intervals.keys())
 
 
 PITCH_PATTERN = '[A-G][#, b]*'
@@ -28,6 +28,7 @@ class Chord:
         self,
         cname: str,
     ):
+        cname = nname_formatting(cname)
         pitch_search = re.match(PITCH_PATTERN, cname)
         assert pitch_search, f"'{cname}' is an invalid string"
 
@@ -35,7 +36,7 @@ class Chord:
         root_name, type = cname[:border], cname[border:]
         root = Note(root_name)
         name = root.name + type
-        interval = chords[type]
+        interval = chord_intervals[type]
 
         self.name = name
         self.root = root
@@ -59,7 +60,7 @@ class Chord:
 
 
     def __repr__(self):
-        return f'chord.Chord {self.name}'
+        return f'<Chord> {self.name}'
 
     def __str__(self):
         return self.name
