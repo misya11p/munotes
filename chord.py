@@ -1,4 +1,4 @@
-from note import Note, KEY_NAMES, nname_formatting
+from .note import Note, KEY_NAMES, nname_formatting
 import re
 
 
