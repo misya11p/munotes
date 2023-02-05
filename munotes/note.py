@@ -91,7 +91,7 @@ class Note:
             self.octave = (self.num - NUM_C0) // 12
             self.freq = A4 * 2**((self.num - NUM_A4)/12)
 
-        self._exist_octave = self.octave != None
+        self.exist_octave = self.octave != None
         self.A4 = A4
         # TODO: チューニング
 
@@ -113,7 +113,7 @@ class Note:
 
     def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
         """Generate time axis"""
-        assert self._exist_octave, "octave is not defined"
+        assert self.exist_octave, "octave is not defined"
         return np.linspace(0, 2*np.pi * self.freq * sec, int(sr*sec))
 
 
@@ -123,7 +123,7 @@ class Note:
 
         Args:
             sec (float): duration in seconds
-            sr (int): sampling frequency
+            sr (int): sampling rate
 
         Returns:
             np.ndarray: sin wave
@@ -138,7 +138,7 @@ class Note:
 
         Args:
             sec (float): duration in seconds
-            sr (int): sampling frequency
+            sr (int): sampling rate
 
         Returns:
             np.ndarray: square wave
@@ -153,7 +153,7 @@ class Note:
 
         Args:
             sec (float): duration in seconds
-            sr (int): sampling frequency
+            sr (int): sampling rate
 
         Returns:
             np.ndarray: sawtooth wave
