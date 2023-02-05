@@ -111,54 +111,54 @@ class Note:
             self.freq = self.A4 * 2**((self.num - NUM_A4)/12)
 
 
-    def _return_time_axis(self, sec: float, fs: int) -> np.ndarray:
+    def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
         """Generate time axis"""
         assert self._exist_octave, "octave is not defined"
-        return np.linspace(0, 2*np.pi * self.freq * sec, int(fs*sec))
+        return np.linspace(0, 2*np.pi * self.freq * sec, int(sr*sec))
 
 
-    def sin(self, sec: float = 1., fs: int = 22050) -> np.ndarray:
+    def sin(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
         Generate sin wave of the note.
 
         Args:
             sec (float): duration in seconds
-            fs (int): sampling frequency
+            sr (int): sampling frequency
 
         Returns:
             np.ndarray: sin wave
         """
-        t = self._return_time_axis(sec, fs)
+        t = self._return_time_axis(sec, sr)
         return np.sin(t)
 
 
-    def square(self, sec: float = 1., fs: int = 22050) -> np.ndarray:
+    def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
         Generate square wave of the note.
 
         Args:
             sec (float): duration in seconds
-            fs (int): sampling frequency
+            sr (int): sampling frequency
 
         Returns:
             np.ndarray: square wave
         """
-        t = self._return_time_axis(sec, fs)
+        t = self._return_time_axis(sec, sr)
         return signal.square(t)
 
 
-    def sawtooth(self, sec: float = 1., fs: int = 22050) -> np.ndarray:
+    def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
         Generate sawtooth wave of the note.
 
         Args:
             sec (float): duration in seconds
-            fs (int): sampling frequency
+            sr (int): sampling frequency
 
         Returns:
             np.ndarray: sawtooth wave
         """
-        t = self._return_time_axis(sec, fs)
+        t = self._return_time_axis(sec, sr)
         return signal.sawtooth(t)
 
 
@@ -174,9 +174,9 @@ class Note:
             ipd.Audio: Audio object
         """
         assert wave_type in ['sin', 'square', 'sawtooth'], "wave_type must be in ['sin', 'square', 'sawtooth']"
-        fs = 22050
-        wave = getattr(self, wave_type)(sec, fs)
-        return ipd.Audio(wave, rate=fs)
+        sr = 22050
+        wave = getattr(self, wave_type)(sec, sr)
+        return ipd.Audio(wave, rate=sr)
 
 
     def _return_idx(self):
