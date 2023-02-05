@@ -167,7 +167,7 @@ class Note:
         Render note as IPython.display.Audio object.
 
         Args:
-            sec (float, optional): duration in seconds. Defaults to 1..
+            sec (float, optional): duration in seconds. Defaults to 1.
             wave_type (str, optional): wave type. Defaults to 'sin'.
 
         Returns:

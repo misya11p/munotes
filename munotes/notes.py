@@ -22,6 +22,17 @@ class Notes:
         self.n_notes = len(self.notes)
 
 
+    def transpose(self, n_semitones: int) -> None:
+        """
+        Transpose notes.
+
+        Args:
+            n_semitones (int): number of semitones to transpose
+        """
+        for note in self.notes:
+            note.transpose(n_semitones)
+
+
     def sin(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
         Generate sin wave of the notes.
