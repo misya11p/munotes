@@ -1,3 +1,6 @@
+import numpy as np
+from scipy import signal
+import IPython.display as ipd
 from typing import Optional, Union
 import warnings
 
@@ -72,7 +75,7 @@ class Note:
             self.name = check_nname(query, return_nname=True)
             self.idx = self._return_idx()
             self.octave = octave
-            if self.octave:
+            if self.octave != None:
                 self.num = NUM_C0 + 12*self.octave + self.idx
                 self.freq = A4 * 2**((self.num - NUM_A4)/12)
             else:
@@ -88,7 +91,9 @@ class Note:
             self.octave = (self.num - NUM_C0) // 12
             self.freq = A4 * 2**((self.num - NUM_A4)/12)
 
+        self._exist_octave = self.octave != None
         self.A4 = A4
+        # TODO: チューニング
 
 
     def transpose(self, n_semitones: int) -> None:
@@ -104,6 +109,74 @@ class Note:
             self.num += n_semitones
             self.octave = (self.num - NUM_C0) // 12
             self.freq = self.A4 * 2**((self.num - NUM_A4)/12)
+
+
+    def _return_time_axis(self, sec: float, fs: int) -> np.ndarray:
+        """Generate time axis"""
+        assert self._exist_octave, "octave is not defined"
+        return np.linspace(0, 2*np.pi * self.freq * sec, int(fs*sec))
+
+
+    def sin(self, sec: float = 1., fs: int = 22050) -> np.ndarray:
+        """
+        Generate sin wave of the note.
+
+        Args:
+            sec (float): duration in seconds
+            fs (int): sampling frequency
+
+        Returns:
+            np.ndarray: sin wave
+        """
+        t = self._return_time_axis(sec, fs)
+        return np.sin(t)
+
+
+    def square(self, sec: float = 1., fs: int = 22050) -> np.ndarray:
+        """
+        Generate square wave of the note.
+
+        Args:
+            sec (float): duration in seconds
+            fs (int): sampling frequency
+
+        Returns:
+            np.ndarray: square wave
+        """
+        t = self._return_time_axis(sec, fs)
+        return signal.square(t)
+
+
+    def sawtooth(self, sec: float = 1., fs: int = 22050) -> np.ndarray:
+        """
+        Generate sawtooth wave of the note.
+
+        Args:
+            sec (float): duration in seconds
+            fs (int): sampling frequency
+
+        Returns:
+            np.ndarray: sawtooth wave
+        """
+        t = self._return_time_axis(sec, fs)
+        return signal.sawtooth(t)
+
+
+    def render(self, sec: float = 1., wave_type: str = 'sin') -> ipd.Audio:
+        """
+        Render note as IPython.display.Audio object.
+
+        Args:
+            sec (float, optional): duration in seconds. Defaults to 1..
+            wave_type (str, optional): wave type. Defaults to 'sin'.
+
+        Returns:
+            ipd.Audio: Audio object
+        """
+        assert wave_type in ['sin', 'square', 'sawtooth'], "wave_type must be in ['sin', 'square', 'sawtooth']"
+        fs = 22050
+        wave = getattr(self, wave_type)(sec, fs)
+        return ipd.Audio(wave, rate=fs)
 
 
     def _return_idx(self):
