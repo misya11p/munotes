@@ -1,6 +1,6 @@
 from .note import Note
-from .chord import Chord
+from .notes import Notes, Chord
 
-__all__ = ["Note", "Chord"]
+__all__ = ["Note", "Notes", "Chord"]
 
 __version__ = "0.1.0"
