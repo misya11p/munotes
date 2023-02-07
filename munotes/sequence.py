@@ -111,9 +111,14 @@ class Track:
         Rendering waveform of the note.
 
         Args:
-            waveform (Union[str, Callable], Optional): waveform. Defaults to 'sin'.
-            sec (float, optional): duration in seconds. Defaults to 1.
-            sr (int, optional): sampling rate. Defaults to 22050.
+            waveform (Union[str, Callables], optional):
+                waveform type or waveform function. Defaults to 'sin'.
+            sr (int, optional):
+                sampling rate. Defaults to 22050.
+            release (int, optional):
+                release time in samples. Wavefrom will be multiplied
+                by a linear window from 1 to 0 in the last {release}
+                samples to connect sounds smoothly. Defaults to 200.
 
         Returns:
             np.ndarray: waveform of the note
@@ -178,8 +183,10 @@ class Track:
         Args:
             waveform (Union[str, Callables], optional):
                 waveform type or waveform function. Defaults to 'sin'.
-            sec (float, optional):
-                duration in seconds. Defaults to 1.0.
+            release (int, optional):
+                release time in samples. Wavefrom will be multiplied
+                by a linear window from 1 to 0 in the last {release}
+                samples to connect sounds smoothly. Defaults to 200.
 
         Returns:
             ipd.Audio: audio object
@@ -241,9 +248,12 @@ class Stream(Track):
         Generate waveform of the note from various query types.
 
         Args:
-            waveform (Union[str, Callable]): waveform type. str or callable object.
-            sr (int, optional): sampling rate. Defaults to 22050.
-            release (int, optional): release time in samples. Defaults to 200.
+            waveform (Union[str, Callables, Waveforms], optional):
+                waveform. Defaults to 'sin'.
+            sr (int, optional):
+                sampling rate. Defaults to 22050.
+            release (int, optional):
+                release time in samples. Defaults to 200.
 
         Returns:
             np.ndarray: waveform of the note
@@ -277,9 +287,19 @@ class Stream(Track):
         Rendering waveform of the note.
 
         Args:
-            waveform (Union[str, Callable], Optional): waveform. Defaults to 'sin'.
-            sec (float, optional): duration in seconds. Defaults to 1.
-            sr (int, optional): sampling rate. Defaults to 22050.
+            waveform (Union[str, Callables, Waveforms], optional):
+                waveform.
+                supported types:
+                    - str: waveform type
+                    - callable: waveform function
+                    - list of str or callable: multiple waveforms
+                Defaults to 'sin'.
+            sr (int, optional):
+                sampling rate. Defaults to 22050.
+            release (int, optional):
+                release time in samples. Wavefrom will be multiplied
+                by a linear window from 1 to 0 in the last {release}
+                samples to connect sounds smoothly. Defaults to 200.
 
         Returns:
             np.ndarray: waveform of the note
@@ -296,10 +316,17 @@ class Stream(Track):
         Return IPython.display.Audio object.
 
         Args:
-            waveform (Union[str, Callables], optional):
-                waveform type or waveform function. Defaults to 'sin'.
-            sec (float, optional):
-                duration in seconds. Defaults to 1.0.
+            waveform (Union[str, Callables, Waveforms], optional):
+                waveform.
+                supported types:
+                    - str: waveform type
+                    - callable: waveform function
+                    - list of str or callable: multiple waveforms
+                Defaults to 'sin'.
+            release (int, optional):
+                release time in samples. Wavefrom will be multiplied
+                by a linear window from 1 to 0 in the last {release}
+                samples to connect sounds smoothly. Defaults to 200.
 
         Returns:
             ipd.Audio: audio object
