@@ -5,3 +5,4 @@ dist
 munotes.egg-info
 build
 *.ipynb
+requirements.txt
