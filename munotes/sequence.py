@@ -4,7 +4,8 @@ import IPython.display as ipd
 from typing import List, Tuple, Union, Optional, Callable
 import warnings
 
-PLAY_SR = 22050
+PLAY_SR = 22050 # sample rate for play()
+SPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 
@@ -18,7 +19,26 @@ class Track:
         bpm: Optional[float] = None,
         A4: float = 440,
     ):
-        assert unit in ["s", "ms", "ql"], "unit must be in ['s', 'ms', 'ql']"
+        """
+        Track class.
+        Input notes and durations to manage multiple notes as a track.
+
+        Args:
+            sequence (NotesSequence):
+                sequence of notes and durations.
+            unit (str, optional):
+                unit of duration. Supported units:
+                    - 's': second
+                    - 'ms': millisecond
+                    - 'ql': quarter length (bpm is required)
+                Defaults to "s".
+            bpm (Optional[float], optional):
+                BPM (beats per minute). Required when unit is 'ql'.
+                Defaults to None.
+            A4 (float, optional):
+                tuning. frequency of A4. Defaults to 440.
+        """
+        assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
         if bpm == None:
             if unit == "ql":
                 raise Exception("bpm is required when unit is 'ql'")
@@ -31,7 +51,7 @@ class Track:
         self.unit = unit
         self.bpm = bpm
         self._A4 = A4
-        self.tune(self._A4)
+        self.tuning(self._A4)
 
     @property
     def A4(self):
@@ -39,19 +59,65 @@ class Track:
 
     @A4.setter
     def A4(self, value):
-        raise Exception("A4 can not be changed. If you want to tune the note, use tune() method.")
+        raise Exception("A4 can not be changed. If you want to tuning the note, use tuning() method.")
 
 
     def sin(self, sr: int = 22050, release: int = 200) -> np.ndarray:
+        """
+        Generate sin wave of the note
+
+        Args:
+            sr (int, optional): sampling rate. Defaults to 22050.
+            release (int, optional): release time in samples. Defaults to 200.
+
+        Returns:
+            np.ndarray: sin wave of the note
+        """
         return self._gen_y("sin", sr, release)
 
     def square(self, sr: int = 22050, release: int = 200) -> np.ndarray:
+        """
+        Generate square wave of the note
+
+        Args:
+            sr (int, optional): sampling rate. Defaults to 22050.
+            release (int, optional): release time in samples. Defaults to 200.
+
+        Returns:
+            np.ndarray: square wave of the note
+        """
         return self._gen_y("square", sr, release)
 
     def sawtooth(self, sr: int = 22050, release: int = 200) -> np.ndarray:
+        """
+        Generate sawtooth wave of the note
+
+        Args:
+            sr (int, optional): sampling rate. Defaults to 22050.
+            release (int, optional): release time in samples. Defaults to 200.
+
+        Returns:
+            np.ndarray: sawtooth wave of the note
+        """
         return self._gen_y("sawtooth", sr, release)
 
-    def render(self, waveform: Union[str, Callable], sr: int = 22050, release: int = 200) -> np.ndarray:
+    def render(
+        self,
+        waveform: Union[str, Callable] = 'sin',
+        sr: int = 22050,
+        release: int = 200
+    ) -> np.ndarray:
+        """
+        Rendering waveform of the note.
+
+        Args:
+            waveform (Union[str, Callable], Optional): waveform. Defaults to 'sin'.
+            sec (float, optional): duration in seconds. Defaults to 1.
+            sr (int, optional): sampling rate. Defaults to 22050.
+
+        Returns:
+            np.ndarray: waveform of the note
+        """
         return self._gen_y(waveform, sr, release)
 
     def _gen_y(
@@ -60,6 +126,17 @@ class Track:
         sr: int = 22050,
         release: int = 200,
     ) -> np.ndarray:
+        """
+        Generate waveform of the note from various query types.
+
+        Args:
+            waveform (Union[str, Callable]): waveform type. str or callable object.
+            sr (int, optional): sampling rate. Defaults to 22050.
+            release (int, optional): release time in samples. Defaults to 200.
+
+        Returns:
+            np.ndarray: waveform of the note
+        """
         y = np.array([])
         for note, duration in self.sequence:
             sec = self._to_sec(duration)
@@ -72,6 +149,15 @@ class Track:
         return y
 
     def _to_sec(self, duration: float) -> float:
+        """
+        Transform duration to second based on unit.
+
+        Args:
+            duration (float): duration
+
+        Returns:
+            float: duration in second
+        """
         if self.unit == "s":
             return duration
         elif self.unit == "ms":
@@ -80,17 +166,46 @@ class Track:
             return duration * 60 / self.bpm
 
 
-    def play(self, waveform: Union[str, Callable] = 'sin', release: int = 200) -> ipd.Audio:
+    def play(
+        self,
+        waveform: Union[str, Callable] = 'sin',
+        release: int = 200
+    ) -> ipd.Audio:
+        """
+        Play note sound.
+        Return IPython.display.Audio object.
+
+        Args:
+            waveform (Union[str, Callables], optional):
+                waveform type or waveform function. Defaults to 'sin'.
+            sec (float, optional):
+                duration in seconds. Defaults to 1.0.
+
+        Returns:
+            ipd.Audio: audio object
+        """
         y = self.render(waveform, PLAY_SR, release)
         return ipd.Audio(y, rate=PLAY_SR)
 
 
-    def tune(self, A4: float = 440) -> None:
-        self._A4 = A4
+    def tuning(self, A4_freq: float = 440) -> None:
+        """
+        Tuning sound.
+
+        Args:
+            A4_freq (float, optional): frequency of A4. Defaults to 440.0.
+        """
+        self._A4 = A4_freq
         for note, _ in self.sequence:
-            note.tune(A4)
+            note.tuning(A4_freq)
 
     def transpose(self, semitone: int) -> None:
+        """
+        Transpose notes.
+
+        Args:
+            n_semitones (int): number of semitones to transpose
+        """
         for note, _ in self.sequence:
             note.transpose(semitone)
 
@@ -103,10 +218,17 @@ Waveforms = List[Union[str, Callable]]
 
 class Stream(Track):
     def __init__(self, tracks: List[Track], A4: float = 440.):
+        """
+        Stream class. Manage multiple tracks as a stream.
+
+        Args:
+            tracks (List[Track]): tracks
+            A4 (float, optional): frequency of A4. Defaults to 440.0.
+        """
         self.tracks = tracks
         self.n_tracks = len(tracks)
         self._A4 = A4
-        self.tune(self._A4)
+        self.tuning(self._A4)
 
 
     def _gen_y(
@@ -115,10 +237,22 @@ class Stream(Track):
         sr: int = 22050,
         release: int = 200
     ) -> np.array:
+        """
+        Generate waveform of the note from various query types.
+
+        Args:
+            waveform (Union[str, Callable]): waveform type. str or callable object.
+            sr (int, optional): sampling rate. Defaults to 22050.
+            release (int, optional): release time in samples. Defaults to 200.
+
+        Returns:
+            np.ndarray: waveform of the note
+        """
         if isinstance(waveform, str):
             waveforms = [waveform] * self.n_tracks
         elif hasattr(waveform, '__iter__'):
-            assert len(waveform) == self.n_tracks, f"If input multiple waveforms, its length must have the same as the number of tracks: {self.n_tracks}"
+            assert len(waveform) == self.n_tracks, \
+                f"If input multiple waveforms, its length must have the same as the number of tracks: {self.n_tracks}"
             waveforms = waveform
         else:
             waveforms = [waveform] * self.n_tracks
@@ -139,6 +273,17 @@ class Stream(Track):
         sr: int = 22050,
         release: int = 200
     ) -> np.array:
+        """
+        Rendering waveform of the note.
+
+        Args:
+            waveform (Union[str, Callable], Optional): waveform. Defaults to 'sin'.
+            sec (float, optional): duration in seconds. Defaults to 1.
+            sr (int, optional): sampling rate. Defaults to 22050.
+
+        Returns:
+            np.ndarray: waveform of the note
+        """
         return self._gen_y(waveform, sr, release)
 
     def play(
@@ -146,16 +291,41 @@ class Stream(Track):
         waveform: Union[str, Callable, Waveforms] = 'sin',
         release: int = 200
     ) -> ipd.Audio:
+        """
+        Play note sound.
+        Return IPython.display.Audio object.
+
+        Args:
+            waveform (Union[str, Callables], optional):
+                waveform type or waveform function. Defaults to 'sin'.
+            sec (float, optional):
+                duration in seconds. Defaults to 1.0.
+
+        Returns:
+            ipd.Audio: audio object
+        """
         y = self.render(waveform, PLAY_SR, release)
         return ipd.Audio(y, rate=PLAY_SR)
 
 
-    def tune(self, A4_freq: float = 440.) -> None:
+    def tuning(self, A4_freq: float = 440.) -> None:
+        """
+        Tuning sound.
+
+        Args:
+            A4_freq (float, optional): frequency of A4. Defaults to 440.0.
+        """
         self._A4 = A4_freq
         for track in self.tracks:
-            track.tune(A4_freq)
+            track.tuning(A4_freq)
 
     def transpose(self, semitone: int) -> None:
+        """
+        Transpose notes.
+
+        Args:
+            n_semitones (int): number of semitones to transpose
+        """
         for track in self.tracks:
             track.transpose(semitone)
 

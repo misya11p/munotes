@@ -7,16 +7,21 @@ from typing import Union, Callable
 import re
 
 
-NUM_C0 = 12
-NUM_A4 = 69
+NUM_C0 = 12 # MIDI note number of C0
+NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth"]
-PLAY_SR = 22050
+PLAY_SR = 22050 # sampling rate for play()
 
 
 
 class Note:
-    def __init__(self, query: Union[str, int], octave: int = 4, A4: float = 440.):
+    def __init__(
+        self,
+        query: Union[str, int],
+        octave: int = 4,
+        A4: float = 440.
+    ):
         """
         Note class
 
@@ -100,23 +105,31 @@ class Note:
         t = self._return_time_axis(sec, sr)
         return signal.sawtooth(t)
 
-    def render(self, waveform: Union[str, Callable], sec: float = 1., sr: int = 22050) -> np.ndarray:
+    def render(
+        self,
+        waveform: Union[str, Callable] = 'sin',
+        sec: float = 1.,
+        sr: int = 22050
+    ) -> np.ndarray:
         """
         Rendering waveform of the note.
 
-        Spported waveform types:
-            - 'sin'
-            - 'square'
-            - 'sawtooth'
-            - user-defined waveform function
-
         Args:
-            waveform (Union[str, Callable]): waveform. String or Callable object.
-            sec (float, optional): duration in seconds. Defaults to 1.
-            sr (int, optional): sampling rate. Defaults to 22050.
+            waveform (Union[str, Callable], Optional):
+                waveform.
+                spported waveform types:
+                    - 'sin'
+                    - 'square'
+                    - 'sawtooth'
+                    - user-defined waveform function
+                Defaults to 'sin'.
+            sec (float, optional):
+                duration in seconds. Defaults to 1.
+            sr (int, optional):
+                sampling rate. Defaults to 22050.
 
         Returns:
-            np.ndarray: Waveform of the note
+            np.ndarray: waveform of the note
         """
         if isinstance(waveform, str):
             assert waveform in SUPPOERTED_WAVEFORMS, f"waveform string must be in {SUPPOERTED_WAVEFORMS}"
@@ -175,7 +188,7 @@ class Note:
 
     def tuning(self, A4_freq: float = 440.) -> None:
         """
-        Tuning the sound of note.
+        Tuning sound.
 
         Args:
             A4_freq (float, optional): freqency of A4. Defaults to 440.0.
@@ -300,21 +313,27 @@ class Notes:
         """
         Rendering waveform of the note.
 
-        Spported waveform types:
-            - 'sin'
-            - 'square'
-            - 'sawtooth'
-            - user-defined waveform function
-
         Args:
-            waveform (Union[str, Callable]): waveform. String or Callable object.
-            sec (float, optional): duration in seconds. Defaults to 1.
-            sr (int, optional): sampling rate. Defaults to 22050.
+            waveform (Union[str, Callable], Optional):
+                waveform.
+                spported waveform types:
+                    - 'sin'
+                    - 'square'
+                    - 'sawtooth'
+                    - user-defined waveform function
+                Defaults to 'sin'.
+            sec (float, optional):
+                duration in seconds. Defaults to 1.
+            sr (int, optional):
+                sampling rate. Defaults to 22050.
 
         Returns:
-            np.ndarray: Waveform of the note
+            np.ndarray: waveform of the note
         """
-        return np.sum([note.render(waveform, sec, sr) for note in self.notes], axis=0)
+        return np.sum(
+            [note.render(waveform, sec, sr) for note in self.notes],
+            axis=0
+            )
 
 
     def play(
@@ -341,7 +360,7 @@ class Notes:
 
     def tuning(self, A4_freq: float = 440.) -> None:
         """
-        tuning the sound of notes.
+        tuning sound.
 
         Args:
             A4_freq (float, optional): freqency of A4. Defaults to 440.
@@ -415,9 +434,12 @@ class Chord(Notes):
         Chord class.
 
         Args:
-            chord_name (str): chord name string
-            octave (int, optional): octave of the root note when play sound. Defaults to 4.
-            A4 (float, optional): frequency of A4 when play sound. Defaults to 440.0.
+            chord_name (str):
+                chord name string
+            octave (int, optional):
+                octave of the root note when play sound. Defaults to 4.
+            A4 (float, optional):
+                frequency of A4 when play sound. Defaults to 440.0.
         """
         chord_name = nname_formatting(chord_name)
         pitch_search = re.match(PITCH_PATTERN, chord_name)
