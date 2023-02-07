@@ -29,7 +29,7 @@ class Track:
         self.unit = unit
         self.bpm = bpm
         self._A4 = A4
-        self.tuning(self._A4)
+        self.tune(self._A4)
 
     @property
     def A4(self):
@@ -104,7 +104,7 @@ class Track:
     def tune(self, A4: float = 440) -> None:
         self._A4 = A4
         for note, _ in self.sequence:
-            note.tuning(A4)
+            note.tune(A4)
 
     def transpose(self, semitone: int) -> None:
         for note, _ in self.sequence:
