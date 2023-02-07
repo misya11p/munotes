@@ -216,7 +216,7 @@ class Note:
         if isinstance(other, str):
             return str(self) + other
         elif isinstance(other, (Note, Notes)):
-            return Notes([self, other])
+            return Notes(self, other)
         else:
             raise TypeError(f"unsupported operand type(s) for +: 'Note' and '{type(other)}'")
 
