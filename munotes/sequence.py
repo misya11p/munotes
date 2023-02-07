@@ -4,6 +4,8 @@ import IPython.display as ipd
 from typing import List, Tuple, Union, Optional, Callable
 import warnings
 
+PLAY_SR = 22050
+
 
 
 NotesSequence = List[Tuple[Union[Note, Notes], float]]
@@ -41,17 +43,33 @@ class Track:
 
 
     def sin(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        return self._gen_waveform("sin", sr, release)
+        return self._gen_y("sin", sr, release)
 
     def square(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        return self._gen_waveform("square", sr, release)
+        return self._gen_y("square", sr, release)
 
     def sawtooth(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        return self._gen_waveform("sawtooth", sr, release)
+        return self._gen_y("sawtooth", sr, release)
 
-    def perform(self, waveform: Callable, sr: int = 22050, release: int = 200) -> np.ndarray:
-        return self._gen_waveform("perform", sr, release, waveform)
+    def render(self, waveform: Union[str, Callable], sr: int = 22050, release: int = 200) -> np.ndarray:
+        return self._gen_y(waveform, sr, release)
 
+    def _gen_y(
+        self,
+        waveform: Union[str, Callable],
+        sr: int = 22050,
+        release: int = 200,
+    ) -> np.ndarray:
+        y = np.array([])
+        for note, duration in self.sequence:
+            sec = self._to_sec(duration)
+            y_note = note.render(waveform, sec, sr)
+            release = min(len(y_note), release)
+            if release:
+                window = np.linspace(1, 0, release)
+                y_note[-release:] *= window
+            y = np.append(y, y_note)
+        return y
 
     def _to_sec(self, duration: float) -> float:
         if self.unit == "s":
@@ -61,45 +79,11 @@ class Track:
         elif self.unit == "ql":
             return duration * 60 / self.bpm
 
-    def _gen_waveform(
-        self,
-        waveform_type: str,
-        sr: int = 22050,
-        release: int = 200,
-        waveform_func: Optional[Callable] = None
-    ) -> np.ndarray:
-        y = np.array([])
-        for note, duration in self.sequence:
-            sec = self._to_sec(duration)
-            if waveform_type == "perform":
-                y_ = getattr(note, "perform")(waveform_func, sec, sr)
-            else:
-                y_ = getattr(note, waveform_type)(sec, sr)
-            release = min(len(y_), release)
-            if release:
-                window = np.linspace(1, 0, release)
-                y_[-release:] *= window
-            y = np.append(y, y_)
-        return y
 
+    def play(self, waveform: Union[str, Callable] = 'sin', release: int = 200) -> ipd.Audio:
+        y = self.render(waveform, PLAY_SR, release)
+        return ipd.Audio(y, rate=PLAY_SR)
 
-    def render(self, waveform: str = 'sin', release: int = 200) -> ipd.Audio:
-        """
-        Render note as IPython.display.Audio object.
-
-        Args:
-            waveform (Union[str, Callables], optional): waveform type or waveform function. Defaults to 'sin'.
-
-        Returns:
-            ipd.Audio: Audio object
-        """
-        sr = 22050
-        if isinstance(waveform, str):
-            assert waveform in ['sin', 'square', 'sawtooth'], "waveform string must be in ['sin', 'square', 'sawtooth']"
-            wave = getattr(self, waveform)(sr, release)
-        else:
-            wave = self.perform(waveform, sr, release)
-        return ipd.Audio(wave, rate=sr)
 
     def tune(self, A4: float = 440) -> None:
         self._A4 = A4
@@ -115,73 +99,66 @@ class Track:
 
 
 
-waveforms = List[Union[str, Callable]]
+Waveforms = List[Union[str, Callable]]
 
 class Stream(Track):
-    def __init__(self, tracks: List[Track], A4: float = 440):
+    def __init__(self, tracks: List[Track], A4: float = 440.):
         self.tracks = tracks
+        self.n_tracks = len(tracks)
         self._A4 = A4
         self.tune(self._A4)
 
 
-    def _gen_waveform(
+    def _gen_y(
         self,
-        waveform_type: str,
-        sr: int = 22050,
-        release: int = 200,
-        waveform_func: Optional[Callable] = None
-    ) -> np.ndarray:
-        y = np.array([])
-        for track in self.tracks:
-            y_ = track._gen_waveform(waveform_type, sr, release, waveform_func)
-            y = np.append(y, y_)
-        return y
-
-
-    def perform(
-        self,
-        waveforms: waveforms,
+        waveform: Union[str, Callable, Waveforms] = 'sin',
         sr: int = 22050,
         release: int = 200
     ) -> np.array:
+        if isinstance(waveform, str):
+            waveforms = [waveform] * self.n_tracks
+        elif hasattr(waveform, '__iter__'):
+            assert len(waveform) == self.n_tracks, f"If input multiple waveforms, its length must have the same as the number of tracks: {self.n_tracks}"
+            waveforms = waveform
+        else:
+            waveforms = [waveform] * self.n_tracks
+
         y = np.array([])
-        for waveform, track in zip(waveforms, self.tracks):
-            if isinstance(waveform, str):
-                assert waveform in ['sin', 'square', 'sawtooth'], "waveform string must be in ['sin', 'square', 'sawtooth']"
-                y_ = getattr(track, waveform)(sr, release)
+        for track, waveform in zip(self.tracks, waveforms):
+            y_track = track.render(waveform, sr, release)
+            if len(y_track) > len(y):
+                y = np.append(y, np.zeros(len(y_track) - len(y)))
             else:
-                y_ = track.perform(waveform, sr, release)
-            y = np.append(y, y_)
+                y_track = np.append(y_track, np.zeros(len(y) - len(y_track)))
+            y += y_track
         return y
 
+    def render(
+        self,
+        waveform: Union[str, Callable, Waveforms] = 'sin',
+        sr: int = 22050,
+        release: int = 200
+    ) -> np.array:
+        return self._gen_y(waveform, sr, release)
 
-    def play(self, waveform: Union[str, Callable, waveforms] = 'sin', release: int = 200) -> ipd.Audio:
-        """
-        Render note as IPython.display.Audio object.
-
-        Args:
-            waveform (Union[str, Callables], optional): 'waveform type' or 'waveform function' or 'list of waveform types or functions'. Defaults to 'sin'.
-            # TODO: release
-
-        Returns:
-            ipd.Audio: Audio object
-        """
-        sr = 22050
-        if isinstance(waveform, str):
-            assert waveform in ['sin', 'square', 'sawtooth'], "waveform string must be in ['sin', 'square', 'sawtooth']"
-            y = getattr(self, waveform)(sr, release)
-        elif hasattr(waveform, '__iter__'):
-            y = self.perform(waveform, sr, release)
-        else:
-            y = self.render(waveform, sr, release)
-        return ipd.Audio(y, rate=sr)
+    def play(
+        self,
+        waveform: Union[str, Callable, Waveforms] = 'sin',
+        release: int = 200
+    ) -> ipd.Audio:
+        y = self.render(waveform, PLAY_SR, release)
+        return ipd.Audio(y, rate=PLAY_SR)
 
 
-    def tune(self, A4: float = 440) -> None:
-        self._A4 = A4
+    def tune(self, A4_freq: float = 440.) -> None:
+        self._A4 = A4_freq
         for track in self.tracks:
-            track.tune(A4)
+            track.tune(A4_freq)
 
     def transpose(self, semitone: int) -> None:
         for track in self.tracks:
             track.transpose(semitone)
+
+
+    def __len__(self) -> int:
+        return self.n_tracks

@@ -7,12 +7,13 @@ from typing import Union, Callable
 import re
 
 
-
 NUM_C0 = 12
 NUM_A4 = 69
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth"]
 PLAY_SR = 22050
+
+
 
 class Note:
     def __init__(self, query: Union[str, int], octave: int = 4, A4: float = 440.):
@@ -261,7 +262,12 @@ class Notes:
         """
         return np.sum([note.sawtooth(sec, sr) for note in self.notes], axis=0)
 
-    def render(self, waveform: Union[str, Callable], sec: float = 1., sr: int = 22050) -> np.ndarray:
+    def render(
+        self,
+        waveform: Union[str, Callable] = 'sin',
+        sec: float = 1.,
+        sr: int = 22050
+    ) -> np.ndarray:
         """
         Render note sound.
 
