@@ -8,12 +8,13 @@ import re
 
 
 class Notes:
-    def __init__(self, *notes: Union[Note, Notes, Chord]):
+    def __init__(self, *notes: Union[Note, Notes, Chord], A4: float = 440.):
         """
         Notes class.
 
         Args:
             *notes (Union[Note, Chord, Notes]): notes
+            A4 (float, optional): Frequency of A4. Defaults to 440..
         """
         self.notes = []
         for note in notes:
@@ -23,6 +24,15 @@ class Notes:
             else:
                 self.notes += note.notes
         self.n_notes = len(self.notes)
+        self._A4 = A4
+
+    @property
+    def A4(self):
+        return self._A4
+
+    @A4.setter
+    def A4(self, value):
+        raise ValueError("A4 can not be changed. If you want to tuning the note, use tune() method.")
 
 
     def transpose(self, n_semitones: int) -> None:
@@ -93,6 +103,18 @@ class Notes:
         sr = 22050
         wave = getattr(self, wave_type)(sec, sr)
         return ipd.Audio(wave, rate=sr)
+
+
+    def tuning(self, freq: float = 440.) -> None:
+        """
+        Tuning the sound of notes.
+
+        Args:
+            freq (float, optional): Freqency of A4. Defaults to 440.
+        """
+        for note in self.notes:
+            note.tuning(freq)
+
 
 
 chord_intervals = {

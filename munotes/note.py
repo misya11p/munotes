@@ -2,7 +2,7 @@ import numpy as np
 from scipy import signal
 import IPython.display as ipd
 from typing import Optional, Union
-import warnings
+# import warnings
 
 def check_nname(nname: str, return_nname: bool = False) -> Optional[str]:
     """
@@ -58,7 +58,7 @@ class Note:
     def __init__(
         self,
         query: Union[str, int],
-        octave: Optional[int] = None,
+        octave: int = 4,
         A4: float = 440.,
     ):
         """
@@ -66,7 +66,7 @@ class Note:
 
         Args:
             query (Union[str, int]): string of note name or midi note number.
-            octave (Optional[int], optional): octave.
+            octave (int, optional): octave of the note. Defaults to 4.
             A4 (float, optional): tuning. freqency of A4. Defaults to 440.
         """
         assert isinstance(query, (str, int)), "input must be a string or an integer"
@@ -75,40 +75,42 @@ class Note:
             self.name = check_nname(query, return_nname=True)
             self.idx = self._return_idx()
             self.octave = octave
-            if self.octave != None:
-                self.num = NUM_C0 + 12*self.octave + self.idx
-                self.freq = A4 * 2**((self.num - NUM_A4)/12)
-            else:
-                self.num = None
-                self.freq = None
-        else:
-            if octave:
-                warnings.warn("octave is ignored when query is an integer")
+            self.num = NUM_C0 + 12*self.octave + self.idx
+        elif isinstance(query, int):
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
             self.num = query
             self.name = KEY_NAMES[(self.num - NUM_C0) % 12]
             self.idx = self._return_idx()
             self.octave = (self.num - NUM_C0) // 12
-            self.freq = A4 * 2**((self.num - NUM_A4)/12)
+        else:
+            raise ValueError("query must be a string or an integer")
 
         self.exist_octave = self.octave != None
-        self.A4 = A4
-        # TODO: チューニング
+        self._A4 = A4
+        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
+
+
+    @property
+    def A4(self) -> float:
+        return self._A4
+
+    @A4.setter
+    def A4(self, value):
+        raise ValueError("A4 can not be changed. If you want to tuning the note, use tune() method.")
 
 
     def transpose(self, n_semitones: int) -> None:
         """
-        transpose note
+        Transpose note.
 
         Args:
             n_semitones (int): number of semitones to transpose
         """
         self.idx = (self.idx + n_semitones) % 12
         self.name = KEY_NAMES[self.idx]
-        if self.octave:
-            self.num += n_semitones
-            self.octave = (self.num - NUM_C0) // 12
-            self.freq = self.A4 * 2**((self.num - NUM_A4)/12)
+        self.num += n_semitones
+        self.octave = (self.num - NUM_C0) // 12
+        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
 
 
     def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
@@ -177,6 +179,17 @@ class Note:
         sr = 22050
         wave = getattr(self, wave_type)(sec, sr)
         return ipd.Audio(wave, rate=sr)
+
+
+    def tuning(self, A4_freq: float = 440.) -> None:
+        """
+        Tuning the sound of note.
+
+        Args:
+            A4_freq (float, optional): freqency of A4. Defaults to 440.
+        """
+        self._A4 = A4_freq
+        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
 
 
     def _return_idx(self):
