@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .format import check_nname
+from .format import check_nname, nname_formatting
 import numpy as np
 from scipy import signal
 import IPython.display as ipd
@@ -11,6 +11,8 @@ import re
 NUM_C0 = 12
 NUM_A4 = 69
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth"]
+PLAY_SR = 22050
 
 class Note:
     def __init__(self, query: Union[str, int], octave: int = 4, A4: float = 440.):
@@ -26,20 +28,19 @@ class Note:
 
         if isinstance(query, str):
             self.name = check_nname(query, return_nname=True)
-            self.idx = self._return_idx()
+            self.idx = self._return_name_idx()
             self.octave = octave
             self.num = NUM_C0 + 12*self.octave + self.idx
         else:
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
             self.num = query
             self.name = KEY_NAMES[(self.num - NUM_C0) % 12]
-            self.idx = self._return_idx()
+            self.idx = self._return_name_idx()
             self.octave = (self.num - NUM_C0) // 12
 
         self.exist_octave = self.octave != None
         self._A4 = A4
         self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
-
 
     @property
     def A4(self) -> float:
@@ -49,25 +50,10 @@ class Note:
     def A4(self, value):
         raise Exception("A4 can not be changed. If you want to tune the note, use tune() method.")
 
-
-    def transpose(self, n_semitones: int) -> None:
-        """
-        Transpose note.
-
-        Args:
-            n_semitones (int): number of semitones to transpose
-        """
-        self.idx = (self.idx + n_semitones) % 12
-        self.name = KEY_NAMES[self.idx]
-        self.num += n_semitones
-        self.octave = (self.num - NUM_C0) // 12
-        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
-
-
-    def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
-        """Generate time axis"""
-        assert self.exist_octave, "octave is not defined"
-        return np.linspace(0, 2*np.pi * self.freq * sec, int(sr*sec))
+    def _return_name_idx(self):
+        idx = KEY_NAMES.index(self.name[0])
+        idx = (idx + ('#' in self.name) - ('b' in self.name)) % 12
+        return idx
 
 
     def sin(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
@@ -84,7 +70,6 @@ class Note:
         t = self._return_time_axis(sec, sr)
         return np.sin(t)
 
-
     def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
         Generate square wave of the note.
@@ -98,7 +83,6 @@ class Note:
         """
         t = self._return_time_axis(sec, sr)
         return signal.square(t)
-
 
     def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
@@ -114,26 +98,33 @@ class Note:
         t = self._return_time_axis(sec, sr)
         return signal.sawtooth(t)
 
-
-    def perform(self, waveform: Callable, sec: float = 1., sr: int = 22050) -> np.ndarray:
+    def render(self, waveform: Union[str, Callable], sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
-        Perform note.
+        Render note sound.
 
         Args:
-            waveform (Callables): waveform function
+            waveform (Union[str, Callable]): waveform type or waveform function.
             sec (float, optional): duration in seconds. Defaults to 1.
             sr (int, optional): sampling rate. Defaults to 22050.
 
         Returns:
             np.ndarray: wave of the note
         """
-        t = self._return_time_axis(sec, sr)
-        return waveform(t)
+        if isinstance(waveform, str):
+            assert waveform in SUPPOERTED_WAVEFORMS, f"waveform string must be in {SUPPOERTED_WAVEFORMS}"
+            return getattr(self, waveform)(sec, sr)
+        else:
+            t = self._return_time_axis(sec, sr)
+            return waveform(t)
 
+    def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
+        """Generate time axis"""
+        assert self.exist_octave, "octave is not defined"
+        return np.linspace(0, 2*np.pi * self.freq * sec, int(sr*sec))
 
-    def render(self, waveform: Union[str, Callable] = 'sin', sec: float = 1.,) -> ipd.Audio:
+    def play(self, waveform: Union[str, Callable] = 'sin', sec: float = 1.,) -> ipd.Audio:
         """
-        Render note as IPython.display.Audio object.
+        Return IPython.display.Audio object of the note.
 
         Args:
             waveform (Union[str, Callables], optional): waveform type or waveform function. Defaults to 'sin'.
@@ -142,14 +133,22 @@ class Note:
         Returns:
             ipd.Audio: Audio object
         """
-        sr = 22050
-        if isinstance(waveform, str):
-            assert waveform in ['sin', 'square', 'sawtooth'], "waveform string must be in ['sin', 'square', 'sawtooth']"
-            wave = getattr(self, waveform)(sec, sr)
-        else:
-            wave = self.perform(waveform, sec, sr)
-        return ipd.Audio(wave, rate=sr)
+        y = self.render(waveform, sec, PLAY_SR)
+        return ipd.Audio(y, rate=PLAY_SR)
 
+
+    def transpose(self, n_semitones: int) -> None:
+        """
+        Transpose note.
+
+        Args:
+            n_semitones (int): number of semitones to transpose
+        """
+        self.idx = (self.idx + n_semitones) % 12
+        self.name = KEY_NAMES[self.idx]
+        self.num += n_semitones
+        self.octave = (self.num - NUM_C0) // 12
+        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
 
     def tune(self, A4_freq: float = 440.) -> None:
         """
@@ -161,11 +160,6 @@ class Note:
         self._A4 = A4_freq
         self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
 
-
-    def _return_idx(self):
-        idx = KEY_NAMES.index(self.name[0])
-        idx = (idx + ('#' in self.name) - ('b' in self.name)) % 12
-        return idx
 
     def __add__(self, other):
         if isinstance(other, str):
@@ -195,7 +189,6 @@ class Note:
 
     def __ge__(self, other):
         return self.num >= other
-
 
 
 
@@ -229,17 +222,6 @@ class Notes:
         raise Exception("A4 can not be changed. If you want to tune the note, use tune() method.")
 
 
-    def transpose(self, n_semitones: int) -> None:
-        """
-        Transpose notes.
-
-        Args:
-            n_semitones (int): number of semitones to transpose
-        """
-        for note in self.notes:
-            note.transpose(n_semitones)
-
-
     def sin(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
         Generate sin wave of the notes.
@@ -252,7 +234,6 @@ class Notes:
             np.ndarray: sin wave of the notes
         """
         return np.sum([note.sin(sec, sr) for note in self.notes], axis=0)
-
 
     def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
@@ -267,7 +248,6 @@ class Notes:
         """
         return np.sum([note.square(sec, sr) for note in self.notes], axis=0)
 
-
     def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
         Generate sawtooth wave of the notes.
@@ -281,23 +261,22 @@ class Notes:
         """
         return np.sum([note.sawtooth(sec, sr) for note in self.notes], axis=0)
 
-
-    def perform(self, waveform: Callable, sec: float = 1., sr: int = 22050) -> np.ndarray:
+    def render(self, waveform: Union[str, Callable], sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
-        Perform note.
+        Render note sound.
 
         Args:
-            waveform (Callable): waveform function
+            waveform (Union[str, Callable]): waveform type or waveform function.
             sec (float, optional): duration in seconds. Defaults to 1.
             sr (int, optional): sampling rate. Defaults to 22050.
 
         Returns:
             np.ndarray: wave of the note
         """
-        return np.sum([note.perform(waveform, sec, sr) for note in self.notes], axis=0)
+        return np.sum([note.render(waveform, sec, sr) for note in self.notes], axis=0)
 
 
-    def render(self, waveform: str = 'sin', sec: float = 1.) -> ipd.Audio:
+    def play(self, waveform: str = 'sin', sec: float = 1.) -> ipd.Audio:
         """
         Render note as IPython.display.Audio object.
 
@@ -308,25 +287,30 @@ class Notes:
         Returns:
             ipd.Audio: Audio object
         """
-        sr = 22050
-        if isinstance(waveform, str):
-            assert waveform in ['sin', 'square', 'sawtooth'], "waveform string must be in ['sin', 'square', 'sawtooth']"
-            wave = getattr(self, waveform)(sec, sr)
-        else:
-            wave = self.perform(waveform, sec, sr)
-        return ipd.Audio(wave, rate=sr)
+        y = self.render(waveform, sec)
+        return ipd.Audio(y, rate=PLAY_SR)
 
 
-    def tune(self, freq: float = 440.) -> None:
+    def tune(self, A4_freq: float = 440.) -> None:
         """
         tune the sound of notes.
 
         Args:
-            freq (float, optional): Freqency of A4. Defaults to 440.
+            A4_freq (float, optional): Freqency of A4. Defaults to 440.
         """
-        self._A4 = freq
+        self._A4 = A4_freq
         for note in self.notes:
-            note.tune(freq)
+            note.tune(A4_freq)
+
+    def transpose(self, n_semitones: int) -> None:
+        """
+        Transpose notes.
+
+        Args:
+            n_semitones (int): number of semitones to transpose
+        """
+        for note in self.notes:
+            note.transpose(n_semitones)
 
 
     def append(self, note: Union[Note, Notes, Chord]) -> None:
@@ -337,7 +321,6 @@ class Notes:
             note (Union[Note, Notes, Chord]): note
         """
         self = Notes(self, note)
-        self.n_notes = len(self)
 
 
     def __len__(self):
@@ -379,20 +362,21 @@ chords = list(chord_intervals.keys())
 PITCH_PATTERN = '[A-G][#, b]*'
 
 class Chord(Notes):
-    def __init__(self, cname: str, octave: int = 4):
+    def __init__(self, chord_name: str, octave: int = 4, A4: float = 440.):
         """
         Chord class.
 
         Args:
-            cname (str): chord name string
+            chord_name (str): chord name string
             octave (int, optional): root note octave of the sound.
+            A4 (float, optional): frequency of A4 when play sound. Defaults to 440.
         """
-        cname = nname_formatting(cname)
-        pitch_search = re.match(PITCH_PATTERN, cname)
-        assert pitch_search, f"'{cname}' is an invalid string"
+        chord_name = nname_formatting(chord_name)
+        pitch_search = re.match(PITCH_PATTERN, chord_name)
+        assert pitch_search, f"'{chord_name}' is an invalid string"
 
         border = pitch_search.end()
-        root_name, type = cname[:border], cname[border:]
+        root_name, type = chord_name[:border], chord_name[border:]
         root = Note(root_name, octave)
         name = root.name + type
         interval = chord_intervals[type]
@@ -405,6 +389,13 @@ class Chord(Notes):
         self.octave = octave
         self._compose()
 
+    def _compose(self):
+        """Define other attributes based on note name"""
+        self.name = self.root.name + self.type
+        self.idx = [(self.root.idx + i) % 12 for i in self.interval]
+        self.note_names = [KEY_NAMES[i] for i in self.idx]
+        self.notes = [Note(self.root.num + i) for i in self.interval]
+
 
     def transpose(self, n_semitones: int):
         """
@@ -415,14 +406,6 @@ class Chord(Notes):
         """
         self.root.transpose(n_semitones)
         self._compose()
-
-
-    def _compose(self):
-        """Define other attributes based on note name"""
-        self.name = self.root.name + self.type
-        self.idx = [(self.root.idx + i) % 12 for i in self.interval]
-        self.note_names = [KEY_NAMES[i] for i in self.idx]
-        self.notes = [Note(self.root.num + i) for i in self.interval]
 
 
     def __repr__(self):
