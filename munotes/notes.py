@@ -32,7 +32,7 @@ class Notes:
 
     @A4.setter
     def A4(self, value):
-        raise ValueError("A4 can not be changed. If you want to tuning the note, use tune() method.")
+        raise Exception("A4 can not be changed. If you want to tuning the note, use tune() method.")
 
 
     def transpose(self, n_semitones: int) -> None:

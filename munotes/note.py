@@ -83,7 +83,7 @@ class Note:
             self.idx = self._return_idx()
             self.octave = (self.num - NUM_C0) // 12
         else:
-            raise ValueError("query must be a string or an integer")
+            raise Exception("query must be a string or an integer")
 
         self.exist_octave = self.octave != None
         self._A4 = A4
@@ -96,7 +96,7 @@ class Note:
 
     @A4.setter
     def A4(self, value):
-        raise ValueError("A4 can not be changed. If you want to tuning the note, use tune() method.")
+        raise Exception("A4 can not be changed. If you want to tuning the note, use tune() method.")
 
 
     def transpose(self, n_semitones: int) -> None:
