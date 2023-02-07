@@ -1,6 +1,6 @@
 from .notes import Note, Notes
 import numpy as np
-import IPython.display as ipd
+import IPython
 from typing import List, Tuple, Union, Optional, Callable
 import warnings
 
@@ -27,7 +27,8 @@ class Track:
             sequence (NotesSequence):
                 sequence of notes and durations.
             unit (str, optional):
-                unit of duration. Supported units:
+                unit of duration.
+                supported units:
                     - 's': second
                     - 'ms': millisecond
                     - 'ql': quarter length (bpm is required)
@@ -140,7 +141,7 @@ class Track:
         self,
         waveform: Union[str, Callable] = 'sin',
         release: int = 200
-    ) -> ipd.Audio:
+    ) -> IPython.display.Audio:
         """
         Play note sound.
         Return IPython.display.Audio object.
@@ -154,10 +155,10 @@ class Track:
                 samples to connect sounds smoothly. Defaults to 200.
 
         Returns:
-            ipd.Audio: audio object
+            IPython.display.Audio: audio object
         """
         y = self.render(waveform, PLAY_SR, release)
-        return ipd.Audio(y, rate=PLAY_SR)
+        return IPython.display.Audio(y, rate=PLAY_SR)
 
 
     def tuning(self, A4_freq: float = 440) -> None:
@@ -265,7 +266,7 @@ class Stream(Track):
         self,
         waveform: Union[str, Callable, Waveforms] = 'sin',
         release: int = 200
-    ) -> ipd.Audio:
+    ) -> IPython.display.Audio:
         """
         Play note sound.
         Return IPython.display.Audio object.
@@ -284,10 +285,10 @@ class Stream(Track):
                 samples to connect sounds smoothly. Defaults to 200.
 
         Returns:
-            ipd.Audio: audio object
+            IPython.display.Audio: audio object
         """
         y = self.render(waveform, PLAY_SR, release)
-        return ipd.Audio(y, rate=PLAY_SR)
+        return IPython.display.Audio(y, rate=PLAY_SR)
 
 
     def tuning(self, A4_freq: float = 440.) -> None:

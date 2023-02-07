@@ -2,7 +2,7 @@ from __future__ import annotations
 from .format import check_nname, nname_formatting
 import numpy as np
 from scipy import signal
-import IPython.display as ipd
+import IPython
 from typing import Union, Callable
 import re
 
@@ -156,7 +156,7 @@ class Note:
         self,
         waveform: Union[str, Callable] = 'sin',
         sec: float = 1.
-    ) -> ipd.Audio:
+    ) -> IPython.display.Audio:
         """
         Play note sound.
         Return IPython.display.Audio object.
@@ -168,10 +168,10 @@ class Note:
                 duration in seconds. Defaults to 1.0.
 
         Returns:
-            ipd.Audio: audio object
+            IPython.display.Audio: audio object
         """
         y = self.render(waveform, sec, PLAY_SR)
-        return ipd.Audio(y, rate=PLAY_SR)
+        return IPython.display.Audio(y, rate=PLAY_SR)
 
 
     def transpose(self, n_semitones: int) -> None:
@@ -314,7 +314,7 @@ class Notes:
         self,
         waveform: Union[str, Callable] = 'sin',
         sec: float = 1.
-    ) -> ipd.Audio:
+    ) -> IPython.display.Audio:
         """
         Play note sound.
         Return IPython.display.Audio object.
@@ -326,10 +326,10 @@ class Notes:
                 duration in seconds. Defaults to 1.0.
 
         Returns:
-            ipd.Audio: audio object
+            IPython.display.Audio: audio object
         """
         y = self.render(waveform, sec)
-        return ipd.Audio(y, rate=PLAY_SR)
+        return IPython.display.Audio(y, rate=PLAY_SR)
 
 
     def tuning(self, A4_freq: float = 440.) -> None:

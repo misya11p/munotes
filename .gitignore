@@ -6,3 +6,4 @@ munotes.egg-info
 build
 *.ipynb
 requirements.txt
+docs
