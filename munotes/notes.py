@@ -3,7 +3,7 @@ from __future__ import annotations
 from .note import Note, KEY_NAMES, nname_formatting
 import numpy as np
 import IPython.display as ipd
-from typing import Union
+from typing import Union, Callable
 import re
 
 
@@ -88,20 +88,38 @@ class Notes:
         return np.sum([note.sawtooth(sec, sr) for note in self.notes], axis=0)
 
 
-    def render(self, sec: float = 1., wave_type: str = 'sin') -> ipd.Audio:
+    def perform(self, waveform: Callable, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
-        Render notes as IPython.display.Audio object.
+        Perform note.
 
         Args:
-            sec (float, optional): duration in seconds. Defaults to 1..
-            wave_type (str, optional): wave type. Defaults to 'sin'.
+            waveform (Callable): waveform function
+            sec (float, optional): duration in seconds. Defaults to 1.
+            sr (int, optional): sampling rate. Defaults to 22050.
+
+        Returns:
+            np.ndarray: wave of the note
+        """
+        return np.sum([note.perform(waveform, sec, sr) for note in self.notes], axis=0)
+
+
+    def render(self, waveform: str = 'sin', sec: float = 1.) -> ipd.Audio:
+        """
+        Render note as IPython.display.Audio object.
+
+        Args:
+            waveform (Union[str, Callables], optional): waveform type or waveform function. Defaults to 'sin'.
+            sec (float, optional): duration in seconds. Defaults to 1.
 
         Returns:
             ipd.Audio: Audio object
         """
-        assert wave_type in ['sin', 'square', 'sawtooth'], "wave_type must be in ['sin', 'square', 'sawtooth']"
         sr = 22050
-        wave = getattr(self, wave_type)(sec, sr)
+        if isinstance(waveform, str):
+            assert waveform in ['sin', 'square', 'sawtooth'], "waveform string must be in ['sin', 'square', 'sawtooth']"
+            wave = getattr(self, waveform)(sec, sr)
+        else:
+            wave = self.perform(waveform, sec, sr)
         return ipd.Audio(wave, rate=sr)
 
 

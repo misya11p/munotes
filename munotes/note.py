@@ -1,8 +1,8 @@
 import numpy as np
 from scipy import signal
 import IPython.display as ipd
-from typing import Optional, Union
-# import warnings
+from typing import Optional, Union, Callable
+
 
 def check_nname(nname: str, return_nname: bool = False) -> Optional[str]:
     """
@@ -124,11 +124,11 @@ class Note:
         Generate sin wave of the note.
 
         Args:
-            sec (float): duration in seconds
-            sr (int): sampling rate
+            sec (float, optional): duration in seconds. Defaults to 1.0.
+            sr (int, optional): sampling rate. Defaults to 22050.
 
         Returns:
-            np.ndarray: sin wave
+            np.ndarray: sin wave of the note
         """
         t = self._return_time_axis(sec, sr)
         return np.sin(t)
@@ -139,11 +139,11 @@ class Note:
         Generate square wave of the note.
 
         Args:
-            sec (float): duration in seconds
-            sr (int): sampling rate
+            sec (float, optional): duration in seconds. Defaults to 1.0.
+            sr (int, optional): sampling rate. Defaults to 22050.
 
         Returns:
-            np.ndarray: square wave
+            np.ndarray: square wave of the note
         """
         t = self._return_time_axis(sec, sr)
         return signal.square(t)
@@ -154,30 +154,49 @@ class Note:
         Generate sawtooth wave of the note.
 
         Args:
-            sec (float): duration in seconds
-            sr (int): sampling rate
+            sec (float, optional): duration in seconds. Defaults to 1.0.
+            sr (int, optional): sampling rate. Defaults to 22050.
 
         Returns:
-            np.ndarray: sawtooth wave
+            np.ndarray: sawtooth wave of the note
         """
         t = self._return_time_axis(sec, sr)
         return signal.sawtooth(t)
 
 
-    def render(self, sec: float = 1., wave_type: str = 'sin') -> ipd.Audio:
+    def perform(self, waveform: Callable, sec: float = 1., sr: int = 22050) -> np.ndarray:
+        """
+        Perform note.
+
+        Args:
+            waveform (Callables): waveform function
+            sec (float, optional): duration in seconds. Defaults to 1.
+            sr (int, optional): sampling rate. Defaults to 22050.
+
+        Returns:
+            np.ndarray: wave of the note
+        """
+        t = self._return_time_axis(sec, sr)
+        return waveform(t)
+
+
+    def render(self, waveform: Union[str, Callable] = 'sin', sec: float = 1.,) -> ipd.Audio:
         """
         Render note as IPython.display.Audio object.
 
         Args:
+            waveform (Union[str, Callables], optional): waveform type or waveform function. Defaults to 'sin'.
             sec (float, optional): duration in seconds. Defaults to 1.
-            wave_type (str, optional): wave type. Defaults to 'sin'.
 
         Returns:
             ipd.Audio: Audio object
         """
-        assert wave_type in ['sin', 'square', 'sawtooth'], "wave_type must be in ['sin', 'square', 'sawtooth']"
         sr = 22050
-        wave = getattr(self, wave_type)(sec, sr)
+        if isinstance(waveform, str):
+            assert waveform in ['sin', 'square', 'sawtooth'], "waveform string must be in ['sin', 'square', 'sawtooth']"
+            wave = getattr(self, waveform)(sec, sr)
+        else:
+            wave = self.perform(waveform, sec, sr)
         return ipd.Audio(wave, rate=sr)
 
 
