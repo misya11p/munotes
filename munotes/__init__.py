@@ -1,5 +1,4 @@
-from .note import Note
-from .notes import Notes, Chord
+from .notes import Note, Notes, Chord
 
 __all__ = ["Note", "Notes", "Chord"]
 
