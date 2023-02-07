@@ -267,42 +267,15 @@ class Notes:
 
 
     def sin(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """
-        Generate sin wave of the notes.
-
-        Args:
-            sec (float): duration in seconds
-            sr (int): sampling frequency
-
-        Returns:
-            np.ndarray: sin wave of the notes
-        """
+        """Generate sin wave of the notes"""
         return np.sum([note.sin(sec, sr) for note in self.notes], axis=0)
 
     def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """
-        Generate square wave of the notes.
-
-        Args:
-            sec (float): duration in seconds. Defaults to 1.0.
-            sr (int): sampling frequency. Defaults to 22050.
-
-        Returns:
-            np.ndarray: square wave of the notes
-        """
+        """Generate square wave of the notes"""
         return np.sum([note.square(sec, sr) for note in self.notes], axis=0)
 
     def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """
-        Generate sawtooth wave of the notes.
-
-        Args:
-            sec (float): duration in seconds. Defaults to 1.0.
-            sr (int): sampling frequency. Defaults to 22050.
-
-        Returns:
-            np.ndarray: sawtooth wave of the notes
-        """
+        """Generate sawtooth wave of the notes"""
         return np.sum([note.sawtooth(sec, sr) for note in self.notes], axis=0)
 
     def render(
@@ -360,23 +333,13 @@ class Notes:
 
 
     def tuning(self, A4_freq: float = 440.) -> None:
-        """
-        tuning sound.
-
-        Args:
-            A4_freq (float, optional): freqency of A4. Defaults to 440.
-        """
+        """tuning sound"""
         self._A4 = A4_freq
         for note in self.notes:
             note.tuning(A4_freq)
 
     def transpose(self, n_semitones: int) -> None:
-        """
-        Transpose notes.
-
-        Args:
-            n_semitones (int): number of semitones to transpose
-        """
+        """Transpose notes"""
         for note in self.notes:
             note.transpose(n_semitones)
 
@@ -469,12 +432,7 @@ class Chord(Notes):
 
 
     def transpose(self, n_semitones: int):
-        """
-        Transpose chord
-
-        Args:
-            n_semitones (int): number of semitones to transpose
-        """
+        """Transpose chord"""
         self.root.transpose(n_semitones)
         self._compose()
 

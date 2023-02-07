@@ -63,42 +63,15 @@ class Track:
 
 
     def sin(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        """
-        Generate sin wave of the note
-
-        Args:
-            sr (int, optional): sampling rate. Defaults to 22050.
-            release (int, optional): release time in samples. Defaults to 200.
-
-        Returns:
-            np.ndarray: sin wave of the note
-        """
+        """Generate sin wave of the note"""
         return self._gen_y("sin", sr, release)
 
     def square(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        """
-        Generate square wave of the note
-
-        Args:
-            sr (int, optional): sampling rate. Defaults to 22050.
-            release (int, optional): release time in samples. Defaults to 200.
-
-        Returns:
-            np.ndarray: square wave of the note
-        """
+        """Generate square wave of the note"""
         return self._gen_y("square", sr, release)
 
     def sawtooth(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        """
-        Generate sawtooth wave of the note
-
-        Args:
-            sr (int, optional): sampling rate. Defaults to 22050.
-            release (int, optional): release time in samples. Defaults to 200.
-
-        Returns:
-            np.ndarray: sawtooth wave of the note
-        """
+        """Generate sawtooth wave of the note"""
         return self._gen_y("sawtooth", sr, release)
 
     def render(
@@ -154,15 +127,7 @@ class Track:
         return y
 
     def _to_sec(self, duration: float) -> float:
-        """
-        Transform duration to second based on unit.
-
-        Args:
-            duration (float): duration
-
-        Returns:
-            float: duration in second
-        """
+        """Transform duration to second based on unit"""
         if self.unit == "s":
             return duration
         elif self.unit == "ms":
@@ -196,23 +161,13 @@ class Track:
 
 
     def tuning(self, A4_freq: float = 440) -> None:
-        """
-        Tuning sound.
-
-        Args:
-            A4_freq (float, optional): frequency of A4. Defaults to 440.0.
-        """
+        """Tuning sound"""
         self._A4 = A4_freq
         for note, _ in self.sequence:
             note.tuning(A4_freq)
 
     def transpose(self, semitone: int) -> None:
-        """
-        Transpose notes.
-
-        Args:
-            n_semitones (int): number of semitones to transpose
-        """
+        """Transpose notes"""
         for note, _ in self.sequence:
             note.transpose(semitone)
 
@@ -336,23 +291,13 @@ class Stream(Track):
 
 
     def tuning(self, A4_freq: float = 440.) -> None:
-        """
-        Tuning sound.
-
-        Args:
-            A4_freq (float, optional): frequency of A4. Defaults to 440.0.
-        """
+        """Tuning sound"""
         self._A4 = A4_freq
         for track in self.tracks:
             track.tuning(A4_freq)
 
     def transpose(self, semitone: int) -> None:
-        """
-        Transpose notes.
-
-        Args:
-            n_semitones (int): number of semitones to transpose
-        """
+        """Transpose notes"""
         for track in self.tracks:
             track.transpose(semitone)
 
