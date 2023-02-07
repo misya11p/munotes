@@ -65,7 +65,7 @@ class Note:
         Args:
             query (Union[str, int]): string of note name or midi note number.
             octave (int, optional): octave of the note. Defaults to 4.
-            A4 (float, optional): tuning. freqency of A4. Defaults to 440.
+            A4 (float, optional): tune. freqency of A4. Defaults to 440.
         """
         assert isinstance(query, (str, int)), "input must be a string or an integer"
 
@@ -92,7 +92,7 @@ class Note:
 
     @A4.setter
     def A4(self, value):
-        raise Exception("A4 can not be changed. If you want to tuning the note, use tune() method.")
+        raise Exception("A4 can not be changed. If you want to tune the note, use tune() method.")
 
 
     def transpose(self, n_semitones: int) -> None:
@@ -196,9 +196,9 @@ class Note:
         return ipd.Audio(wave, rate=sr)
 
 
-    def tuning(self, A4_freq: float = 440.) -> None:
+    def tune(self, A4_freq: float = 440.) -> None:
         """
-        Tuning the sound of note.
+        tune the sound of note.
 
         Args:
             A4_freq (float, optional): freqency of A4. Defaults to 440.
@@ -263,7 +263,7 @@ class Notes:
                 self.notes += note.notes
         self.n_notes = len(self)
         self._A4 = A4
-        self.tuning(self.A4)
+        self.tune(self.A4)
 
     @property
     def A4(self):
@@ -271,7 +271,7 @@ class Notes:
 
     @A4.setter
     def A4(self, value):
-        raise Exception("A4 can not be changed. If you want to tuning the note, use tune() method.")
+        raise Exception("A4 can not be changed. If you want to tune the note, use tune() method.")
 
 
     def transpose(self, n_semitones: int) -> None:
@@ -362,15 +362,16 @@ class Notes:
         return ipd.Audio(wave, rate=sr)
 
 
-    def tuning(self, freq: float = 440.) -> None:
+    def tune(self, freq: float = 440.) -> None:
         """
-        Tuning the sound of notes.
+        tune the sound of notes.
 
         Args:
             freq (float, optional): Freqency of A4. Defaults to 440.
         """
+        self._A4 = freq
         for note in self.notes:
-            note.tuning(freq)
+            note.tune(freq)
 
 
     def append(self, note: Union[Note, Notes, Chord]) -> None:
