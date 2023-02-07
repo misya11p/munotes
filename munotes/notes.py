@@ -132,7 +132,8 @@ class Note:
             np.ndarray: waveform of the note
         """
         if isinstance(waveform, str):
-            assert waveform in SUPPOERTED_WAVEFORMS, f"waveform string must be in {SUPPOERTED_WAVEFORMS}"
+            assert waveform in SUPPOERTED_WAVEFORMS, \
+                f"waveform string must be in {SUPPOERTED_WAVEFORMS}"
             return getattr(self, waveform)(sec, sr)
         else:
             t = self._return_time_axis(sec, sr)
