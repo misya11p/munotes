@@ -105,3 +105,8 @@ class Track:
     def tuning(self, A4: float = 440) -> None:
         for note, _ in self.sequence:
             note.tuning(A4)
+
+
+    def transpose(self, semitone: int) -> None:
+        for note, _ in self.sequence:
+            note.transpose(semitone)
