@@ -47,7 +47,7 @@ class Track:
             assert bpm > 0, "bpm must be greater than 0"
 
         self.sequence = sequence
-        self.unit = unit
+        self._unit = unit
         self.bpm = bpm
         self._A4 = A4
         self.tuning(self._A4)
@@ -59,6 +59,14 @@ class Track:
     @A4.setter
     def A4(self, value):
         raise Exception("A4 can not be changed. If you want to tuning the note, use tuning() method.")
+
+    @property
+    def unit(self):
+        return self._unit
+
+    @unit.setter
+    def unit(self, value):
+        raise Exception("unit can not be changed.")
 
 
     def sin(self, sr: int = 22050, release: int = 200) -> np.ndarray:
