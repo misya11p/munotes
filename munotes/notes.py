@@ -311,6 +311,65 @@ class Note:
 
 
 
+class Rest(Note):
+    def __init__(self):
+        """
+        Rest class for Track and Stream class.
+        Returns 0 in ``sec * sr`` in all cases.
+
+        Examples:
+            >>> rest = mn.Rest()
+            >>> rest.sin()
+            array([0., 0., 0., ..., 0., 0., 0.])
+
+            >>> rest.square()
+            array([0., 0., 0., ..., 0., 0., 0.])
+
+            >>> rest.sawtooth()
+            array([0., 0., 0., ..., 0., 0., 0.])
+        """
+        self.name = 'Rest'
+        self._octave = None
+        self._freq = 0.
+        self._num = None
+        self._idx = None
+        self._A4 = 440.
+        self._notes = [self]
+
+    @property
+    def freq(self):
+        return self._freq
+
+    @freq.setter
+    def freq(self, value):
+        pass
+
+    def sin(self, sec=1., sr=22050) -> np.ndarray:
+        return np.zeros(int(sr*sec))
+
+    def square(self, sec=1., sr=22050) -> np.ndarray:
+        return np.zeros(int(sr*sec))
+
+    def sawtooth(self, sec=1., sr=22050) -> np.ndarray:
+        return np.zeros(int(sr*sec))
+
+    def render(self, waveform=None, sec=1., sr=22050) -> np.ndarray:
+        return np.zeros(int(sr*sec))
+
+    def transpose(self, *args, **kwargs):
+        pass
+
+    def tuning(self, *args, **kwargs):
+        pass
+
+    def __str__(self):
+        return 'Rest'
+
+    def __repr__(self):
+        return 'Rest'
+
+
+
 class Notes(Note):
     def __init__(self, *notes: Union[Note, int], A4: float = 440.):
         """
