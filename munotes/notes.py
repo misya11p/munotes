@@ -47,21 +47,45 @@ class Note:
         """
         if isinstance(query, str):
             self.name = check_nname(query, return_nname=True)
-            self.idx = self._return_name_idx()
-            self.octave = octave
-            self.num = NUM_C0 + 12*self.octave + self.idx
+            self._idx = self._return_name_idx()
+            self._octave = octave
+            self._num = NUM_C0 + 12*self.octave + self.idx
         elif isinstance(query, int):
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
-            self.num = query
+            self._num = query
             self.name = KEY_NAMES[(self.num - NUM_C0) % 12]
-            self.idx = self._return_name_idx()
-            self.octave = (self.num - NUM_C0) // 12
+            self._idx = self._return_name_idx()
+            self._octave = (self.num - NUM_C0) // 12
         else:
             raise ValueError("Input must be a string or an integer")
 
         self._A4 = A4
         self._freq = self._A4 * 2**((self.num - NUM_A4)/12)
         self._notes = [self]
+
+    @property
+    def num(self) -> int:
+        return self._num
+
+    @num.setter
+    def num(self, value):
+        raise Exception("num is read only")
+
+    @property
+    def idx(self) -> int:
+        return self._idx
+
+    @idx.setter
+    def idx(self, value):
+        raise Exception("idx is read only")
+
+    @property
+    def octave(self) -> int:
+        return self._octave
+
+    @octave.setter
+    def octave(self, value):
+        self.transpose(12 * (value - self.octave))
 
     @property
     def A4(self) -> float:
@@ -219,11 +243,11 @@ class Note:
             C#4
         """
         for note in self._notes:
-            note.idx = (note.idx + n_semitones) % 12
+            note._idx = (note.idx + n_semitones) % 12
             note.name = KEY_NAMES[note.idx]
-            note.num += n_semitones
-            note.octave = (note.num - NUM_C0) // 12
-            note.freq = note._A4 * 2**((note.num - NUM_A4)/12)
+            note._num += n_semitones
+            note._octave = (note.num - NUM_C0) // 12
+            note._freq = note._A4 * 2**((note.num - NUM_A4)/12)
 
     def tuning(self, freq: float = 440., stand_A4: bool = False) -> None:
         """
@@ -351,9 +375,22 @@ class Notes(Note):
                 raise ValueError(f"Unsupported type: '{type(note)}'")
         self._notes = self.notes
         self.names = [note.name for note in self.notes]
-        self.nums = [note.num for note in self.notes]
+        self._nums = [note.num for note in self.notes]
         self.A4 = A4
 
+    @property
+    def nums(self):
+        return self._nums
+
+    @nums.setter
+    def nums(self, value):
+        raise Exception("nums is read only")
+
+
+    def transpose(self, n_semitones: int) -> None:
+        super().transpose(n_semitones)
+        self.names = [note.name for note in self.notes]
+        self._nums = [note.num for note in self.notes]
 
     def tuning(self, A4_freq: float):
         """
@@ -462,11 +499,45 @@ class Chord(Notes):
         interval = chord_intervals[type]
 
         self.name = name
+        self._type = type
+        self._interval = interval
         self.root = root
-        self.interval = interval
-        self.type = type
-        self.idxs = [(self.root.idx + i) % 12 for i in self.interval]
+        self._idxs = [(self.root.idx + i) % 12 for i in self.interval]
         super().__init__(*[self.root.num + i for i in self.interval], A4=A4)
+
+    @property
+    def type(self):
+        return self._type
+
+    @type.setter
+    def type(self, value):
+        raise Exception("type is read only")
+
+    @property
+    def interval(self):
+        return self._interval
+
+    @interval.setter
+    def interval(self, value):
+        raise Exception("interval is read only")
+
+    @property
+    def root(self):
+        return self._root
+
+    @root.setter
+    def root(self, value):
+        self._root = value
+        self.name = self.root.name + self.type
+        self._idxs = [(self.root.idx + i) % 12 for i in self.interval]
+
+    @property
+    def idxs(self):
+        return self._idxs
+
+    @idxs.setter
+    def idxs(self, value):
+        raise Exception("idxs is read only")
 
 
     def transpose(self, n_semitones: int):
@@ -481,8 +552,6 @@ class Chord(Notes):
         """
         super().transpose(n_semitones)
         self.root = self.notes[0]
-        self.name = self.root.name + self.type
-        self.idxs = [(self.root.idx + i) % 12 for i in self.interval]
 
 
     def append(self, value) -> None:
