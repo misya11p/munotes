@@ -59,7 +59,6 @@ class Note:
         else:
             raise ValueError("Input must be a string or an integer")
 
-        self.exist_octave = self.octave != None
         self._A4 = A4
         self._freq = self._A4 * 2**((self.num - NUM_A4)/12)
         self._notes = [self]
@@ -246,7 +245,7 @@ class Note:
 
     def tuning(self, freq: float = 440., stand_A4: bool = True) -> None:
         """
-        Tuning sound.
+        Tuning.
 
         Args:
             freq (float, optional): freqency of note.
@@ -307,16 +306,17 @@ class Note:
 
 
 class Notes(Note):
-    def __init__(self, *notes: Union[Note, Notes, int], A4: float = 440.):
+    def __init__(self, *notes: Union[Note, int], A4: float = 440.):
         """
         Notes class. Manage multiple notes at once.
 
         Args:
-            *notes (Union[Note, Notes, int]):
+            *notes (Union[Note, int]):
                 notes.
                 supported input types:
                     - Note
                     - Notes
+                    - Chord
                     - int (midi note number)
             A4 (float, optional):
                 tuning. frequency of A4.
@@ -326,7 +326,7 @@ class Notes(Note):
             - n_notes (int): number of notes
             - A4 (float): tuning. frequency of A4.
 
-        \Methods:
+        Inherited Methods:
             **The usage of these methods is the same as in the mn.Note**
 
             - sin: Generate sin wave of the notes
@@ -334,8 +334,8 @@ class Notes(Note):
             - sawtooth: Generate sawtooth wave of the notes
             - render: Rendering waveform of the note
             - play: Play note sound
-            - tuning: tuning sound
             - transpose: Transpose notes
+            - tuning: Sound tuning
 
         Examples:
             >>> import musicnote as mn
@@ -350,6 +350,10 @@ class Notes(Note):
             >>> notes = mn.Notes(60, 64, 67)
             >>> notes
             Notes [Note C4, Note E4, Note G4]
+
+            >>> notes = mn.Notes(60, 64, 67) + mn.Note("C", 5)
+            >>> notes
+            Notes [Note C4, Note E4, Note G4, Note C5]
         """
         assert notes, "Notes must be input"
         self.notes = []
@@ -371,15 +375,24 @@ class Notes(Note):
 
 
     def tuning(self, A4_freq: float):
+        """
+        Tuning based on A4.
+
+        Args:
+            A4_freq (float): frequency of A4.
+
+        Note:
+            In this class, does not supported tuning based on other notes.
+        """
         self.A4 = A4_freq
 
 
-    def append(self, note: Union[Note, Notes, int]) -> None:
+    def append(self, note: Union[Note, int]) -> None:
         """
         Append note.
 
         Args:
-            note (Union[Note, Notes]): Note or Notes or midi note number
+            note (Union[Note, int]): Note (or Notes or Chord) or midi note number
 
         Examples:
             >>> notes = mn.Notes(mn.Note("C", 4))
@@ -425,20 +438,19 @@ chord_intervals = {
     "m6": (0,3,7,9),
     "sus2": (0,2,7)
 }
-chords = list(chord_intervals.keys())
 PITCH_PATTERN = '[A-G][#, b]*'
 
 class Chord(Notes):
     def __init__(self, chord_name: str, octave: int = 4, A4: float = 440.):
         """
         Chord class.
-        Estimating notes from chord names and creating a notes object.
+        Estimating notes from chord names and creating a Notes object.
 
         Args:
             chord_name (str):
                 chord name string
             octave (int, optional):
-                octave of the root note when playing sound.
+                octave of the root note to initialize notes.
             A4 (float, optional):
                 tuning. frequency of A4 when playing sound.
 
@@ -447,16 +459,15 @@ class Chord(Notes):
             - root (Note): root note.
             - interval (tuple): interval of the chord. Ex: (0,4,7) for C major
             - type (str): chord type. Ex: "m" for C minor
-            - octave (int): octave of the root note when playing sound.
             - A4 (float): tuning. frequency of A4 when playing sound.
-            - note_names (tuple): note names of the chord.
+            - names (tuple): note names of the chord.
             - notes (List[Note]): notes of the chord.
-            - idx (int): index of the root note.
+            - idxs (int): index of the root note.
 
         Examples:
             >>> import musicnotes as mn
             >>> chord = mn.Chord("C")
-            >>> chord.note_names
+            >>> chord.names
             ['C', 'E', 'G']
         """
         chord_name = nname_formatting(chord_name)
@@ -473,6 +484,7 @@ class Chord(Notes):
         self.root = root
         self.interval = interval
         self.type = type
+        self.idxs = [(self.root.idx + i) % 12 for i in self.interval]
         super().__init__(*[self.root.num + i for i in self.interval], A4=A4)
 
 
@@ -483,7 +495,7 @@ class Chord(Notes):
         Examples:
             >>> chord = mn.Chord("C")
             >>> chord.transpose(1)
-            >>> chord.note_names
+            >>> chord.names
             ['C#', 'F', 'G#']
         """
         super().transpose(n_semitones)
