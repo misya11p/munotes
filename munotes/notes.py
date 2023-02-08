@@ -23,12 +23,27 @@ class Note:
         A4: float = 440.
     ):
         """
-        Note class
+        Note class.
+        Single note. It can be initialized with note name or MIDI note number.
 
         Args:
             query (Union[str, int]): string of note name or midi note number
             octave (int, optional): octave of the note.
             A4 (float, optional): tuning. freqency of A4.
+
+        \Attributes:
+            - name (str): note name
+            - octave (int): octave of the note
+            - idx (int): index of the note name when C as 0
+            - num (int): MIDI note number
+            - freq (float): frequency of the note
+            - A4 (float): tuning. freqency of A4
+
+        Examples:
+            >>> import munotes as mn
+            >>> note = mn.Note("C", 4)
+            >>> print(note)
+            C4
         """
         if isinstance(query, str):
             self.name = check_nname(query, return_nname=True)
@@ -73,6 +88,12 @@ class Note:
 
         Returns:
             np.ndarray: sin wave of the note
+
+        Examples:
+            >>> note = mn.Note("C", 4)
+            >>> note.sin()
+            array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,
+            -0.65516123, -0.70961388])
         """
         t = self._return_time_axis(sec, sr)
         return np.sin(t)
@@ -129,6 +150,21 @@ class Note:
 
         Returns:
             np.ndarray: waveform of the note
+
+        Examples:
+            >>> note = mn.Note("C", 4)
+            >>> note.render('sin')
+            array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,
+            -0.65516123, -0.70961388])
+
+            >>> note.render(lambda t: np.sin(t) + np.sin(2*t))
+            array([0.        , 0.23622339, 0.46803688, ..., 1.75357961, 1.72041279,
+            1.66076322])
+
+        Note:
+            Generating a waveform by inputting a string into this method,
+            as in ``note.render('sin')``, is the same as generating a waveform by
+            calling the method directly, as in ``note.sin()``.
         """
         if isinstance(waveform, str):
             assert waveform in SUPPOERTED_WAVEFORMS, \
@@ -157,7 +193,7 @@ class Note:
         sec: float = 1.
     ) -> IPython.display.Audio:
         """
-        Play note sound.
+        Play note sound in IPython notebook.
         Return IPython.display.Audio object.
 
         Args:
@@ -179,6 +215,12 @@ class Note:
 
         Args:
             n_semitones (int): number of semitones to transpose
+
+        Examples:
+            >>> note = mn.Note("C", 4)
+            >>> note.transpose(1)
+            >>> print(note)
+            C#4
         """
         self.idx = (self.idx + n_semitones) % 12
         self.name = KEY_NAMES[self.idx]
@@ -192,6 +234,14 @@ class Note:
 
         Args:
             A4_freq (float, optional): freqency of A4.
+
+        Examples:
+            >>> note = mn.Note("C", 4)
+            >>> print(note.freq)
+            >>> note.tuning(450.)
+            >>> print(note.freq)
+            261.6255653005986
+            267.5716008756122
         """
         self._A4 = A4_freq
         self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
@@ -232,14 +282,46 @@ class Notes:
     def __init__(self, *notes: Union[Note, Notes, int], A4: float = 440.):
         """
         Notes class. Manage multiple notes at once.
-        Supported input types:
-            - Note
-            - Notes
-            - int (midi note number)
 
         Args:
-            *notes (Union[Note, Notes, int]): notes.
-            A4 (float, optional): tuning. frequency of A4.
+            *notes (Union[Note, Notes, int]):
+                notes.
+                supported input types:
+                    - Note
+                    - Notes
+                    - int (midi note number)
+            A4 (float, optional):
+                tuning. frequency of A4.
+
+        \Attributes:
+            - notes (List[Note]): list of notes
+            - n_notes (int): number of notes
+            - A4 (float): tuning. frequency of A4.
+
+        \Methods:
+            **The usage of these methods is the same as in the mn.Note**
+
+            - sin: Generate sin wave of the notes
+            - square: Generate square wave of the notes
+            - sawtooth: Generate sawtooth wave of the notes
+            - render: Rendering waveform of the note
+            - play: Play note sound
+            - tuning: tuning sound
+            - transpose: Transpose notes
+
+        Examples:
+            >>> import musicnote as mn
+            >>> notes = mn.Notes(
+                    mn.Note("C", 4),
+                    mn.Note("E", 4),
+                    mn.Note("G", 4)
+                    )
+            >>> notes
+            Notes [Note C4, Note E4, Note G4]
+
+            >>> notes = mn.Notes(60, 64, 67)
+            >>> notes
+            Notes [Note C4, Note E4, Note G4]
         """
         assert notes, "Notes must be input"
         self.notes = []
@@ -283,25 +365,7 @@ class Notes:
         sec: float = 1.,
         sr: int = 22050
     ) -> np.ndarray:
-        """
-        Rendering waveform of the note.
-
-        Args:
-            waveform (Union[str, Callable], Optional):
-                waveform.
-                spported waveform types:
-                    - 'sin'
-                    - 'square'
-                    - 'sawtooth'
-                    - user-defined waveform function
-            sec (float, optional):
-                duration in seconds.
-            sr (int, optional):
-                sampling rate.
-
-        Returns:
-            np.ndarray: waveform of the note
-        """
+        """Rendering waveform of the note"""
         return np.sum(
             [note.render(waveform, sec, sr) for note in self.notes],
             axis=0
@@ -313,19 +377,7 @@ class Notes:
         waveform: Union[str, Callable] = 'sin',
         sec: float = 1.
     ) -> IPython.display.Audio:
-        """
-        Play note sound.
-        Return IPython.display.Audio object.
-
-        Args:
-            waveform (Union[str, Callables], optional):
-                waveform type or waveform function.
-            sec (float, optional):
-                duration in seconds.
-
-        Returns:
-            IPython.display.Audio: audio object
-        """
+        """Play note sound"""
         y = self.render(waveform, sec)
         return IPython.display.Audio(y, rate=PLAY_SR)
 
@@ -348,6 +400,12 @@ class Notes:
 
         Args:
             note (Union[Note, Notes]): Note or Notes or midi note number
+
+        Examples:
+            >>> notes = mn.Notes(mn.Note("C", 4))
+            >>> notes.append(mn.Note("E", 4))
+            >>> notes
+            Notes [Note C4, Note E4]
         """
         self = Notes(self, note)
 
@@ -394,14 +452,32 @@ class Chord(Notes):
     def __init__(self, chord_name: str, octave: int = 4, A4: float = 440.):
         """
         Chord class.
+        Estimating notes from chord names and creating a notes object.
 
         Args:
             chord_name (str):
                 chord name string
             octave (int, optional):
-                octave of the root note when play sound.
+                octave of the root note when playing sound.
             A4 (float, optional):
-                frequency of A4 when play sound.
+                tuning. frequency of A4 when playing sound.
+
+        \Attributes:
+            - name (str): chord name
+            - root (Note): root note.
+            - interval (tuple): interval of the chord. Ex: (0,4,7) for C major
+            - type (str): chord type. Ex: "m" for C minor
+            - octave (int): octave of the root note when playing sound.
+            - A4 (float): tuning. frequency of A4 when playing sound.
+            - note_names (tuple): note names of the chord.
+            - notes (List[Note]): notes of the chord.
+            - idx (int): index of the root note.
+
+        Examples:
+            >>> import musicnotes as mn
+            >>> chord = mn.Chord("C")
+            >>> chord.note_names
+            ['C', 'E', 'G']
         """
         chord_name = nname_formatting(chord_name)
         pitch_search = re.match(PITCH_PATTERN, chord_name)
@@ -416,9 +492,9 @@ class Chord(Notes):
         self.name = name
         self.root = root
         self.interval = interval
-        self.bass = None
         self.type = type
         self.octave = octave
+        self._A4 = A4
         self._compose()
 
     def _compose(self):
@@ -430,7 +506,15 @@ class Chord(Notes):
 
 
     def transpose(self, n_semitones: int):
-        """Transpose chord"""
+        """
+        Transpose chord
+
+        Examples:
+            >>> chord = mn.Chord("C")
+            >>> chord.transpose(1)
+            >>> chord.note_names
+            ['C#', 'F', 'G#']
+        """
         self.root.transpose(n_semitones)
         self._compose()
 
