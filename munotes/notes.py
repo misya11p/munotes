@@ -243,7 +243,7 @@ class Note:
             note.octave = (note.num - NUM_C0) // 12
             note.freq = note._A4 * 2**((note.num - NUM_A4)/12)
 
-    def tuning(self, freq: float = 440., stand_A4: bool = True) -> None:
+    def tuning(self, freq: float = 440., stand_A4: bool = False) -> None:
         """
         Tuning.
 
@@ -254,17 +254,17 @@ class Note:
         Examples:
             >>> note = mn.Note("C", 4)
             >>> print(note.freq)
-            >>> note.tuning(450.)
-            >>> print(note.freq)
-            261.6255653005986
-            267.5716008756122
-
-            >>> note = mn.Note("C", 4)
-            >>> print(note.freq)
-            >>> note.tuning(270., stand_A4=False)
+            >>> note.tuning(270.)
             >>> print(note.freq)
             261.6255653005986
             270.0
+
+            >>> note = mn.Note("C", 4)
+            >>> print(note.freq)
+            >>> note.tuning(450., stand_A4=True)
+            >>> print(note.freq)
+            261.6255653005986
+            267.5716008756122
         """
         if stand_A4:
             for note in self._notes:
@@ -324,6 +324,8 @@ class Notes(Note):
         \Attributes:
             - notes (List[Note]): list of notes
             - n_notes (int): number of notes
+            - names (List[str]): list of note names
+            - nums (List[int]): list of MIDI note numbers
             - A4 (float): tuning. frequency of A4.
 
         Inherited Methods:
@@ -370,8 +372,7 @@ class Notes(Note):
         self.n_notes = len(self)
         self.names = [note.name for note in self.notes]
         self.nums = [note.num for note in self.notes]
-        self._A4 = A4
-        self.tuning(self.A4)
+        self.A4 = A4
 
 
     def tuning(self, A4_freq: float):

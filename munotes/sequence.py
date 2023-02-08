@@ -49,8 +49,7 @@ class Track:
         self.sequence = sequence
         self._unit = unit
         self.bpm = bpm
-        self._A4 = A4
-        self.tuning(self._A4)
+        self.A4 = A4
 
     @property
     def A4(self):
@@ -58,7 +57,9 @@ class Track:
 
     @A4.setter
     def A4(self, value):
-        raise Exception("A4 can not be changed. If you want to tuning the note, use tuning() method.")
+        self._A4 = value
+        for note, _ in self.sequence:
+            note.A4 = value
 
     @property
     def unit(self):
@@ -167,16 +168,14 @@ class Track:
         return IPython.display.Audio(y, rate=PLAY_SR)
 
 
-    def tuning(self, A4_freq: float = 440) -> None:
-        """Tuning sound"""
-        self._A4 = A4_freq
-        for note, _ in self.sequence:
-            note.tuning(A4_freq)
+    def tuning(self, A4_freq: float = 440.) -> None:
+        self.A4 = A4_freq
 
     def transpose(self, semitone: int) -> None:
         """Transpose notes"""
         for note, _ in self.sequence:
             note.transpose(semitone)
+
 
     def __len__(self) -> int:
         return len(self.sequence)
