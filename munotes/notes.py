@@ -61,7 +61,8 @@ class Note:
 
         self.exist_octave = self.octave != None
         self._A4 = A4
-        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
+        self._freq = self._A4 * 2**((self.num - NUM_A4)/12)
+        self._notes = [self]
 
     @property
     def A4(self) -> float:
@@ -69,7 +70,19 @@ class Note:
 
     @A4.setter
     def A4(self, value):
-        raise Exception("A4 can not be changed. If you want to tuning the note, use tuning() method.")
+        self._A4 = value
+        for note in self._notes:
+            note._A4 = value
+            note._freq = note.A4 * 2**((note.num - NUM_A4)/12)
+
+    @property
+    def freq(self) -> float:
+        return self._freq
+
+    @freq.setter
+    def freq(self, value):
+        for note in self._notes:
+            note.A4 = value / 2**((note.num - NUM_A4)/12)
 
     def _return_name_idx(self) -> int:
         """Return index of the note name in KEY_NAMES"""
@@ -96,7 +109,7 @@ class Note:
             -0.65516123, -0.70961388])
         """
         t = self._return_time_axis(sec, sr)
-        return np.sin(t)
+        return np.sum(np.sin(t), axis=0)
 
     def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
@@ -110,7 +123,7 @@ class Note:
             np.ndarray: square wave of the note
         """
         t = self._return_time_axis(sec, sr)
-        return signal.square(t)
+        return np.sum(signal.square(t), axis=0)
 
     def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
         """
@@ -124,7 +137,7 @@ class Note:
             np.ndarray: sawtooth wave of the note
         """
         t = self._return_time_axis(sec, sr)
-        return signal.sawtooth(t)
+        return np.sum(signal.sawtooth(t), axis=0)
 
     def render(
         self,
@@ -172,7 +185,7 @@ class Note:
             return getattr(self, waveform)(sec, sr)
         else:
             t = self._return_time_axis(sec, sr)
-            return waveform(t)
+            return np.sum(waveform(t), axis=0)
 
     def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
         """
@@ -185,7 +198,9 @@ class Note:
         Returns:
             np.ndarray: Time axis
         """
-        return np.linspace(0, 2*np.pi * self.freq * sec, int(sr*sec))
+        freqs = np.array([note.freq for note in self._notes])
+        t = np.linspace(0, 2*np.pi * sec * freqs, int(sr*sec), axis=1)
+        return t
 
     def play(
         self,
@@ -222,18 +237,20 @@ class Note:
             >>> print(note)
             C#4
         """
-        self.idx = (self.idx + n_semitones) % 12
-        self.name = KEY_NAMES[self.idx]
-        self.num += n_semitones
-        self.octave = (self.num - NUM_C0) // 12
-        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
+        for note in self._notes:
+            note.idx = (note.idx + n_semitones) % 12
+            note.name = KEY_NAMES[note.idx]
+            note.num += n_semitones
+            note.octave = (note.num - NUM_C0) // 12
+            note.freq = note._A4 * 2**((note.num - NUM_A4)/12)
 
-    def tuning(self, A4_freq: float = 440.) -> None:
+    def tuning(self, freq: float = 440., stand_A4: bool = True) -> None:
         """
         Tuning sound.
 
         Args:
-            A4_freq (float, optional): freqency of A4.
+            freq (float, optional): freqency of note.
+            stand_A4 (bool, optional): if True, the tuning standard is A4.
 
         Examples:
             >>> note = mn.Note("C", 4)
@@ -242,9 +259,20 @@ class Note:
             >>> print(note.freq)
             261.6255653005986
             267.5716008756122
+
+            >>> note = mn.Note("C", 4)
+            >>> print(note.freq)
+            >>> note.tuning(270., stand_A4=False)
+            >>> print(note.freq)
+            261.6255653005986
+            270.0
         """
-        self._A4 = A4_freq
-        self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
+        if stand_A4:
+            for note in self._notes:
+                note.A4 = freq
+        else:
+            for note in self._notes:
+                note.freq = freq
 
 
     def __add__(self, other):
@@ -278,7 +306,7 @@ class Note:
 
 
 
-class Notes:
+class Notes(Note):
     def __init__(self, *notes: Union[Note, Notes, int], A4: float = 440.):
         """
         Notes class. Manage multiple notes at once.
@@ -326,72 +354,24 @@ class Notes:
         assert notes, "Notes must be input"
         self.notes = []
         for note in notes:
-            if isinstance(note, Note):
-                self.notes.append(note)
-            elif isinstance(note, Notes):
+            if isinstance(note, Notes):
                 self.notes += note.notes
+            elif isinstance(note, Note):
+                self.notes.append(note)
             elif isinstance(note, int):
                 self.notes.append(Note(note))
             else:
                 raise ValueError(f"Unsupported type: '{type(note)}'")
+        self._notes = self.notes
         self.n_notes = len(self)
+        self.names = [note.name for note in self.notes]
+        self.nums = [note.num for note in self.notes]
         self._A4 = A4
         self.tuning(self.A4)
 
-    @property
-    def A4(self):
-        return self._A4
 
-    @A4.setter
-    def A4(self, value):
-        raise Exception("A4 can not be changed. If you want to tuning the note, use tuning() method.")
-
-
-    def sin(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """Generate sin wave of the notes"""
-        return np.sum([note.sin(sec, sr) for note in self.notes], axis=0)
-
-    def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """Generate square wave of the notes"""
-        return np.sum([note.square(sec, sr) for note in self.notes], axis=0)
-
-    def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """Generate sawtooth wave of the notes"""
-        return np.sum([note.sawtooth(sec, sr) for note in self.notes], axis=0)
-
-    def render(
-        self,
-        waveform: Union[str, Callable] = 'sin',
-        sec: float = 1.,
-        sr: int = 22050
-    ) -> np.ndarray:
-        """Rendering waveform of the note"""
-        return np.sum(
-            [note.render(waveform, sec, sr) for note in self.notes],
-            axis=0
-            )
-
-
-    def play(
-        self,
-        waveform: Union[str, Callable] = 'sin',
-        sec: float = 1.
-    ) -> IPython.display.Audio:
-        """Play note sound"""
-        y = self.render(waveform, sec)
-        return IPython.display.Audio(y, rate=PLAY_SR)
-
-
-    def tuning(self, A4_freq: float = 440.) -> None:
-        """tuning sound"""
-        self._A4 = A4_freq
-        for note in self.notes:
-            note.tuning(A4_freq)
-
-    def transpose(self, n_semitones: int) -> None:
-        """Transpose notes"""
-        for note in self.notes:
-            note.transpose(n_semitones)
+    def tuning(self, A4_freq: float):
+        self.A4 = A4_freq
 
 
     def append(self, note: Union[Note, Notes, int]) -> None:
@@ -493,16 +473,7 @@ class Chord(Notes):
         self.root = root
         self.interval = interval
         self.type = type
-        self.octave = octave
-        self._A4 = A4
-        self._compose()
-
-    def _compose(self):
-        """Define other attributes based on note name"""
-        self.name = self.root.name + self.type
-        self.idx = [(self.root.idx + i) % 12 for i in self.interval]
-        self.note_names = [KEY_NAMES[i] for i in self.idx]
-        self.notes = [Note(self.root.num + i) for i in self.interval]
+        super().__init__(*[self.root.num + i for i in self.interval], A4=A4)
 
 
     def transpose(self, n_semitones: int):
@@ -515,8 +486,10 @@ class Chord(Notes):
             >>> chord.note_names
             ['C#', 'F', 'G#']
         """
-        self.root.transpose(n_semitones)
-        self._compose()
+        super().transpose(n_semitones)
+        self.root = self.notes[0]
+        self.name = self.root.name + self.type
+        self.idxs = [(self.root.idx + i) % 12 for i in self.interval]
 
 
     def __repr__(self):
