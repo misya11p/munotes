@@ -485,6 +485,9 @@ class Chord(Notes):
         self.idxs = [(self.root.idx + i) % 12 for i in self.interval]
 
 
+    def append(self, value) -> None:
+        raise NotImplementedError("Chord class does not support append()")
+
     def __repr__(self):
         return f'Chord {self.name}'
 

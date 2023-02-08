@@ -41,6 +41,26 @@ class Track:
             - bpm (Optional[float]): BPM (beats per minute).
             - A4 (float): tuning. frequency of A4.
 
+        Main Methods:
+            **These methods is the same as in the mn.Notes.**
+
+            - sin: Generate sin wave of the notes
+            - square: Generate square wave of the notes
+            - sawtooth: Generate sawtooth wave of the notes
+            - render: Rendering waveform of the note
+            - play: Play note sound
+            - transpose: Transpose notes
+            - tuning: Sound tuning
+
+        Note:
+            There are some changes regarding methods that handle waveforms
+            (``sin()``, ``render()``, etc.).
+
+            1. Remove ``sec`` argument.
+            2. Add ``release`` argument. It is release time in samples.
+                Wavefrom will be multiplied by a linear window from 1 to 0
+                in the last ``release`` samples to connect sounds smoothly.
+
         Examples:
             >>> import munotes as mn
             >>> track = mn.Track([
@@ -90,7 +110,7 @@ class Track:
 
 
     def sin(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        """Generate sin wave of the note"""
+        """Generate sin wave of the track"""
         return self._gen_y("sin", sr, release)
 
     def square(self, sr: int = 22050, release: int = 200) -> np.ndarray:
@@ -107,22 +127,7 @@ class Track:
         sr: int = 22050,
         release: int = 200
     ) -> np.ndarray:
-        """
-        Rendering waveform of the note.
-
-        Args:
-            waveform (Union[str, Callables], optional):
-                waveform type or waveform function.
-            sr (int, optional):
-                sampling rate.
-            release (int, optional):
-                release time in samples. Wavefrom will be multiplied
-                by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly.
-
-        Returns:
-            np.ndarray: waveform of the note
-        """
+        """Rendering waveform of the track"""
         return self._gen_y(waveform, sr, release)
 
     def _gen_y(
@@ -162,32 +167,18 @@ class Track:
         elif self.unit == "ql":
             return duration * 60 / self.bpm
 
-
     def play(
         self,
         waveform: Union[str, Callable] = 'sin',
         release: int = 200
     ) -> IPython.display.Audio:
-        """
-        Play note sound.
-        Return IPython.display.Audio object.
-
-        Args:
-            waveform (Union[str, Callables], optional):
-                waveform type or waveform function.
-            release (int, optional):
-                release time in samples. Wavefrom will be multiplied
-                by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly.
-
-        Returns:
-            IPython.display.Audio: audio object
-        """
+        """Play note sound in IPython notebook"""
         y = self.render(waveform, PLAY_SR, release)
         return IPython.display.Audio(y, rate=PLAY_SR)
 
 
     def tuning(self, A4_freq: float = 440.) -> None:
+        """Tuning"""
         self.A4 = A4_freq
 
     def transpose(self, semitone: int) -> None:
@@ -214,7 +205,6 @@ class Track:
         """
         self.sequence += Track(note, self.unit, self.bpm, self.A4).sequence
 
-
     def __len__(self) -> int:
         return len(self.sequence)
 
@@ -239,11 +229,56 @@ class Stream(Track):
         Args:
             tracks (List[Track]): tracks
             A4 (float, optional): frequency of A4.
+
+        Inherited Methods:
+            **These methods is the same as in the mn.Note**
+
+            - sin: Generate sin wave of the notes
+            - square: Generate square wave of the notes
+            - sawtooth: Generate sawtooth wave of the notes
+            - render: Rendering waveform of the note
+            - play: Play note sound
+            - transpose: Transpose notes
+            - tuning: Sound tuning
+
+        Note:
+            In ``render()`` and ``play()``, waveforms can be specified for
+            each track by inputting as many waveforms as there are tracks.
+
+        Example:
+            >>> melody = mn.Track([
+            >>>     (mn.Note("C4"), 1),
+            >>>     (mn.Note("D4"), 1),
+            >>>     (mn.Note("E4"), 1)
+            >>>     ])
+            >>> chords = mn.Track([(mn.Chord("C"), 3)])
+            >>> stream = mn.Stream([melody, chords])
+            >>> stream
+            Stream [Track [(Note C4, 1), (Note D4, 1), (Note E4, 1)], Track [(Chord C, 3)]]
+
+            >>> stream.render('sin')
+            array([ 0.        ,  0.35422835,  0.70541282, ..., -0.02489362,
+                -0.01173826,  0.        ])
+
+            >>> stream.render([
+            >>>     'square',
+            >>>     lambda t: np.sin(t) + np.sin(2*t)
+            >>>     ])
+            array([ 1.        ,  1.83660002,  2.64969075, ..., -0.05431521,
+                -0.02542138,  0.        ])
         """
         self.tracks = tracks
-        self.n_tracks = len(tracks)
-        self._A4 = A4
-        self.tuning(self._A4)
+        self.A4 = A4
+
+    @property
+    def A4(self):
+        return self._A4
+
+    @A4.setter
+    def A4(self, value):
+        self._A4 = value
+        for note in self.tracks:
+            note.A4 = value
 
 
     def _gen_y(
@@ -252,28 +287,15 @@ class Stream(Track):
         sr: int = 22050,
         release: int = 200
     ) -> np.array:
-        """
-        Generate waveform of the note from various query types.
-
-        Args:
-            waveform (Union[str, Callables, Waveforms], optional):
-                waveform.
-            sr (int, optional):
-                sampling rate.
-            release (int, optional):
-                release time in samples.
-
-        Returns:
-            np.ndarray: waveform of the note
-        """
+        """Generate waveform of the note from various query types"""
         if isinstance(waveform, str):
-            waveforms = [waveform] * self.n_tracks
+            waveforms = [waveform] * len(self)
         elif hasattr(waveform, '__iter__'):
-            assert len(waveform) == self.n_tracks, \
-                f"If input multiple waveforms, its length must have the same as the number of tracks: {self.n_tracks}"
+            assert len(waveform) == len(self), \
+                f"If input multiple waveforms, its length must have the same as the number of tracks: {len(self)}"
             waveforms = waveform
         else:
-            waveforms = [waveform] * self.n_tracks
+            waveforms = [waveform] * len(self)
 
         y = np.array([])
         for track, waveform in zip(self.tracks, waveforms):
@@ -285,73 +307,24 @@ class Stream(Track):
             y += y_track
         return y
 
-    def render(
-        self,
-        waveform: Union[str, Callable, Waveforms] = 'sin',
-        sr: int = 22050,
-        release: int = 200
-    ) -> np.array:
-        """
-        Rendering waveform of the note.
-
-        Args:
-            waveform (Union[str, Callables, Waveforms], optional):
-                waveform.
-                supported types:
-                    - str: waveform type
-                    - callable: waveform function
-                    - list of str or callable: multiple waveforms
-            sr (int, optional):
-                sampling rate.
-            release (int, optional):
-                release time in samples. Wavefrom will be multiplied
-                by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly.
-
-        Returns:
-            np.ndarray: waveform of the note
-        """
-        return self._gen_y(waveform, sr, release)
-
-    def play(
-        self,
-        waveform: Union[str, Callable, Waveforms] = 'sin',
-        release: int = 200
-    ) -> IPython.display.Audio:
-        """
-        Play note sound.
-        Return IPython.display.Audio object.
-
-        Args:
-            waveform (Union[str, Callables, Waveforms], optional):
-                waveform.
-                supported types:
-                    - str: waveform type
-                    - callable: waveform function
-                    - list of str or callable: multiple waveforms
-            release (int, optional):
-                release time in samples. Wavefrom will be multiplied
-                by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly.
-
-        Returns:
-            IPython.display.Audio: audio object
-        """
-        y = self.render(waveform, PLAY_SR, release)
-        return IPython.display.Audio(y, rate=PLAY_SR)
-
-
-    def tuning(self, A4_freq: float = 440.) -> None:
-        """Tuning sound"""
-        self._A4 = A4_freq
-        for track in self.tracks:
-            track.tuning(A4_freq)
 
     def transpose(self, semitone: int) -> None:
         """Transpose notes"""
-        for track in self.tracks:
-            track.transpose(semitone)
+        for note in self.tracks:
+            note.transpose(semitone)
 
+
+    def append(self, *track: Track) -> None:
+        self.tracks += Stream(track, self.A4).tracks
 
     def __len__(self) -> int:
-        return self.n_tracks
+        return len(self.tracks)
+
+    def __iter__(self) -> Iterable:
+        return iter(self.tracks)
+
+    def __getitem__(self, index: int) -> Track:
+        return self.tracks[index]
+
+    def __repr__(self) -> str:
+        return f"Stream {self.tracks}"
