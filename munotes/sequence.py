@@ -57,9 +57,9 @@ class Track:
             (``sin()``, ``render()``, etc.).
 
             1. Remove ``sec`` argument.
-            2. Add ``release`` argument. It is release time in samples.
-                Wavefrom will be multiplied by a linear window from 1 to 0
-                in the last ``release`` samples to connect sounds smoothly.
+            2. Add ``release: int = 200`` argument. It is release time in samples.
+               Wavefrom will be multiplied by a linear window from 1 to 0 in the
+               last ``release`` samples to connect sounds smoothly.
 
         Examples:
             >>> import munotes as mn
