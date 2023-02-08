@@ -13,6 +13,8 @@ An object can be created by inputting the name of a note or chord.
 From the object, various waveforms can be generated and sounds can be played back on the notebook.
 They can also be managed as a sequence of objects.
 
+**source**: `misya11p/munotes <https://github.com/misya11p/munotes>`_
+
 Supported classes:
 
 - `notes <#module-munotes.notes>`_
