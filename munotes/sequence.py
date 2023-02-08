@@ -85,10 +85,26 @@ class Track:
                 warnings.warn("bpm is not required when unit is not 'ql'")
             assert bpm > 0, "bpm must be greater than 0"
 
-        self.sequence = sequence
+        self._sequence = sequence
         self._unit = unit
         self.bpm = bpm
         self.A4 = A4
+
+    @property
+    def sequence(self):
+        return self._sequence
+
+    @sequence.setter
+    def sequence(self, value):
+        raise Exception("Cannot set sequence directly")
+
+    @property
+    def unit(self):
+        return self._unit
+
+    @unit.setter
+    def unit(self, value):
+        raise Exception("unit can not be changed.")
 
     @property
     def A4(self):
@@ -99,14 +115,6 @@ class Track:
         self._A4 = value
         for note, _ in self.sequence:
             note.A4 = value
-
-    @property
-    def unit(self):
-        return self._unit
-
-    @unit.setter
-    def unit(self, value):
-        raise Exception("unit can not be changed.")
 
 
     def sin(self, sr: int = 22050, release: int = 200) -> np.ndarray:
@@ -203,7 +211,7 @@ class Track:
             >>> track
             Track [(C4, 1), (D4, 1), (E4, 1)]
         """
-        self.sequence += Track(note, self.unit, self.bpm, self.A4).sequence
+        self._sequence += Track(note, self.unit, self.bpm, self.A4).sequence
 
     def __len__(self) -> int:
         return len(self.sequence)
@@ -267,8 +275,16 @@ class Stream(Track):
             array([ 1.        ,  1.83660002,  2.64969075, ..., -0.05431521,
                 -0.02542138,  0.        ])
         """
-        self.tracks = tracks
+        self._tracks = tracks
         self.A4 = A4
+
+    @property
+    def tracks(self):
+        return self._tracks
+
+    @tracks.setter
+    def tracks(self, value):
+        raise Exception("Cannot set tracks directly")
 
     @property
     def A4(self):
@@ -315,7 +331,7 @@ class Stream(Track):
 
 
     def append(self, *track: Track) -> None:
-        self.tracks += Stream(track, self.A4).tracks
+        self._tracks += Stream(track, self.A4).tracks
 
     def __len__(self) -> int:
         return len(self.tracks)
