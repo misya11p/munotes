@@ -27,8 +27,8 @@ class Note:
 
         Args:
             query (Union[str, int]): string of note name or midi note number
-            octave (int, optional): octave of the note. Defaults to 4.
-            A4 (float, optional): tuning. freqency of A4. Defaults to 440.
+            octave (int, optional): octave of the note.
+            A4 (float, optional): tuning. freqency of A4.
         """
         if isinstance(query, str):
             self.name = check_nname(query, return_nname=True)
@@ -68,8 +68,8 @@ class Note:
         Generate sin wave of the note
 
         Args:
-            sec (float, optional): duration in seconds. Defaults to 1.0.
-            sr (int, optional): sampling rate. Defaults to 22050.
+            sec (float, optional): duration in seconds.
+            sr (int, optional): sampling rate.
 
         Returns:
             np.ndarray: sin wave of the note
@@ -82,8 +82,8 @@ class Note:
         Generate square wave of the note
 
         Args:
-            sec (float, optional): duration in seconds. Defaults to 1.0.
-            sr (int, optional): sampling rate. Defaults to 22050.
+            sec (float, optional): duration in seconds.
+            sr (int, optional): sampling rate.
 
         Returns:
             np.ndarray: square wave of the note
@@ -96,8 +96,8 @@ class Note:
         Generate sawtooth wave of the note
 
         Args:
-            sec (float, optional): duration in seconds. Defaults to 1.0.
-            sr (int, optional): sampling rate. Defaults to 22050.
+            sec (float, optional): duration in seconds.
+            sr (int, optional): sampling rate.
 
         Returns:
             np.ndarray: sawtooth wave of the note
@@ -122,11 +122,10 @@ class Note:
                     - 'square'
                     - 'sawtooth'
                     - user-defined waveform function
-                Defaults to 'sin'.
             sec (float, optional):
-                duration in seconds. Defaults to 1.
+                duration in seconds.
             sr (int, optional):
-                sampling rate. Defaults to 22050.
+                sampling rate.
 
         Returns:
             np.ndarray: waveform of the note
@@ -163,9 +162,9 @@ class Note:
 
         Args:
             waveform (Union[str, Callables], optional):
-                waveform type or waveform function. Defaults to 'sin'.
+                waveform type or waveform function.
             sec (float, optional):
-                duration in seconds. Defaults to 1.0.
+                duration in seconds.
 
         Returns:
             IPython.display.Audio: audio object
@@ -192,7 +191,7 @@ class Note:
         Tuning sound.
 
         Args:
-            A4_freq (float, optional): freqency of A4. Defaults to 440.0.
+            A4_freq (float, optional): freqency of A4.
         """
         self._A4 = A4_freq
         self.freq = self._A4 * 2**((self.num - NUM_A4)/12)
@@ -240,7 +239,7 @@ class Notes:
 
         Args:
             *notes (Union[Note, Notes, int]): notes.
-            A4 (float, optional): tuning. frequency of A4. Defaults to 440.0.
+            A4 (float, optional): tuning. frequency of A4.
         """
         assert notes, "Notes must be input"
         self.notes = []
@@ -295,11 +294,10 @@ class Notes:
                     - 'square'
                     - 'sawtooth'
                     - user-defined waveform function
-                Defaults to 'sin'.
             sec (float, optional):
-                duration in seconds. Defaults to 1.
+                duration in seconds.
             sr (int, optional):
-                sampling rate. Defaults to 22050.
+                sampling rate.
 
         Returns:
             np.ndarray: waveform of the note
@@ -321,9 +319,9 @@ class Notes:
 
         Args:
             waveform (Union[str, Callables], optional):
-                waveform type or waveform function. Defaults to 'sin'.
+                waveform type or waveform function.
             sec (float, optional):
-                duration in seconds. Defaults to 1.0.
+                duration in seconds.
 
         Returns:
             IPython.display.Audio: audio object
@@ -401,9 +399,9 @@ class Chord(Notes):
             chord_name (str):
                 chord name string
             octave (int, optional):
-                octave of the root note when play sound. Defaults to 4.
+                octave of the root note when play sound.
             A4 (float, optional):
-                frequency of A4 when play sound. Defaults to 440.0.
+                frequency of A4 when play sound.
         """
         chord_name = nname_formatting(chord_name)
         pitch_search = re.match(PITCH_PATTERN, chord_name)

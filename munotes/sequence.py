@@ -32,12 +32,10 @@ class Track:
                     - 's': second
                     - 'ms': millisecond
                     - 'ql': quarter length (bpm is required)
-                Defaults to "s".
             bpm (Optional[float], optional):
                 BPM (beats per minute). Required when unit is 'ql'.
-                Defaults to None.
             A4 (float, optional):
-                tuning. frequency of A4. Defaults to 440.
+                tuning. frequency of A4.
         """
         assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
         if bpm == None:
@@ -86,13 +84,13 @@ class Track:
 
         Args:
             waveform (Union[str, Callables], optional):
-                waveform type or waveform function. Defaults to 'sin'.
+                waveform type or waveform function.
             sr (int, optional):
-                sampling rate. Defaults to 22050.
+                sampling rate.
             release (int, optional):
                 release time in samples. Wavefrom will be multiplied
                 by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly. Defaults to 200.
+                samples to connect sounds smoothly.
 
         Returns:
             np.ndarray: waveform of the note
@@ -110,8 +108,8 @@ class Track:
 
         Args:
             waveform (Union[str, Callable]): waveform type. str or callable object.
-            sr (int, optional): sampling rate. Defaults to 22050.
-            release (int, optional): release time in samples. Defaults to 200.
+            sr (int, optional): sampling rate.
+            release (int, optional): release time in samples.
 
         Returns:
             np.ndarray: waveform of the note
@@ -148,11 +146,11 @@ class Track:
 
         Args:
             waveform (Union[str, Callables], optional):
-                waveform type or waveform function. Defaults to 'sin'.
+                waveform type or waveform function.
             release (int, optional):
                 release time in samples. Wavefrom will be multiplied
                 by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly. Defaults to 200.
+                samples to connect sounds smoothly.
 
         Returns:
             IPython.display.Audio: audio object
@@ -186,7 +184,7 @@ class Stream(Track):
 
         Args:
             tracks (List[Track]): tracks
-            A4 (float, optional): frequency of A4. Defaults to 440.0.
+            A4 (float, optional): frequency of A4.
         """
         self.tracks = tracks
         self.n_tracks = len(tracks)
@@ -205,11 +203,11 @@ class Stream(Track):
 
         Args:
             waveform (Union[str, Callables, Waveforms], optional):
-                waveform. Defaults to 'sin'.
+                waveform.
             sr (int, optional):
-                sampling rate. Defaults to 22050.
+                sampling rate.
             release (int, optional):
-                release time in samples. Defaults to 200.
+                release time in samples.
 
         Returns:
             np.ndarray: waveform of the note
@@ -249,13 +247,12 @@ class Stream(Track):
                     - str: waveform type
                     - callable: waveform function
                     - list of str or callable: multiple waveforms
-                Defaults to 'sin'.
             sr (int, optional):
-                sampling rate. Defaults to 22050.
+                sampling rate.
             release (int, optional):
                 release time in samples. Wavefrom will be multiplied
                 by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly. Defaults to 200.
+                samples to connect sounds smoothly.
 
         Returns:
             np.ndarray: waveform of the note
@@ -278,11 +275,10 @@ class Stream(Track):
                     - str: waveform type
                     - callable: waveform function
                     - list of str or callable: multiple waveforms
-                Defaults to 'sin'.
             release (int, optional):
                 release time in samples. Wavefrom will be multiplied
                 by a linear window from 1 to 0 in the last {release}
-                samples to connect sounds smoothly. Defaults to 200.
+                samples to connect sounds smoothly.
 
         Returns:
             IPython.display.Audio: audio object
