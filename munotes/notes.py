@@ -370,7 +370,7 @@ class Notes(Note):
 
     def append(self, *note: Union[Note, int]) -> None:
         """
-        Append note.
+        Append notes.
 
         Args:
             note (Union[Note, int]): Note (or Notes or Chord) or midi note number

@@ -46,14 +46,15 @@ class Track:
             >>> track = mn.Track([
             >>>     (mn.Note("C4"), 1),
             >>>     (mn.Note("D4"), 1),
-            >>>     (mn.Note("E4"), 1)
+            >>>     (mn.Note("E4"), 1),
+            >>>     (mn.Chord("C", 1),
             >>>     ])
             >>> track
-            Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]
+            Track [(Note C4, 1), (Note E4, 1), (Note G4, 1), (Chord C, 1)]
 
             >>> track.sin()
-            array([ 0.        ,  0.07786396,  0.15525513, ..., -0.00991399,
-            -0.00482715, -0.        ])
+            array([ 0.        ,  0.07448499,  0.14855616, ..., -0.01429455,
+                -0.00726152, -0.        ])
         """
         assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
         if bpm == None:
@@ -195,8 +196,23 @@ class Track:
             note.transpose(semitone)
 
 
-    def append(self, note: Note, duration: float) -> None:
-        self.sequence.append((note, duration))
+    def append(self, *note: Tuple[Note, float]) -> None:
+        """
+        Append notes.
+
+        Args:
+            *note (Tuple[Note, float]): note
+
+        Example:
+            >>> track = mn.Track([
+            >>>     (mn.Note("C4"), 1),
+            >>>     (mn.Note("D4"), 1),
+            >>>     ])
+            >>> track.append((mn.Note("E4"), 1))
+            >>> track
+            Track [(C4, 1), (D4, 1), (E4, 1)]
+        """
+        self.sequence += Track(note, self.unit, self.bpm, self.A4).sequence
 
 
     def __len__(self) -> int:
