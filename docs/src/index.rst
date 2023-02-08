@@ -31,11 +31,3 @@ Supported classes:
    :caption: Contents:
 
    munotes
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
