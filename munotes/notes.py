@@ -111,30 +111,12 @@ class Note:
         return np.sum(np.sin(t), axis=0)
 
     def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """
-        Generate square wave of the note
-
-        Args:
-            sec (float, optional): duration in seconds.
-            sr (int, optional): sampling rate.
-
-        Returns:
-            np.ndarray: square wave of the note
-        """
+        """Generate square wave of the note"""
         t = self._return_time_axis(sec, sr)
         return np.sum(signal.square(t), axis=0)
 
     def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """
-        Generate sawtooth wave of the note
-
-        Args:
-            sec (float, optional): duration in seconds.
-            sr (int, optional): sampling rate.
-
-        Returns:
-            np.ndarray: sawtooth wave of the note
-        """
+        """Generate sawtooth wave of the note"""
         t = self._return_time_axis(sec, sr)
         return np.sum(signal.sawtooth(t), axis=0)
 
@@ -323,13 +305,12 @@ class Notes(Note):
 
         \Attributes:
             - notes (List[Note]): list of notes
-            - n_notes (int): number of notes
             - names (List[str]): list of note names
             - nums (List[int]): list of MIDI note numbers
             - A4 (float): tuning. frequency of A4.
 
         Inherited Methods:
-            **The usage of these methods is the same as in the mn.Note**
+            **These methods is the same as in the mn.Note**
 
             - sin: Generate sin wave of the notes
             - square: Generate square wave of the notes
@@ -342,10 +323,10 @@ class Notes(Note):
         Examples:
             >>> import musicnote as mn
             >>> notes = mn.Notes(
-                    mn.Note("C", 4),
-                    mn.Note("E", 4),
-                    mn.Note("G", 4)
-                    )
+            >>>     mn.Note("C", 4),
+            >>>     mn.Note("E", 4),
+            >>>     mn.Note("G", 4)
+            >>>     )
             >>> notes
             Notes [Note C4, Note E4, Note G4]
 
@@ -369,7 +350,6 @@ class Notes(Note):
             else:
                 raise ValueError(f"Unsupported type: '{type(note)}'")
         self._notes = self.notes
-        self.n_notes = len(self)
         self.names = [note.name for note in self.notes]
         self.nums = [note.num for note in self.notes]
         self.A4 = A4
@@ -388,7 +368,7 @@ class Notes(Note):
         self.A4 = A4_freq
 
 
-    def append(self, note: Union[Note, int]) -> None:
+    def append(self, *note: Union[Note, int]) -> None:
         """
         Append note.
 
@@ -397,11 +377,11 @@ class Notes(Note):
 
         Examples:
             >>> notes = mn.Notes(mn.Note("C", 4))
-            >>> notes.append(mn.Note("E", 4))
+            >>> notes.append(mn.Note("E", 4), mn.Note("G", 4))
             >>> notes
-            Notes [Note C4, Note E4]
+            Notes [Note C4, Note E4, Note G4]
         """
-        self = Notes(self, note)
+        self = Notes(self, *note)
 
 
     def __len__(self):

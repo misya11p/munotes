@@ -1,7 +1,7 @@
 from .notes import Note, Notes
 import numpy as np
 import IPython
-from typing import List, Tuple, Union, Optional, Callable
+from typing import List, Tuple, Union, Optional, Callable, Iterable
 import warnings
 
 PLAY_SR = 22050 # sample rate for play()
@@ -9,12 +9,10 @@ SPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 
-NotesSequence = List[Tuple[Union[Note, Notes], float]]
-
 class Track:
     def __init__(
         self,
-        sequence: NotesSequence,
+        sequence: List[Tuple[Note, float]],
         unit: str = "s",
         bpm: Optional[float] = None,
         A4: float = 440,
@@ -24,7 +22,7 @@ class Track:
         Input notes and durations to manage multiple notes as a track.
 
         Args:
-            sequence (NotesSequence):
+            sequence (List[Tuple[Note, float]]):
                 sequence of notes and durations.
             unit (str, optional):
                 unit of duration.
@@ -36,6 +34,26 @@ class Track:
                 BPM (beats per minute). Required when unit is 'ql'.
             A4 (float, optional):
                 tuning. frequency of A4.
+
+        \Attributes:
+            - sequence (List[Tuple[Note, float]]): sequence of notes and durations.
+            - unit (str): unit of duration.
+            - bpm (Optional[float]): BPM (beats per minute).
+            - A4 (float): tuning. frequency of A4.
+
+        Examples:
+            >>> import munotes as mn
+            >>> track = mn.Track([
+            >>>     (mn.Note("C4"), 1),
+            >>>     (mn.Note("D4"), 1),
+            >>>     (mn.Note("E4"), 1)
+            >>>     ])
+            >>> track
+            Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]
+
+            >>> track.sin()
+            array([ 0.        ,  0.07786396,  0.15525513, ..., -0.00991399,
+            -0.00482715, -0.        ])
         """
         assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
         if bpm == None:
@@ -177,8 +195,21 @@ class Track:
             note.transpose(semitone)
 
 
+    def append(self, note: Note, duration: float) -> None:
+        self.sequence.append((note, duration))
+
+
     def __len__(self) -> int:
         return len(self.sequence)
+
+    def __iter__(self) -> Iterable:
+        return iter(self.sequence)
+
+    def __getitem__(self, index: int) -> Tuple[Note, float]:
+        return self.sequence[index]
+
+    def __repr__(self) -> str:
+        return f"Track {self.sequence}"
 
 
 
