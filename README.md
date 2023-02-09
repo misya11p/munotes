@@ -1,61 +1,102 @@
 # munotes
 
-musical-notes
+*musical-notes*
+
+![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/munotes?style=plastic)
+
+<br>
 
 This library is for handling notes and chords in Python.
+
+[API Reference](https://misya11p.github.io/munotes/)
 
 ## Note
 
 Note class. Handling note.
 
-`Note` class is used by entering the note name and octave height at initialization.
+This class is used by inputting the note name and octave height, or MIDI note number at initialization.
 
 ```python
-from munotes import Note
-note = Note("A", octave=4)
+import munotes as mn
+
+note = mn.Note("A", octave=4)
+print(note) # A4
+
+note = mn.Note(69)
 print(note) # A4
 ```
 
-`Note` class defines these attributes.
+- `transpose()`
+
+Transpose the note.
 
 ```python
-print(note.name)   # A
-print(note.idx)    # 9
-print(note.octave) # 4
-print(note.num)    # 69
-print(note.freq)   # 440.0
-```
+note.transpose(2)
+print(note)        # B4
 
-- `Note.name: str`  Note name
-- `Note.idx: int`  Index of note name with C as 0
-- `Note.octave: int`  Octave
-- `Note.num: int`  MIDI Note Number
-- `Note.freq: float` Freqency
-
-It is possible not to define octaves at initialization, in which case all attributes except for `name` and `idx` will be `None`.
-
-
-
-This class can be transposed with `Note.transpose()`.
-
-```python
-note.transpose(5)
-print(note)        # D5
-print(note.name)   # D
-print(note.idx)    # 2
-print(note.octave) # 5
-print(note.num)    # 74
-print(note.freq)   # 587.3295358348151
 ```
 
 
+- `render()`
 
-If an integer between 0 and 127 is entered at initialization, it is used as the midi note number, and other attributes are initialized based on it.
+Get the waveform of the note.
 
 ```python
-note = Note(40)
-print(note) # E2
+import matplotlib.pyplot as plt
+y = note.render('sin')
+plt.plot(y[:200])
 ```
+
+![image](docs/images/sin.jpg)
+
+`squere` and `sawtooth` are also sapported.
+
+```python
+y = note.render('squere')
+plt.plot(y[:200])
+```
+![image](docs/images/square.jpg)
+
+```python
+y = note.render('sawtooth')
+plt.plot(y[:200])
+```
+![image](docs/images/sawtooth.jpg)
+
+Arbitrary waveforms are also supported.
+
+```python
+y = note.render(lambda t: np.sin(t) + np.sin(2*t))
+plt.plot(y[:200])
+```
+![image](docs/images/sin2.jpg)
+
+
+- `play()`
+
+Get IPython.display.Audio object.
+
+![image](docs/images/play.jpg)
+
+
+## Notes
+
+Notes class. Handling multiple notes.
+
+This class is used by inputting the notes at initialization.
+
+```python
+notes = mn.Notes(
+    mn.Note("C", octave=4),
+    mn.Note("E", octave=4),
+    mn.Note("G", octave=4)
+    )
+print(notes) # C4 E4 G4
+
+```
+
+Methods are the same as `Note`. Ex: `transpose()`, `render()`, `play()`.
 
 
 
@@ -63,41 +104,62 @@ print(note) # E2
 
 Chord class. Handling chord.
 
-This class is used by entering the chord name at initialization.
+This class generates a Notes object by inputting a chord name at initialization.
 
 ```python
 from munotes import Chord
 chord = Chord("A#m7")
 print(chord) # A#m7
+print(chord.names) # ['A#', 'C#', 'F', 'G#']
 ```
 
-`Chord` class defines these attributes.
-
-```python
-print(chord.name)       # A#m7
-print(chord.root)       # A#
-print(chord.type)       # m7
-print(chord.interval)   # (0, 3, 7, 10)
-print(chord.notes)      # [Note A#, Note C#, Note F, Note G#]
-print(chord.note_names) # ['A#', 'C#', 'F', 'G#']
-print(chord.idx)        # [10, 1, 5, 8]
-```
-
-- `Chord.name: str`  Chord name
-- `Chord.root: munotes.Note`  Root of a chord
-- `Chord.type: str`  Chord Type
-- `Chord.interval: Tuple[int]`  Height of the sound when the root as 0.
-- `Chord.notes: List[munotes.Note]`  List of notes that make up the chord.
-- `Chord.note_names: List[str]`  List of `munotes.Note.name`
-- `Chord.idx: List[int]`   List of `munotes.Note.idx`
-
-
-
-Like Note, This class can be transposed with `Chord.transpose()`.
+Methods are the same as `Note` (and `Notes`).  
+Transpose is also supported by `transpose()`
 
 ```python
 chord.transpose(3)
 print(chord)            # C#m7
-print(chord.note_names) # ['C#', 'E', 'G#', 'B']
+print(chord.names) # ['C#', 'E', 'G#', 'B']
 ```
 
+
+## Track
+
+Track class. Handling multiple Notes as a sequence.
+
+This class is used by inputting the notes and durations at initialization.
+
+
+```python
+track = mn.Track([
+    (mn.Note("C", octave=4), 1),
+    (mn.Note("E", octave=4), 1),
+    (mn.Note("G", octave=4), 1)
+    ])
+```
+
+Methods are the same as other classes.  
+But in methods that handling waveform (`render()`, `play()`, etc), generate the waveform as sequence of notes (like: C -> E -> G).
+
+
+## Stream
+
+Stream class. Handling multiple tracks.
+
+This class is used by inputting the tracks at initialization.
+
+```python
+melody = mn.Track([
+    (mn.Note("C", octave=4), 1),
+    (mn.Note("D", octave=4), 1),
+    (mn.Note("E", octave=4), 1)
+    ])
+
+chords = mn.Track([
+    (mn.Chord("C"), 3),
+    ])
+
+stream = mn.Stream([melody, chords])
+```
+
+Methods are the same as other classes.
