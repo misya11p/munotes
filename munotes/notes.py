@@ -297,6 +297,9 @@ class Note:
     def __int__(self):
         return self.num
 
+    def __eq__(self, other):
+        return self.num == other.num
+
     def __lt__(self, other):
         return self.num < other
 
@@ -423,16 +426,17 @@ class Notes(Note):
             Notes [Note C4, Note E4, Note G4, Note C5]
         """
         assert notes, "Notes must be input"
-        self.notes = []
+        notes_ = []
         for note in notes:
             if isinstance(note, Notes):
-                self.notes += note.notes
+                notes_ += note.notes
             elif isinstance(note, Note):
-                self.notes.append(note)
+                notes_.append(note)
             elif isinstance(note, int):
-                self.notes.append(Note(note))
+                notes_.append(Note(note))
             else:
                 raise ValueError(f"Unsupported type: '{type(note)}'")
+        self.notes = sorted(notes_, key=lambda note: note.num)
         self._notes = self.notes
         self.names = [note.name for note in self]
         self.fullnames = [str(note) for note in self]
