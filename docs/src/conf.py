@@ -33,3 +33,5 @@ html_static_path = ['_static']
 autoclass_content = 'both'
 autodoc_member_order = 'bysource'
 autodoc_typehints = 'none'
+
+# build command: 'sphinx-build -b singlehtml ./docs/src ./docs/'

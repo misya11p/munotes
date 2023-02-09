@@ -2,8 +2,8 @@
 
 *musical-notes*
 
-![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/munotes?style=plastic)
+![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)(https://pypi.org/project/munotes/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/munotes?style=plastic)(https://pypi.org/project/munotes/)
 
 <br>
 
@@ -33,7 +33,7 @@ Transpose the note.
 
 ```python
 note.transpose(2)
-print(note)        # B4
+print(note) # B4
 
 ```
 
