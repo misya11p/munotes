@@ -293,8 +293,8 @@ class Stream(Track):
     @A4.setter
     def A4(self, value):
         self._A4 = value
-        for note in self.tracks:
-            note.A4 = value
+        for track in self.tracks:
+            track.A4 = value
 
 
     def _gen_y(
