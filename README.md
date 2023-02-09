@@ -2,14 +2,15 @@
 
 *musical-notes*
 
-![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)(https://pypi.org/project/munotes/)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/munotes?style=plastic)(https://pypi.org/project/munotes/)
+![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/munotes?style=plastic)
 
 <br>
 
 This library is for handling notes and chords in Python.
 
-[API Reference](https://misya11p.github.io/munotes/)
+- [API Reference](https://misya11p.github.io/munotes/)
+- [PyPI](https://pypi.org/project/munotes/)
 
 ## Note
 
@@ -118,7 +119,7 @@ Transpose is also supported by `transpose()`
 
 ```python
 chord.transpose(3)
-print(chord)            # C#m7
+print(chord) # C#m7
 print(chord.names) # ['C#', 'E', 'G#', 'B']
 ```
 
