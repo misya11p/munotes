@@ -389,6 +389,7 @@ class Notes(Note):
         \Attributes:
             - notes (List[Note]): list of notes
             - names (List[str]): list of note names
+            - fullnames (List[str]): list of note fullnames
             - nums (List[int]): list of MIDI note numbers
             - A4 (float): tuning. frequency of A4.
 
@@ -433,8 +434,9 @@ class Notes(Note):
             else:
                 raise ValueError(f"Unsupported type: '{type(note)}'")
         self._notes = self.notes
-        self.names = [note.name for note in self.notes]
-        self._nums = [note.num for note in self.notes]
+        self.names = [note.name for note in self]
+        self.fullnames = [str(note) for note in self]
+        self._nums = [note.num for note in self]
         self.A4 = A4
 
     @property
@@ -496,7 +498,7 @@ class Notes(Note):
         return f'Notes {self.notes}'
 
     def __str__(self):
-        return f'Notes {self.notes}'
+        return ' '.join(self.fullnames)
 
 
 
@@ -614,7 +616,7 @@ class Chord(Notes):
 
 
     def append(self, value) -> None:
-        raise NotImplementedError("Chord class does not support append()")
+        raise Exception("Chord class does not support append()")
 
     def __repr__(self):
         return f'Chord {self.name}'
