@@ -9,8 +9,8 @@
 
 This library is for handling notes and chords in Python.
 
-- [API Reference](https://misya11p.github.io/munotes/)
 - [PyPI](https://pypi.org/project/munotes/)
+- [API Reference](https://misya11p.github.io/munotes/)
 
 ## Note
 
