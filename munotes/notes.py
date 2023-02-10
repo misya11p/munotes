@@ -129,7 +129,7 @@ class Note:
             >>> note = mn.Note("C", 4)
             >>> note.sin()
             array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,
-            -0.65516123, -0.70961388])
+                   -0.65516123, -0.70961388])
         """
         t = self._return_time_axis(sec, sr)
         return np.sum(np.sin(t), axis=0)
@@ -173,11 +173,11 @@ class Note:
             >>> note = mn.Note("C", 4)
             >>> note.render('sin')
             array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,
-            -0.65516123, -0.70961388])
+                   -0.65516123, -0.70961388])
 
             >>> note.render(lambda t: np.sin(t) + np.sin(2*t))
             array([0.        , 0.23622339, 0.46803688, ..., 1.75357961, 1.72041279,
-            1.66076322])
+                   1.66076322])
 
         Note:
             Generating a waveform by inputting a string into this method,
@@ -413,7 +413,7 @@ class Notes(Note):
             >>>     mn.Note("C", 4),
             >>>     mn.Note("E", 4),
             >>>     mn.Note("G", 4)
-            >>>     )
+            >>> )
             >>> notes
             Notes [Note C4, Note E4, Note G4]
 

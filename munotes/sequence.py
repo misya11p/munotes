@@ -68,7 +68,7 @@ class Track:
             >>>     (mn.Note("D4"), 1),
             >>>     (mn.Note("E4"), 1),
             >>>     (mn.Chord("C", 1),
-            >>>     ])
+            >>> ])
             >>> track
             Track [(Note C4, 1), (Note E4, 1), (Note G4, 1), (Chord C, 1)]
 
@@ -206,7 +206,7 @@ class Track:
             >>> track = mn.Track([
             >>>     (mn.Note("C4"), 1),
             >>>     (mn.Note("D4"), 1),
-            >>>     ])
+            >>> ])
             >>> track.append((mn.Note("E4"), 1))
             >>> track
             Track [(C4, 1), (D4, 1), (E4, 1)]
@@ -258,7 +258,7 @@ class Stream(Track):
             >>>     (mn.Note("C4"), 1),
             >>>     (mn.Note("D4"), 1),
             >>>     (mn.Note("E4"), 1)
-            >>>     ])
+            >>> ])
             >>> chords = mn.Track([(mn.Chord("C"), 3)])
             >>> stream = mn.Stream([melody, chords])
             >>> stream
@@ -266,14 +266,14 @@ class Stream(Track):
 
             >>> stream.render('sin')
             array([ 0.        ,  0.35422835,  0.70541282, ..., -0.02489362,
-                -0.01173826,  0.        ])
+                   -0.01173826,  0.        ])
 
             >>> stream.render([
             >>>     'square',
             >>>     lambda t: np.sin(t) + np.sin(2*t)
             >>>     ])
             array([ 1.        ,  1.83660002,  2.64969075, ..., -0.05431521,
-                -0.02542138,  0.        ])
+                   -0.02542138,  0.        ])
         """
         self._tracks = tracks
         self.A4 = A4

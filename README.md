@@ -2,7 +2,7 @@
 
 *musical-notes*
 
-![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)
+[![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)](https://pypi.org/project/munotes/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/munotes?style=plastic)
 
 <br>
@@ -92,7 +92,7 @@ notes = mn.Notes(
     mn.Note("C", octave=4),
     mn.Note("E", octave=4),
     mn.Note("G", octave=4)
-    )
+)
 print(notes) # C4 E4 G4
 
 ```
@@ -136,7 +136,7 @@ track = mn.Track([
     (mn.Note("C", octave=4), 1),
     (mn.Note("E", octave=4), 1),
     (mn.Note("G", octave=4), 1)
-    ])
+])
 ```
 
 Methods are the same as other classes.  
@@ -154,11 +154,11 @@ melody = mn.Track([
     (mn.Note("C", octave=4), 1),
     (mn.Note("D", octave=4), 1),
     (mn.Note("E", octave=4), 1)
-    ])
+])
 
 chords = mn.Track([
     (mn.Chord("C"), 3),
-    ])
+])
 
 stream = mn.Stream([melody, chords])
 ```

@@ -172,7 +172,7 @@ Single note. It can be initialized with note name or MIDI note number.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
 <span class="go">array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,</span>
-<span class="go">-0.65516123, -0.70961388])</span>
+<span class="go">       -0.65516123, -0.70961388])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -222,12 +222,12 @@ spported waveform types:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
 <span class="go">array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,</span>
-<span class="go">-0.65516123, -0.70961388])</span>
+<span class="go">       -0.65516123, -0.70961388])</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="p">))</span>
 <span class="go">array([0.        , 0.23622339, 0.46803688, ..., 1.75357961, 1.72041279,</span>
-<span class="go">1.66076322])</span>
+<span class="go">       1.66076322])</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -382,7 +382,7 @@ supported input types:</p>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span>
 <span class="go">Notes [Note C4, Note E4, Note G4]</span>
 </pre></div>
@@ -534,7 +534,7 @@ last <code class="docutils literal notranslate"><span class="pre">release</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">track</span>
 <span class="go">Track [(Note C4, 1), (Note E4, 1), (Note G4, 1), (Chord C, 1)]</span>
 </pre></div>
@@ -557,7 +557,7 @@ last <code class="docutils literal notranslate"><span class="pre">release</span>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">track</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Track</span><span class="p">([</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">track</span>
 <span class="go">Track [(C4, 1), (D4, 1), (E4, 1)]</span>
@@ -603,7 +603,7 @@ each track by inputting as many waveforms as there are tracks.</p>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chords</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Track</span><span class="p">([(</span><span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">),</span> <span class="mi">3</span><span class="p">)])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stream</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Stream</span><span class="p">([</span><span class="n">melody</span><span class="p">,</span> <span class="n">chords</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stream</span>
@@ -612,7 +612,7 @@ each track by inputting as many waveforms as there are tracks.</p>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stream</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
 <span class="go">array([ 0.        ,  0.35422835,  0.70541282, ..., -0.02489362,</span>
-<span class="go">    -0.01173826,  0.        ])</span>
+<span class="go">       -0.01173826,  0.        ])</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stream</span><span class="o">.</span><span class="n">render</span><span class="p">([</span>
@@ -620,7 +620,7 @@ each track by inputting as many waveforms as there are tracks.</p>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">])</span>
 <span class="go">array([ 1.        ,  1.83660002,  2.64969075, ..., -0.05431521,</span>
-<span class="go">    -0.02542138,  0.        ])</span>
+<span class="go">       -0.02542138,  0.        ])</span>
 </pre></div>
 </div>
 </dd></dl>
