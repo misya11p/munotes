@@ -2,7 +2,7 @@
 
 *musical-notes*
 
-[![PyPI](https://img.shields.io/pypi/v/munotes?style=plastic)](https://pypi.org/project/munotes/)
+[![PyPI version](https://badge.fury.io/py/munotes.svg)](https://badge.fury.io/py/munotes)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/munotes?style=plastic)
 
 <br>
