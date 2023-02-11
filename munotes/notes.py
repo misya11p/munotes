@@ -340,6 +340,14 @@ class Rest(Note):
         self._notes = [self]
 
     @property
+    def A4(self) -> float:
+        return self._A4
+
+    @A4.setter
+    def A4(self, value):
+        self._A4 = value
+
+    @property
     def freq(self):
         return self._freq
 
