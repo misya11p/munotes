@@ -140,7 +140,10 @@ class Note:
         sr: int = 22050,
         duty: float = 0.5
     ) -> np.ndarray:
-        """Generate square wave of the note with scipy.signal.square"""
+        """
+        Generate square wave of the note with scipy.signal.square.
+        kwargs of scipy.signal.square are supported.
+        """
         t = self._return_time_axis(sec, sr)
         return np.sum(sp.signal.square(t, duty), axis=0)
 
@@ -150,7 +153,10 @@ class Note:
         sr: int = 22050,
         width: float = 1.
     ) -> np.ndarray:
-        """Generate sawtooth wave of the note with scipy.signal.sawtooth"""
+        """
+        Generate sawtooth wave of the note with scipy.signal.sawtooth.
+        kwargs of scipy.signal.sawtooth are supported.
+        """
         t = self._return_time_axis(sec, sr)
         return np.sum(sp.signal.sawtooth(t, width), axis=0)
 
@@ -225,7 +231,8 @@ class Note:
     def play(
         self,
         waveform: Union[str, Callable] = 'sin',
-        sec: float = 1.
+        sec: float = 1.,
+        **kwargs
     ) -> IPython.display.Audio:
         """
         Play note sound in IPython notebook.
@@ -240,7 +247,7 @@ class Note:
         Returns:
             IPython.display.Audio: audio object
         """
-        y = self.render(waveform, sec, PLAY_SR)
+        y = self.render(waveform, sec, PLAY_SR, **kwargs)
         return IPython.display.Audio(y, rate=PLAY_SR)
 
 

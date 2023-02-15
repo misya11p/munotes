@@ -191,10 +191,11 @@ class Track:
     def play(
         self,
         waveform: Union[str, Callable] = 'sin',
-        release: int = 200
+        release: int = 200,
+        **kwargs
     ) -> IPython.display.Audio:
         """Play note sound in IPython notebook"""
-        y = self.render(waveform, PLAY_SR, release)
+        y = self.render(waveform, PLAY_SR, release, **kwargs)
         return IPython.display.Audio(y, rate=PLAY_SR)
 
 
@@ -310,11 +311,33 @@ class Stream(Track):
             track.A4 = value
 
 
-    def _gen_y(
+    def render(
         self,
         waveform: Union[str, Callable, Waveforms] = 'sin',
         sr: int = 22050,
         release: int = 200,
+        **kwargs
+    ) -> np.ndarray:
+        """
+        Rendering waveform of the stream. Spported multiple waveforms.
+
+        Args:
+            waveform (Union[str, Callable, Waveforms], optional):
+                waveform or list of waveforms.
+
+        Note:
+            Basic usage is the same as in the other classes. But in kwargs,
+            only 'duty' for 'square' and 'width' for 'sawtooth' are supported
+            if input multiple waveforms.
+        """
+        return super().render(waveform, sr, release, **kwargs)
+
+
+    def _gen_y(
+        self,
+        waveform: Union[str, Callable, Waveforms],
+        sr: int,
+        release: int,
         **kwargs
     ) -> np.array:
         """Generate waveform of the note from various query types"""
@@ -323,13 +346,23 @@ class Stream(Track):
         elif hasattr(waveform, '__iter__'):
             assert len(waveform) == len(self), \
                 f"If input multiple waveforms, its length must have the same as the number of tracks: {len(self)}"
+            if kwargs:
+                assert all(kwarg in ['duty', 'width'] for kwarg in kwargs), \
+                    "If input multiple waveforms, only 'duty' for 'square' and 'width' for 'sawtooth' are supported for kwargs."
             waveforms = waveform
         else:
             raise Exception("Invalid waveform type. Must be str, callable, or list of str or callable.")
 
         y = np.array([])
         for track, waveform in zip(self.tracks, waveforms):
-            y_track = track.render(waveform, sr, release, **kwargs)
+            if waveform == 'square':
+                kwarg = {'duty': kwargs['duty']} if 'duty' in kwargs else {}
+            elif waveform == 'sawtooth':
+                kwarg = {'width': kwargs['width']} if 'width' in kwargs else {}
+            else:
+                kwarg = {}
+
+            y_track = track.render(waveform, sr, release, **kwarg)
             if len(y_track) > len(y):
                 y = np.append(y, np.zeros(len(y_track) - len(y)))
             else:
