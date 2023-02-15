@@ -121,28 +121,40 @@ class Track:
         """Generate sin wave of the track"""
         return self._gen_y("sin", sr, release)
 
-    def square(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        """Generate square wave of the note"""
-        return self._gen_y("square", sr, release)
+    def square(
+        self,
+        sr: int = 22050,
+        release: int = 200,
+        duty: float = 0.5
+    ) -> np.ndarray:
+        """Generate square wave of the note with scipy.signal.square"""
+        return self._gen_y("square", sr, release, duty=duty)
 
-    def sawtooth(self, sr: int = 22050, release: int = 200) -> np.ndarray:
+    def sawtooth(
+        self,
+        sr: int = 22050,
+        release: int = 200,
+        width: float = 1.
+    ) -> np.ndarray:
         """Generate sawtooth wave of the note"""
-        return self._gen_y("sawtooth", sr, release)
+        return self._gen_y("sawtooth", sr, release, width=width)
 
     def render(
         self,
         waveform: Union[str, Callable] = 'sin',
         sr: int = 22050,
-        release: int = 200
+        release: int = 200,
+        **kwargs
     ) -> np.ndarray:
         """Rendering waveform of the track"""
-        return self._gen_y(waveform, sr, release)
+        return self._gen_y(waveform, sr, release, **kwargs)
 
     def _gen_y(
         self,
         waveform: Union[str, Callable],
         sr: int = 22050,
         release: int = 200,
+        **kwargs
     ) -> np.ndarray:
         """
         Generate waveform of the note from various query types.
@@ -151,6 +163,7 @@ class Track:
             waveform (Union[str, Callable]): waveform type. str or callable object.
             sr (int, optional): sampling rate.
             release (int, optional): release time in samples.
+            **kwargs: keyword arguments for waveform function.
 
         Returns:
             np.ndarray: waveform of the note
@@ -158,7 +171,7 @@ class Track:
         y = np.array([])
         for note, duration in self.sequence:
             sec = self._to_sec(duration)
-            y_note = note.render(waveform, sec, sr)
+            y_note = note.render(waveform, sec, sr, **kwargs)
             release = min(len(y_note), release)
             if release:
                 window = np.linspace(1, 0, release)
@@ -301,21 +314,22 @@ class Stream(Track):
         self,
         waveform: Union[str, Callable, Waveforms] = 'sin',
         sr: int = 22050,
-        release: int = 200
+        release: int = 200,
+        **kwargs
     ) -> np.array:
         """Generate waveform of the note from various query types"""
-        if isinstance(waveform, str):
+        if isinstance(waveform, str) or callable(waveform):
             waveforms = [waveform] * len(self)
         elif hasattr(waveform, '__iter__'):
             assert len(waveform) == len(self), \
                 f"If input multiple waveforms, its length must have the same as the number of tracks: {len(self)}"
             waveforms = waveform
         else:
-            waveforms = [waveform] * len(self)
+            raise Exception("Invalid waveform type. Must be str, callable, or list of str or callable.")
 
         y = np.array([])
         for track, waveform in zip(self.tracks, waveforms):
-            y_track = track.render(waveform, sr, release)
+            y_track = track.render(waveform, sr, release, **kwargs)
             if len(y_track) > len(y):
                 y = np.append(y, np.zeros(len(y_track) - len(y)))
             else:

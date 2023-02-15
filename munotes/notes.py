@@ -142,7 +142,7 @@ class Note:
     ) -> np.ndarray:
         """Generate square wave of the note with scipy.signal.square"""
         t = self._return_time_axis(sec, sr)
-        return np.sum(sp.signal.square(t), axis=0)
+        return np.sum(sp.signal.square(t, duty), axis=0)
 
     def sawtooth(
         self,
@@ -379,7 +379,7 @@ class Rest(Note):
     def sawtooth(self, sec=1., sr=22050) -> np.ndarray:
         return np.zeros(int(sr*sec))
 
-    def render(self, waveform=None, sec=1., sr=22050) -> np.ndarray:
+    def render(self, waveform=None, sec=1., sr=22050, **kwargs) -> np.ndarray:
         return np.zeros(int(sr*sec))
 
     def transpose(self, *args, **kwargs):
