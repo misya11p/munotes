@@ -12,7 +12,9 @@ This library is for handling notes and chords in Python.
 - [PyPI](https://pypi.org/project/munotes/)
 - [API Reference](https://misya11p.github.io/munotes/)
 
-## Note
+## General Usage
+
+### Note
 
 Note class. Handling note.
 
@@ -81,7 +83,7 @@ Get IPython.display.Audio object.
 ![image](docs/images/play.jpg)
 
 
-## Notes
+### Notes
 
 Notes class. Handling multiple notes.
 
@@ -101,7 +103,7 @@ Methods are the same as `Note`. Ex: `transpose()`, `render()`, `play()`.
 
 
 
-## Chord
+### Chord
 
 Chord class. Handling chord.
 
@@ -124,7 +126,7 @@ print(chord.names) # ['C#', 'E', 'G#', 'B']
 ```
 
 
-## Track
+### Track
 
 Track class. Handling multiple Notes as a sequence.
 
@@ -143,7 +145,7 @@ Methods are the same as other classes.
 But in methods that handling waveform (`render()`, `play()`, etc), generate the waveform as sequence of notes (like: C -> E -> G).
 
 
-## Stream
+### Stream
 
 Stream class. Handling multiple tracks.
 
@@ -164,3 +166,22 @@ stream = mn.Stream([melody, chords])
 ```
 
 Methods are the same as other classes.
+
+## Version History
+
+### [0.1.0](https://pypi.org/project/munotes/0.1.0/) (2022-11-12)
+    - Beta release
+    - Add Note class
+    - Add Chord class
+
+### [1.0.0](https://pypi.org/project/munotes/1.0.0/) (2023-02-09)
+    - Add Notes class
+    - Add Track class
+    - Add Stream class
+    - Add sin(), square(), sawtooth() methods
+    - Add play() method
+    - Add render() method
+
+### [1.0.1](https://pypi.org/project/munotes/1.0.1/) (2023-02-12)
+    - Latest
+    - Fixed a bug that mn.Rest could not be put into mn.Track.
