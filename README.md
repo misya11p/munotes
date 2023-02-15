@@ -171,17 +171,17 @@ Methods are the same as other classes.
 
 ### [0.1.0](https://pypi.org/project/munotes/0.1.0/) (2022-11-12)
 - Beta release
-- Add Note class
-- Add Chord class
+- Add `Note` class
+- Add `Chord` class
 
 ### [1.0.0](https://pypi.org/project/munotes/1.0.0/) (2023-02-09)
-- Add Notes class
-- Add Track class
-- Add Stream class
-- Add sin(), square(), sawtooth() methods
-- Add play() method
-- Add render() method
+- Add `Notes` class
+- Add `Track` class
+- Add `Stream` class
+- Add `sin()`, `square()`, `sawtooth()` methods
+- Add `play()` method
+- Add `render()` method
 
 ### [1.0.1](https://pypi.org/project/munotes/1.0.1/) (2023-02-12)
 - Latest
-- Fixed a bug that mn.Rest could not be put into mn.Track.
+- Fixed a bug that `Rest` could not be put into `Track`.
