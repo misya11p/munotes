@@ -178,6 +178,7 @@ Methods are the same as other classes.
 - Add `Notes` class
 - Add `Track` class
 - Add `Stream` class
+- Add `Rest` class
 - Add `sin()`, `square()`, `sawtooth()` methods
 - Add `play()` method
 - Add `render()` method
