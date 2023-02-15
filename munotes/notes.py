@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .format import check_nname, nname_formatting
 import numpy as np
-from scipy import signal
+import scipy as sp
 import IPython
 from typing import Union, Callable
 import re
@@ -134,15 +134,25 @@ class Note:
         t = self._return_time_axis(sec, sr)
         return np.sum(np.sin(t), axis=0)
 
-    def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """Generate square wave of the note"""
+    def square(
+        self,
+        sec: float = 1.,
+        sr: int = 22050,
+        duty: float = 0.5
+    ) -> np.ndarray:
+        """Generate square wave of the note with scipy.signal.square"""
         t = self._return_time_axis(sec, sr)
-        return np.sum(signal.square(t), axis=0)
+        return np.sum(sp.signal.square(t), axis=0)
 
-    def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """Generate sawtooth wave of the note"""
+    def sawtooth(
+        self,
+        sec: float = 1.,
+        sr: int = 22050,
+        width: float = 1.
+    ) -> np.ndarray:
+        """Generate sawtooth wave of the note with scipy.signal.sawtooth"""
         t = self._return_time_axis(sec, sr)
-        return np.sum(signal.sawtooth(t), axis=0)
+        return np.sum(sp.signal.sawtooth(t, width), axis=0)
 
     def render(
         self,
