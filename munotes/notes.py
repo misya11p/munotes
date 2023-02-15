@@ -158,7 +158,8 @@ class Note:
         self,
         waveform: Union[str, Callable] = 'sin',
         sec: float = 1.,
-        sr: int = 22050
+        sr: int = 22050,
+        **kwargs
     ) -> np.ndarray:
         """
         Rendering waveform of the note.
@@ -175,6 +176,10 @@ class Note:
                 duration in seconds.
             sr (int, optional):
                 sampling rate.
+            **kwargs (optional):
+                keyword arguments for waveform function. 'duty' for
+                'square', 'width' for 'sawtooth' and any args for
+                user-defined waveform function are supported.
 
         Returns:
             np.ndarray: waveform of the note
@@ -197,10 +202,10 @@ class Note:
         if isinstance(waveform, str):
             assert waveform in SUPPOERTED_WAVEFORMS, \
                 f"waveform string must be in {SUPPOERTED_WAVEFORMS}"
-            return getattr(self, waveform)(sec, sr)
+            return getattr(self, waveform)(sec, sr, **kwargs)
         else:
             t = self._return_time_axis(sec, sr)
-            return np.sum(waveform(t), axis=0)
+            return np.sum(waveform(t, **kwargs), axis=0)
 
     def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
         """
