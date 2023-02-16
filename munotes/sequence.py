@@ -12,7 +12,7 @@ SPPORTED_UNITS = ["s", "ms", "ql"]
 class Track:
     def __init__(
         self,
-        sequence: List[Tuple[Note, float]],
+        sequence: List[Tuple[Union[Note, str, int], float]],
         unit: str = "s",
         bpm: Optional[float] = None,
         A4: float = 440,
@@ -75,6 +75,15 @@ class Track:
             >>> track.sin()
             array([ 0.        ,  0.07448499,  0.14855616, ..., -0.01429455,
                 -0.00726152, -0.        ])
+
+            You can also input notes as str or int directly.
+            >>> track = mn.Track([
+            >>>     ("C4", 1),
+            >>>     ("D4", 1),
+            >>>     ("E4", 1),
+            >>> ])
+            >>> track
+            Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]
         """
         assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
         if bpm == None:
@@ -85,7 +94,17 @@ class Track:
                 warnings.warn("bpm is not required when unit is not 'ql'")
             assert bpm > 0, "bpm must be greater than 0"
 
-        self._sequence = sequence
+        sequence_ = []
+        for note, duration in sequence:
+            if isinstance(note, (str, int)):
+                note = Note(note)
+            elif isinstance(note, Note):
+                pass
+            else:
+                raise ValueError("note must be Note, str or int")
+            sequence_.append((note, duration))
+
+        self._sequence = sequence_
         self._unit = unit
         self.bpm = bpm
         self.A4 = A4
