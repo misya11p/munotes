@@ -1,5 +1,6 @@
 from __future__ import annotations
-from .name_strings import check_nname, nname_formatting
+from .name_strings import note_name_formatting, chord_name_formatting
+from .chord_names import chord_names
 import numpy as np
 from scipy import signal
 import IPython
@@ -27,9 +28,15 @@ class Note:
         Single note. It can be initialized with note name or MIDI note number.
 
         Args:
-            query (Union[str, int]): string of note name or midi note number
-            octave (int, optional): octave of the note.
-            A4 (float, optional): tuning. freqency of A4.
+            query (Union[str, int]):
+                string of note name or midi note number. If string is given,
+                valid string pattern is '[A-Ga-g][#♯+b♭-]?\d*'.
+                Ex: 'C', 'C#', 'Cb', 'C4'
+            octave (int, optional):
+                octave of the note. This argument is ignored if octave is
+                specified in the note name string, or if query is int.
+            A4 (float, optional):
+                tuning. freqency of A4.
 
         \Attributes:
             - name (str): note name
@@ -41,14 +48,23 @@ class Note:
 
         Examples:
             >>> import munotes as mn
+            >>> note = mn.Note("C4")
+            >>> print(note)
+            C4
+
+            You can also input note name and octave separately.
             >>> note = mn.Note("C", 4)
+            >>> print(note)
+            C4
+
+            You can also input MIDI note number as an integer.
+            >>> note = mn.Note(60)
             >>> print(note)
             C4
         """
         if isinstance(query, str):
-            self.name = check_nname(query, return_nname=True)
+            self.name, self._octave = note_name_formatting(query, octave)
             self._idx = self._return_name_idx()
-            self._octave = octave
             self._num = NUM_C0 + 12*self.octave + self.idx
         elif isinstance(query, int):
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
@@ -514,28 +530,17 @@ class Notes(Note):
 
 
 
-chord_intervals = {
-    "": (0,4,7),
-    "m": (0,3,7),
-    "7": (0,4,7,10),
-    "m7": (0,3,7,10),
-    "M7": (0,4,7,11),
-    "mM7": (0,3,7,11),
-    "sus4": (0,5,7),
-    "dim": (0,3,6),
-    "dim7": (0,3,6,9),
-    "aug": (0,4,8),
-    "6": (0,4,7,9),
-    "m6": (0,3,7,9),
-    "sus2": (0,2,7)
-}
-PITCH_PATTERN = '[A-G][#, b]*'
-
 class Chord(Notes):
     def __init__(self, chord_name: str, octave: int = 4, A4: float = 440.):
         """
         Chord class.
         Estimating notes from chord names and creating a Notes object.
+
+        Supported chord names are shown in ``mn.chord_names``.
+        ``mn.chord_names`` is a dictionary of chord names and intervals
+        between notes with the root note as 0.
+        Ex: {'': (0, 4, 7), 'm': (0, 3, 7), 'dim7': (0, 3, 6, 9), ...}
+        You can add your own chord names and intervals to this dictionary.
 
         Args:
             chord_name (str):
@@ -561,15 +566,10 @@ class Chord(Notes):
             >>> chord.names
             ['C', 'E', 'G']
         """
-        chord_name = nname_formatting(chord_name)
-        pitch_search = re.match(PITCH_PATTERN, chord_name)
-        assert pitch_search, f"'{chord_name}' is an invalid string"
-
-        border = pitch_search.end()
-        root_name, type = chord_name[:border], chord_name[border:]
+        root_name, type = chord_name_formatting(chord_name)
         root = Note(root_name, octave)
         name = root.name + type
-        interval = chord_intervals[type]
+        interval = chord_names[type]
 
         self.name = name
         self._type = type

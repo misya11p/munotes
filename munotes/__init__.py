@@ -1,5 +1,6 @@
 from .notes import Note, Rest, Notes, Chord
 from .sequence import Track, Stream
+from .chord_names import chord_names
 
 __all__ = [
     "Note",
@@ -7,7 +8,8 @@ __all__ = [
     "Notes",
     "Chord",
     "Track",
-    "Stream"
+    "Stream",
+    "chord_names"
     ]
 
 __version__ = "1.0.1"
