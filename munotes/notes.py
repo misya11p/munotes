@@ -2,7 +2,7 @@ from __future__ import annotations
 from .name_strings import note_name_formatting, chord_name_formatting
 from .chord_names import chord_names
 import numpy as np
-from scipy import signal
+import scipy as sp
 import IPython
 from typing import Union, Callable
 import re
@@ -150,21 +150,38 @@ class Note:
         t = self._return_time_axis(sec, sr)
         return np.sum(np.sin(t), axis=0)
 
-    def square(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """Generate square wave of the note"""
+    def square(
+        self,
+        sec: float = 1.,
+        sr: int = 22050,
+        duty: float = 0.5
+    ) -> np.ndarray:
+        """
+        Generate square wave of the note with scipy.signal.square.
+        kwargs of scipy.signal.square are supported.
+        """
         t = self._return_time_axis(sec, sr)
-        return np.sum(signal.square(t), axis=0)
+        return np.sum(sp.signal.square(t, duty), axis=0)
 
-    def sawtooth(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
-        """Generate sawtooth wave of the note"""
+    def sawtooth(
+        self,
+        sec: float = 1.,
+        sr: int = 22050,
+        width: float = 1.
+    ) -> np.ndarray:
+        """
+        Generate sawtooth wave of the note with scipy.signal.sawtooth.
+        kwargs of scipy.signal.sawtooth are supported.
+        """
         t = self._return_time_axis(sec, sr)
-        return np.sum(signal.sawtooth(t), axis=0)
+        return np.sum(sp.signal.sawtooth(t, width), axis=0)
 
     def render(
         self,
         waveform: Union[str, Callable] = 'sin',
         sec: float = 1.,
-        sr: int = 22050
+        sr: int = 22050,
+        **kwargs
     ) -> np.ndarray:
         """
         Rendering waveform of the note.
@@ -181,6 +198,10 @@ class Note:
                 duration in seconds.
             sr (int, optional):
                 sampling rate.
+            **kwargs (optional):
+                keyword arguments for waveform function. 'duty' for
+                'square', 'width' for 'sawtooth' and any args for
+                user-defined waveform function are supported.
 
         Returns:
             np.ndarray: waveform of the note
@@ -203,10 +224,10 @@ class Note:
         if isinstance(waveform, str):
             assert waveform in SUPPOERTED_WAVEFORMS, \
                 f"waveform string must be in {SUPPOERTED_WAVEFORMS}"
-            return getattr(self, waveform)(sec, sr)
+            return getattr(self, waveform)(sec, sr, **kwargs)
         else:
             t = self._return_time_axis(sec, sr)
-            return np.sum(waveform(t), axis=0)
+            return np.sum(waveform(t, **kwargs), axis=0)
 
     def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
         """
@@ -226,7 +247,8 @@ class Note:
     def play(
         self,
         waveform: Union[str, Callable] = 'sin',
-        sec: float = 1.
+        sec: float = 1.,
+        **kwargs
     ) -> IPython.display.Audio:
         """
         Play note sound in IPython notebook.
@@ -241,7 +263,7 @@ class Note:
         Returns:
             IPython.display.Audio: audio object
         """
-        y = self.render(waveform, sec, PLAY_SR)
+        y = self.render(waveform, sec, PLAY_SR, **kwargs)
         return IPython.display.Audio(y, rate=PLAY_SR)
 
 
@@ -380,7 +402,7 @@ class Rest(Note):
     def sawtooth(self, sec=1., sr=22050) -> np.ndarray:
         return np.zeros(int(sr*sec))
 
-    def render(self, waveform=None, sec=1., sr=22050) -> np.ndarray:
+    def render(self, waveform=None, sec=1., sr=22050, **kwargs) -> np.ndarray:
         return np.zeros(int(sr*sec))
 
     def transpose(self, *args, **kwargs):
