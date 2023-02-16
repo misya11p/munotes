@@ -4,8 +4,7 @@ from .chord_names import chord_names
 import numpy as np
 import scipy as sp
 import IPython
-from typing import Union, Callable
-import re
+from typing import Optional, Union, Callable
 
 
 NUM_C0 = 12 # MIDI note number of C0
@@ -556,7 +555,13 @@ class Notes(Note):
 
 
 class Chord(Notes):
-    def __init__(self, chord_name: str, octave: int = 4, A4: float = 440.):
+    def __init__(
+        self,
+        chord_name: str,
+        type: Optional[str] = None,
+        octave: int = 4,
+        A4: float = 440.
+    ):
         """
         Chord class.
         Estimating notes from chord names and creating a Notes object.
@@ -569,7 +574,10 @@ class Chord(Notes):
 
         Args:
             chord_name (str):
-                chord name string
+                string of chord name. Chord type in the string is ignored
+                if 'type' argument is specified.
+            type (str, optional):
+                chord type. Ex. '', 'm7', '7', 'sus4'.
             octave (int, optional):
                 octave of the root note to initialize notes.
             A4 (float, optional):
@@ -594,11 +602,15 @@ class Chord(Notes):
             Example of adding arbitrary chords.
 
             >>> mn.chord_names["black"] = (0, 1, 2, 3, 4)
-            >>> chord = mn.Chord("Cblack")
+            >>> chord = mn.Chord("C", "black")
             >>> chord.names
             ['C', 'C#', 'D', 'D#', 'E']
+
+        Note:
+            Unlike Note, the argument value takes precedence over the
+            input string.
         """
-        root_name, type = chord_name_formatting(chord_name)
+        root_name, type = chord_name_formatting(chord_name, type)
         root = Note(root_name, octave)
         name = root.name + type
         interval = chord_names[type]

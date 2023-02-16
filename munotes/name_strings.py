@@ -37,12 +37,19 @@ def note_name_formatting(
     return pitch_name, octave
 
 
-def chord_name_formatting(chord_name: str) -> Tuple[str, str]:
+def chord_name_formatting(
+    chord_name: str,
+    type: Optional[str]
+) -> Tuple[str, str]:
     """
     Format chord name string and return it with chord type.
 
     Args:
-        chord_name (str): string of chord name
+        chord_name (str):
+            string of chord name. Chord type in the string is ignored
+            if 'type' argument is specified.
+        type (Optional[str]):
+            chord type. Ex. '', 'm7', '7', 'sus4'.
 
     Returns:
         Tuple[str, str]: formatted chord name and chord type
@@ -52,8 +59,9 @@ def chord_name_formatting(chord_name: str) -> Tuple[str, str]:
     assert note_search, f"'{chord_name}' is an invalid string"
     border = note_search.end()
     root_name = form_chord_name[:border]
-    type = form_chord_name[border:]
-    assert type in chord_names, f"'{type}' is an invalid chord type"
+    type = type if type != None else form_chord_name[border:]
+    assert isinstance(type, str) and type in chord_names, \
+        f"'{type}' is an invalid chord type"
     return root_name, type
 
 
