@@ -398,7 +398,7 @@ class Rest(Note):
 
 
 class Notes(Note):
-    def __init__(self, *notes: Union[Note, int], A4: float = 440.):
+    def __init__(self, *notes: Union[Note, int, str], A4: float = 440.):
         """
         Notes class. Manage multiple notes at once.
 
@@ -406,9 +406,8 @@ class Notes(Note):
             *notes (Union[Note, int]):
                 notes.
                 supported input types:
-                    - Note
-                    - Notes
-                    - Chord
+                    - Note (mn.Note, mn.Notes, etc.)
+                    - str (note name)
                     - int (midi note number)
             A4 (float, optional):
                 tuning. frequency of A4.
@@ -441,22 +440,24 @@ class Notes(Note):
             >>> notes
             Notes [Note C4, Note E4, Note G4]
 
+            >>> notes = mn.Notes("C4", "E4", "G4")
+            >>> notes
+            Notes [Note C4, Note E4, Note G4]
+
             >>> notes = mn.Notes(60, 64, 67)
             >>> notes
             Notes [Note C4, Note E4, Note G4]
 
-            >>> notes = mn.Notes(60, 64, 67) + mn.Note("C", 5)
+            >>> notes = mn.Notes(60, 64, 67) + mn.Note("C5")
             >>> notes
             Notes [Note C4, Note E4, Note G4, Note C5]
         """
         assert notes, "Notes must be input"
         notes_ = []
         for note in notes:
-            if isinstance(note, Notes):
-                notes_ += note.notes
-            elif isinstance(note, Note):
-                notes_.append(note)
-            elif isinstance(note, int):
+            if isinstance(note, Note):
+                notes_ += note._notes
+            elif isinstance(note, (str, int)):
                 notes_.append(Note(note))
             else:
                 raise ValueError(f"Unsupported type: '{type(note)}'")
