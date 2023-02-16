@@ -289,9 +289,9 @@ class Stream(Track):
 
         Example:
             >>> melody = mn.Track([
-            >>>     (mn.Note("C4"), 1),
-            >>>     (mn.Note("D4"), 1),
-            >>>     (mn.Note("E4"), 1)
+            >>>     ("C4", 1),
+            >>>     ("D4", 1),
+            >>>     ("E4", 1)
             >>> ])
             >>> chords = mn.Track([(mn.Chord("C"), 3)])
             >>> stream = mn.Stream([melody, chords])
