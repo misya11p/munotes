@@ -184,5 +184,5 @@ Methods are the same as other classes.
 ### [1.1.0](https://pypi.org/project/munotes/1.1.0/) (2023-02-16, Latest)
 - Waveform parameters can be specified. Ex: `note.sawtooth(width=0.5)`
 - Support for inputting octave with note names. Ex: `note = mn.Note("A4")`
-- All supported chords can be seen. Ex: `mn.chord_names`
+- All supported chords can be seen in `mn.chord_names`.
 - Arbitrary chords can be added.
