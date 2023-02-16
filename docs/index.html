@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>munotes 1.0.0 documentation</title>
+  <title>munotes 1.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -50,7 +50,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">munotes 1.0.0 documentation</li>
+      <li class="breadcrumb-item active">munotes 1.1.0 documentation</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -443,7 +443,7 @@ supported input types:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="munotes.notes.Chord">
-<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Chord" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Chord" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#munotes.notes.Notes" title="munotes.notes.Notes"><code class="xref py py-class docutils literal notranslate"><span class="pre">Notes</span></code></a></p>
 <p>Chord class.
 Estimating notes from chord names and creating a Notes object.</p>
@@ -455,7 +455,9 @@ You can add your own chord names and intervals to this dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>chord_name</strong> (<em>str</em>) – chord name string</p></li>
+<li><p><strong>chord_name</strong> (<em>str</em>) – string of chord name. Chord type in the string is ignored
+if ‘type’ argument is specified.</p></li>
+<li><p><strong>type</strong> (<em>str</em><em>, </em><em>optional</em>) – chord type. Ex. ‘’, ‘m7’, ‘7’, ‘sus4’.</p></li>
 <li><p><strong>octave</strong> (<em>int</em><em>, </em><em>optional</em>) – octave of the root note to initialize notes.</p></li>
 <li><p><strong>A4</strong> (<em>float</em><em>, </em><em>optional</em>) – tuning. frequency of A4 when playing sound.</p></li>
 </ul>
@@ -481,12 +483,17 @@ You can add your own chord names and intervals to this dictionary.</p>
 <span class="go">[&#39;C&#39;, &#39;E&#39;, &#39;G&#39;]</span>
 </pre></div>
 </div>
-<p>Example of adding arbitrary chords.</p>
+<p>Adding arbitrary chords.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mn</span><span class="o">.</span><span class="n">chord_names</span><span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;Cblack&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span><span class="o">.</span><span class="n">names</span>
 <span class="go">[&#39;C&#39;, &#39;C#&#39;, &#39;D&#39;, &#39;D#&#39;, &#39;E&#39;]</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unlike Note, the argument value takes precedence over the
+input string.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Chord.transpose">
@@ -580,14 +587,16 @@ last <code class="docutils literal notranslate"><span class="pre">release</span>
 <span class="go">    -0.00726152, -0.        ])</span>
 </pre></div>
 </div>
-<p>You can also input notes as str or int directly.
-&gt;&gt;&gt; track = mn.Track([
-&gt;&gt;&gt;     (“C4”, 1),
-&gt;&gt;&gt;     (“D4”, 1),
-&gt;&gt;&gt;     (“E4”, 1),
-&gt;&gt;&gt; ])
-&gt;&gt;&gt; track
-Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]</p>
+<p>You can also input notes as str or int directly.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">track</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Track</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">track</span>
+<span class="go">Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.sequence.Track.append">
 <span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">note</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Track.append" title="Permalink to this definition"></a></dt>
@@ -599,10 +608,10 @@ Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]</p>
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">track</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Track</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">track</span>
 <span class="go">Track [(C4, 1), (D4, 1), (E4, 1)]</span>
 </pre></div>
@@ -644,9 +653,9 @@ each track by inputting as many waveforms as there are tracks.</p>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">melody</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Track</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chords</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Track</span><span class="p">([(</span><span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">),</span> <span class="mi">3</span><span class="p">)])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stream</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Stream</span><span class="p">([</span><span class="n">melody</span><span class="p">,</span> <span class="n">chords</span><span class="p">])</span>
