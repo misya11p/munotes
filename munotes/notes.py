@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .format import check_nname, nname_formatting
+from .name_strings import check_nname, nname_formatting
 import numpy as np
 from scipy import signal
 import IPython
