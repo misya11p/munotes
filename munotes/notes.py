@@ -53,11 +53,13 @@ class Note:
             C4
 
             You can also input note name and octave separately.
+
             >>> note = mn.Note("C", 4)
             >>> print(note)
             C4
 
             You can also input MIDI note number as an integer.
+
             >>> note = mn.Note(60)
             >>> print(note)
             C4
@@ -142,7 +144,7 @@ class Note:
             np.ndarray: sin wave of the note
 
         Examples:
-            >>> note = mn.Note("C", 4)
+            >>> note = mn.Note("C4")
             >>> note.sin()
             array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,
                    -0.65516123, -0.70961388])
@@ -207,7 +209,7 @@ class Note:
             np.ndarray: waveform of the note
 
         Examples:
-            >>> note = mn.Note("C", 4)
+            >>> note = mn.Note("C4")
             >>> note.render('sin')
             array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,
                    -0.65516123, -0.70961388])
@@ -275,7 +277,7 @@ class Note:
             n_semitones (int): number of semitones to transpose
 
         Examples:
-            >>> note = mn.Note("C", 4)
+            >>> note = mn.Note("C4")
             >>> note.transpose(1)
             >>> print(note)
             C#4
@@ -296,14 +298,14 @@ class Note:
             stand_A4 (bool, optional): if True, the tuning standard is A4.
 
         Examples:
-            >>> note = mn.Note("C", 4)
+            >>> note = mn.Note("C4")
             >>> print(note.freq)
             >>> note.tuning(270.)
             >>> print(note.freq)
             261.6255653005986
             270.0
 
-            >>> note = mn.Note("C", 4)
+            >>> note = mn.Note("C4")
             >>> print(note.freq)
             >>> note.tuning(450., stand_A4=True)
             >>> print(note.freq)
@@ -455,9 +457,9 @@ class Notes(Note):
         Examples:
             >>> import musicnote as mn
             >>> notes = mn.Notes(
-            >>>     mn.Note("C", 4),
-            >>>     mn.Note("E", 4),
-            >>>     mn.Note("G", 4)
+            >>>     mn.Note("C4"),
+            >>>     mn.Note("E4"),
+            >>>     mn.Note("G4")
             >>> )
             >>> notes
             Notes [Note C4, Note E4, Note G4]
@@ -525,8 +527,8 @@ class Notes(Note):
             note (Union[Note, int]): Note (or Notes or Chord) or midi note number
 
         Examples:
-            >>> notes = mn.Notes(mn.Note("C", 4))
-            >>> notes.append(mn.Note("E", 4), mn.Note("G", 4))
+            >>> notes = mn.Notes(mn.Note("C4"))
+            >>> notes.append(mn.Note("E4"), mn.Note("G4"))
             >>> notes
             Notes [Note C4, Note E4, Note G4]
         """
@@ -562,7 +564,7 @@ class Chord(Notes):
         Supported chord names are shown in ``mn.chord_names``.
         ``mn.chord_names`` is a dictionary of chord names and intervals
         between notes with the root note as 0.
-        Ex: {'': (0, 4, 7), 'm': (0, 3, 7), 'dim7': (0, 3, 6, 9), ...}
+        Ex: {'': (0, 4, 7), 'm': (0, 3, 7), 'dim7': (0, 3, 6, 9), ...}.
         You can add your own chord names and intervals to this dictionary.
 
         Args:
@@ -588,6 +590,13 @@ class Chord(Notes):
             >>> chord = mn.Chord("C")
             >>> chord.names
             ['C', 'E', 'G']
+
+            Example of adding arbitrary chords.
+
+            >>> mn.chord_names["black"] = (0, 1, 2, 3, 4)
+            >>> chord = mn.Chord("Cblack")
+            >>> chord.names
+            ['C', 'C#', 'D', 'D#', 'E']
         """
         root_name, type = chord_name_formatting(chord_name)
         root = Note(root_name, octave)

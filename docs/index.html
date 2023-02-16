@@ -101,8 +101,11 @@ Single note. It can be initialized with note name or MIDI note number.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – string of note name or midi note number</p></li>
-<li><p><strong>octave</strong> (<em>int</em><em>, </em><em>optional</em>) – octave of the note.</p></li>
+<li><p><strong>query</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – string of note name or midi note number. If string is given,
+valid string pattern is ‘[A-Ga-g][#♯+b♭-]?d*’.
+Ex: ‘C’, ‘C#’, ‘Cb’, ‘C4’</p></li>
+<li><p><strong>octave</strong> (<em>int</em><em>, </em><em>optional</em>) – octave of the note. This argument is ignored if octave is
+specified in the note name string, or if query is int.</p></li>
 <li><p><strong>A4</strong> (<em>float</em><em>, </em><em>optional</em>) – tuning. freqency of A4.</p></li>
 </ul>
 </dd>
@@ -120,7 +123,19 @@ Single note. It can be initialized with note name or MIDI note number.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">munotes</span> <span class="k">as</span> <span class="nn">mn</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+<span class="go">C4</span>
+</pre></div>
+</div>
+<p>You can also input note name and octave separately.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+<span class="go">C4</span>
+</pre></div>
+</div>
+<p>You can also input MIDI note number as an integer.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
 <span class="go">C4</span>
 </pre></div>
@@ -169,7 +184,7 @@ Single note. It can be initialized with note name or MIDI note number.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
 <span class="go">array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,</span>
 <span class="go">       -0.65516123, -0.70961388])</span>
@@ -179,19 +194,21 @@ Single note. It can be initialized with note name or MIDI note number.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Note.square">
-<span class="sig-name descname"><span class="pre">square</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.square" title="Permalink to this definition"></a></dt>
-<dd><p>Generate square wave of the note</p>
+<span class="sig-name descname"><span class="pre">square</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.square" title="Permalink to this definition"></a></dt>
+<dd><p>Generate square wave of the note with scipy.signal.square.
+kwargs of scipy.signal.square are supported.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Note.sawtooth">
-<span class="sig-name descname"><span class="pre">sawtooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.sawtooth" title="Permalink to this definition"></a></dt>
-<dd><p>Generate sawtooth wave of the note</p>
+<span class="sig-name descname"><span class="pre">sawtooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.sawtooth" title="Permalink to this definition"></a></dt>
+<dd><p>Generate sawtooth wave of the note with scipy.signal.sawtooth.
+kwargs of scipy.signal.sawtooth are supported.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Note.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.render" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.render" title="Permalink to this definition"></a></dt>
 <dd><p>Rendering waveform of the note.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -209,6 +226,9 @@ spported waveform types:</p>
 </p></li>
 <li><p><strong>sec</strong> (<em>float</em><em>, </em><em>optional</em>) – duration in seconds.</p></li>
 <li><p><strong>sr</strong> (<em>int</em><em>, </em><em>optional</em>) – sampling rate.</p></li>
+<li><p><strong>**kwargs</strong> (<em>optional</em>) – keyword arguments for waveform function. ‘duty’ for
+‘square’, ‘width’ for ‘sawtooth’ and any args for
+user-defined waveform function are supported.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -219,7 +239,7 @@ spported waveform types:</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
 <span class="go">array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,</span>
 <span class="go">       -0.65516123, -0.70961388])</span>
@@ -240,7 +260,7 @@ calling the method directly, as in <code class="docutils literal notranslate"><s
 
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Note.play">
-<span class="sig-name descname"><span class="pre">play</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.play" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">play</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.play" title="Permalink to this definition"></a></dt>
 <dd><p>Play note sound in IPython notebook.
 Return IPython.display.Audio object.</p>
 <dl class="field-list simple">
@@ -269,7 +289,7 @@ Return IPython.display.Audio object.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
 <span class="go">C#4</span>
@@ -290,7 +310,7 @@ Return IPython.display.Audio object.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">tuning</span><span class="p">(</span><span class="mf">270.</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
@@ -298,7 +318,7 @@ Return IPython.display.Audio object.</p>
 <span class="go">270.0</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">note</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">note</span><span class="o">.</span><span class="n">tuning</span><span class="p">(</span><span class="mf">450.</span><span class="p">,</span> <span class="n">stand_A4</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
@@ -344,9 +364,8 @@ Returns 0 in <code class="docutils literal notranslate"><span class="pre">sec</s
 supported input types:</p>
 <blockquote>
 <div><ul>
-<li><p>Note</p></li>
-<li><p>Notes</p></li>
-<li><p>Chord</p></li>
+<li><p>Note (mn.Note, mn.Notes, etc.)</p></li>
+<li><p>str (note name)</p></li>
 <li><p>int (midi note number)</p></li>
 </ul>
 </div></blockquote>
@@ -379,10 +398,15 @@ supported input types:</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">musicnote</span> <span class="k">as</span> <span class="nn">mn</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Notes</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span>
+<span class="go">Notes [Note C4, Note E4, Note G4]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Notes</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span>
 <span class="go">Notes [Note C4, Note E4, Note G4]</span>
 </pre></div>
@@ -392,7 +416,7 @@ supported input types:</p>
 <span class="go">Notes [Note C4, Note E4, Note G4]</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Notes</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">67</span><span class="p">)</span> <span class="o">+</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Notes</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">67</span><span class="p">)</span> <span class="o">+</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C5&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span>
 <span class="go">Notes [Note C4, Note E4, Note G4, Note C5]</span>
 </pre></div>
@@ -407,8 +431,8 @@ supported input types:</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Notes</span><span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Notes</span><span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C4&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;E4&quot;</span><span class="p">),</span> <span class="n">mn</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G4&quot;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">notes</span>
 <span class="go">Notes [Note C4, Note E4, Note G4]</span>
 </pre></div>
@@ -423,6 +447,11 @@ supported input types:</p>
 <dd><p>Bases: <a class="reference internal" href="#munotes.notes.Notes" title="munotes.notes.Notes"><code class="xref py py-class docutils literal notranslate"><span class="pre">Notes</span></code></a></p>
 <p>Chord class.
 Estimating notes from chord names and creating a Notes object.</p>
+<p>Supported chord names are shown in <code class="docutils literal notranslate"><span class="pre">mn.chord_names</span></code>.
+<code class="docutils literal notranslate"><span class="pre">mn.chord_names</span></code> is a dictionary of chord names and intervals
+between notes with the root note as 0.
+Ex: {‘’: (0, 4, 7), ‘m’: (0, 3, 7), ‘dim7’: (0, 3, 6, 9), …}.
+You can add your own chord names and intervals to this dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -450,6 +479,13 @@ Estimating notes from chord names and creating a Notes object.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span><span class="o">.</span><span class="n">names</span>
 <span class="go">[&#39;C&#39;, &#39;E&#39;, &#39;G&#39;]</span>
+</pre></div>
+</div>
+<p>Example of adding arbitrary chords.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mn</span><span class="o">.</span><span class="n">chord_names</span><span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;Cblack&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span><span class="o">.</span><span class="n">names</span>
+<span class="go">[&#39;C&#39;, &#39;C#&#39;, &#39;D&#39;, &#39;D#&#39;, &#39;E&#39;]</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -544,6 +580,14 @@ last <code class="docutils literal notranslate"><span class="pre">release</span>
 <span class="go">    -0.00726152, -0.        ])</span>
 </pre></div>
 </div>
+<p>You can also input notes as str or int directly.
+&gt;&gt;&gt; track = mn.Track([
+&gt;&gt;&gt;     (“C4”, 1),
+&gt;&gt;&gt;     (“D4”, 1),
+&gt;&gt;&gt;     (“E4”, 1),
+&gt;&gt;&gt; ])
+&gt;&gt;&gt; track
+Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.sequence.Track.append">
 <span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">note</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Track.append" title="Permalink to this definition"></a></dt>
