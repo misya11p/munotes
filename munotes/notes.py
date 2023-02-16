@@ -599,7 +599,7 @@ class Chord(Notes):
             >>> chord.names
             ['C', 'E', 'G']
 
-            Example of adding arbitrary chords.
+            Adding arbitrary chords.
 
             >>> mn.chord_names["black"] = (0, 1, 2, 3, 4)
             >>> chord = mn.Chord("C", "black")

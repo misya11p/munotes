@@ -77,6 +77,7 @@ class Track:
                 -0.00726152, -0.        ])
 
             You can also input notes as str or int directly.
+
             >>> track = mn.Track([
             >>>     ("C4", 1),
             >>>     ("D4", 1),
@@ -228,7 +229,7 @@ class Track:
             note.transpose(semitone)
 
 
-    def append(self, *note: Tuple[Note, float]) -> None:
+    def append(self, *note: Tuple[Union[Note, str, int], float]) -> None:
         """
         Append notes.
 
@@ -237,10 +238,10 @@ class Track:
 
         Example:
             >>> track = mn.Track([
-            >>>     (mn.Note("C4"), 1),
-            >>>     (mn.Note("D4"), 1),
+            >>>     ("C4", 1),
+            >>>     ("D4", 1),
             >>> ])
-            >>> track.append((mn.Note("E4"), 1))
+            >>> track.append(("E4", 1))
             >>> track
             Track [(C4, 1), (D4, 1), (E4, 1)]
         """
