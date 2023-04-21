@@ -10,6 +10,6 @@ __all__ = [
     "Track",
     "Stream",
     "chord_names"
-    ]
+]
 
 __version__ = "1.1.0"
