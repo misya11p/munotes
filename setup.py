@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fp:
 requires = [
     "scipy",
     "ipython"
-    ]
+]
 
 
 setup(
