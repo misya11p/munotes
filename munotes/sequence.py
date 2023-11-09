@@ -49,6 +49,7 @@ class Track:
             - sin: Generate sin wave of the notes
             - square: Generate square wave of the notes
             - sawtooth: Generate sawtooth wave of the notes
+            - triangle: Generate triangle wave of the notes
             - render: Rendering waveform of the note
             - play: Play note sound
             - transpose: Transpose notes
@@ -161,6 +162,10 @@ class Track:
     ) -> np.ndarray:
         """Generate sawtooth wave of the note"""
         return self._gen_y("sawtooth", sr, release, width=width)
+
+    def triangle(self, sr: int = 22050, release: int = 200) -> np.ndarray:
+        """Generate triangle wave of the note"""
+        return self._gen_y("triangle", sr, release)
 
     def render(
         self,
@@ -282,6 +287,7 @@ class Stream(Track):
             - sin: Generate sin wave of the notes
             - square: Generate square wave of the notes
             - sawtooth: Generate sawtooth wave of the notes
+            - triangle: Generate triangle wave of the notes
             - render: Rendering waveform of the note
             - play: Play note sound
             - transpose: Transpose notes

@@ -10,7 +10,7 @@ from typing import Optional, Union, Callable
 NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth"]
+SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
 PLAY_SR = 22050 # sampling rate for play()
 
 
@@ -179,6 +179,16 @@ class Note:
         t = self._return_time_axis(sec, sr)
         return np.sum(sp.signal.sawtooth(t, width), axis=0)
 
+    def triangle(
+        self,
+        sec: float = 1.,
+        sr: int = 22050,
+    ) -> np.ndarray:
+        """
+        Generate triangle wave of the note with self.sawtooth.
+        """
+        return self.sawtooth(sec, sr, width=0.5)
+
     def render(
         self,
         waveform: Union[str, Callable] = 'sin',
@@ -196,6 +206,7 @@ class Note:
                     - 'sin'
                     - 'square'
                     - 'sawtooth'
+                    - 'triangle'
                     - user-defined waveform function
             sec (float, optional):
                 duration in seconds.
@@ -367,12 +378,6 @@ class Rest(Note):
             >>> rest = mn.Rest()
             >>> rest.sin()
             array([0., 0., 0., ..., 0., 0., 0.])
-
-            >>> rest.square()
-            array([0., 0., 0., ..., 0., 0., 0.])
-
-            >>> rest.sawtooth()
-            array([0., 0., 0., ..., 0., 0., 0.])
         """
         self.name = 'Rest'
         self._octave = None
@@ -405,6 +410,9 @@ class Rest(Note):
         return np.zeros(int(sr*sec))
 
     def sawtooth(self, sec=1., sr=22050) -> np.ndarray:
+        return np.zeros(int(sr*sec))
+
+    def triangle(self, sec=1., sr=22050) -> np.ndarray:
         return np.zeros(int(sr*sec))
 
     def render(self, waveform=None, sec=1., sr=22050, **kwargs) -> np.ndarray:
@@ -452,6 +460,7 @@ class Notes(Note):
             - sin: Generate sin wave of the notes
             - square: Generate square wave of the notes
             - sawtooth: Generate sawtooth wave of the notes
+            - triangle: Generate triangle wave of the notes
             - render: Rendering waveform of the note
             - play: Play note sound
             - transpose: Transpose notes
