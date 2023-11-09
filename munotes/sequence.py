@@ -22,8 +22,9 @@ class Track:
         Input notes and durations to manage multiple notes as a track.
 
         Args:
-            sequence (List[Tuple[Note, float]]):
-                sequence of notes and durations.
+            sequence (List[Tuple[Union[Note, str, int], float]]):
+                sequence of notes and durations. notes type can be
+                Note(, Notes, Rest), str or int.
             unit (str, optional):
                 unit of duration.
                 supported units:
@@ -36,7 +37,8 @@ class Track:
                 tuning. frequency of A4.
 
         \Attributes:
-            - sequence (List[Tuple[Note, float]]): sequence of notes and durations.
+            - sequence (List[Tuple[Note, float]]): sequence of notes and
+              durations.
             - unit (str): unit of duration.
             - bpm (Optional[float]): BPM (beats per minute).
             - A4 (float): tuning. frequency of A4.
@@ -53,13 +55,14 @@ class Track:
             - tuning: Sound tuning
 
         Note:
-            There are some changes regarding methods that handle waveforms
-            (``sin()``, ``render()``, etc.).
+            There are some changes regarding methods that handle
+            waveforms (``sin()``, ``render()``, etc.).
 
             1. Remove ``sec`` argument.
-            2. Add ``release: int = 200`` argument. It is release time in samples.
-               Wavefrom will be multiplied by a linear window from 1 to 0 in the
-               last ``release`` samples to connect sounds smoothly.
+            2. Add ``release: int = 200`` argument. It is release time
+               in samples. Wavefrom will be multiplied by a linear
+               window from 1 to 0 in the last ``release`` samples to
+               connect sounds smoothly.
 
         Examples:
             >>> import munotes as mn
@@ -180,7 +183,8 @@ class Track:
         Generate waveform of the note from various query types.
 
         Args:
-            waveform (Union[str, Callable]): waveform type. str or callable object.
+            waveform (Union[str, Callable]):
+                waveform type. str or callable object.
             sr (int, optional): sampling rate.
             release (int, optional): release time in samples.
             **kwargs: keyword arguments for waveform function.
@@ -284,8 +288,9 @@ class Stream(Track):
             - tuning: Sound tuning
 
         Note:
-            In ``render()`` and ``play()``, waveforms can be specified for
-            each track by inputting as many waveforms as there are tracks.
+            In ``render()`` and ``play()``, waveforms can be specified
+            for each track by inputting as many waveforms as there are
+            tracks.
 
         Example:
             >>> melody = mn.Track([
@@ -305,7 +310,7 @@ class Stream(Track):
             >>> stream.render([
             >>>     'square',
             >>>     lambda t: np.sin(t) + np.sin(2*t)
-            >>>     ])
+            >>> ])
             array([ 1.        ,  1.83660002,  2.64969075, ..., -0.05431521,
                    -0.02542138,  0.        ])
         """
@@ -346,9 +351,9 @@ class Stream(Track):
                 waveform or list of waveforms.
 
         Note:
-            Basic usage is the same as in the other classes. But in kwargs,
-            only 'duty' for 'square' and 'width' for 'sawtooth' are supported
-            if input multiple waveforms.
+            Basic usage is the same as in the other classes. But in
+            kwargs, only 'duty' for 'square' and 'width' for 'sawtooth'
+            are supported if input multiple waveforms.
         """
         return super().render(waveform, sr, release, **kwargs)
 

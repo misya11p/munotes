@@ -24,16 +24,18 @@ class Note:
     ):
         """
         Note class.
-        Single note. It can be initialized with note name or MIDI note number.
+        Single note. It can be initialized with note name or MIDI note
+        number.
 
         Args:
             query (Union[str, int]):
-                string of note name or midi note number. If string is given,
-                valid string pattern is '[A-Ga-g][#♯+b♭-]?\d*'.
+                string of note name or midi note number. If string is
+                given, valid string pattern is '[A-Ga-g][#♯+b♭-]?\d*'.
                 Ex: 'C', 'C#', 'Cb', 'C4'
             octave (int, optional):
-                octave of the note. This argument is ignored if octave is
-                specified in the note name string, or if query is int.
+                octave of the note. This argument is ignored if octave
+                is specified in the note name string, or if query is
+                int.
             A4 (float, optional):
                 tuning. freqency of A4.
 
@@ -218,9 +220,10 @@ class Note:
                    1.66076322])
 
         Note:
-            Generating a waveform by inputting a string into this method,
-            as in ``note.render('sin')``, is the same as generating a waveform by
-            calling the method directly, as in ``note.sin()``.
+            Generating a waveform by inputting a string into this
+            method, as in ``note.render('sin')``, is the same as
+            generating a waveform by calling the method directly, as in
+            ``note.sin()``.
         """
         if isinstance(waveform, str):
             assert waveform in SUPPOERTED_WAVEFORMS, \
@@ -294,7 +297,8 @@ class Note:
 
         Args:
             freq (float, optional): freqency of note.
-            stand_A4 (bool, optional): if True, the tuning standard is A4.
+            stand_A4 (bool, optional):
+                if True, the tuning standard is A4.
 
         Examples:
             >>> note = mn.Note("C4")
@@ -513,7 +517,8 @@ class Notes(Note):
             A4_freq (float): frequency of A4.
 
         Note:
-            In this class, does not supported tuning based on other notes.
+            In this class, does not supported tuning based on other
+            notes.
         """
         self.A4 = A4_freq
 
@@ -523,7 +528,8 @@ class Notes(Note):
         Append notes.
 
         Args:
-            note (Union[Note, int]): Note (or Notes or Chord) or midi note number
+            note (Union[Note, int]):
+                Note (or Notes or Chord) or midi note number
 
         Examples:
             >>> notes = mn.Notes(mn.Note("C4"))
@@ -570,12 +576,13 @@ class Chord(Notes):
         ``mn.chord_names`` is a dictionary of chord names and intervals
         between notes with the root note as 0.
         Ex: {'': (0, 4, 7), 'm': (0, 3, 7), 'dim7': (0, 3, 6, 9), ...}.
-        You can add your own chord names and intervals to this dictionary.
+        You can add your own chord names and intervals to this
+        dictionary.
 
         Args:
             chord_name (str):
-                string of chord name. Chord type in the string is ignored
-                if 'type' argument is specified.
+                string of chord name. Chord type in the string is
+                ignored if 'type' argument is specified.
             type (str, optional):
                 chord type. Ex. '', 'm7', '7', 'sus4'.
             octave (int, optional):
@@ -586,7 +593,8 @@ class Chord(Notes):
         \Attributes:
             - name (str): chord name
             - root (Note): root note.
-            - interval (tuple): interval of the chord. Ex: (0,4,7) for C major
+            - interval (tuple):
+                interval of the chord. Ex: (0,4,7) for C major
             - type (str): chord type. Ex: "m" for C minor
             - A4 (float): tuning. frequency of A4 when playing sound.
             - names (tuple): note names of the chord.
