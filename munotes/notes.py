@@ -4,7 +4,7 @@ from .chord_names import chord_names
 import numpy as np
 import scipy as sp
 import IPython
-from typing import Optional, Union, Callable
+from typing import Optional, Union, Callable, List
 
 
 NUM_C0 = 12 # MIDI note number of C0
@@ -21,10 +21,10 @@ class Note:
         self,
         query: Union[str, int],
         octave: int = 4,
-        A4: float = 440.,
         duration: Union[float, int] = 1.,
         unit: str = "s",
-        bpm: Union[float, int] = 120
+        bpm: Union[float, int] = 120,
+        A4: float = 440.
     ):
         """
         Note class.
@@ -40,8 +40,6 @@ class Note:
                 octave of the note. This argument is ignored if octave
                 is specified in the note name string, or if query is
                 int. Defaults to 4.
-            A4 (float, optional):
-                tuning. freqency of A4. Defaults to 440..
             duration (float, optional):
                 duration. This value becomes the default value when
                 rendering the waveform. Defaults to 1..
@@ -56,6 +54,8 @@ class Note:
                 BPM (beats per minute). If unit is not 'ql', this
                 argument is ignored. This value becomes the default
                 value when rendering the waveform. Defaults to 120.
+            A4 (float, optional):
+                tuning. freqency of A4. Defaults to 440..
 
         \Attributes:
             - name (str): note name
@@ -514,25 +514,34 @@ class Rest(Note):
 
 
 class Notes(Note):
-    def __init__(self, *notes: Union[Note, int, str], A4: float = 440.):
+    def __init__(
+        self,
+        notes: List[Union[Note, int, str]],
+        duration: Union[float, int] = 1.,
+        unit: str = "s",
+        bpm: Union[float, int] = 120,
+        A4: float = 440.
+    ):
         """
-        Notes class. Manage multiple notes at once.
+        Notes class. Manage multiple notes at once. Some arguments set
+        in each Note are ignored and the values set in this class are
+        used: duration, unit, bpm, A4.
 
         Args:
-            *notes (Union[Note, int]):
-                notes.
-                supported input types:
+            notes (List[Union[Note, int, str]]):
+                List of notes. Supported note types:
                     - Note (mn.Note, mn.Notes, etc.)
                     - str (note name)
                     - int (midi note number)
-            A4 (float, optional):
-                tuning. frequency of A4.
 
         \Attributes:
             - notes (List[Note]): list of notes
             - names (List[str]): list of note names
             - fullnames (List[str]): list of note fullnames
             - nums (List[int]): list of MIDI note numbers
+            - duration (float): default duration when rendering
+            - unit (str): default unit of duration when rendering
+            - bpm (float): default BPM when rendering
             - A4 (float): tuning. frequency of A4.
 
         Inherited Methods:
@@ -569,7 +578,8 @@ class Notes(Note):
             >>> notes
             Notes [Note C4, Note E4, Note G4, Note C5]
         """
-        assert notes, "Notes must be input"
+        if isinstance(notes, Note):
+            raise TypeError("The Notes class does not support Note classes as input. Enter a list of notes at once as an argument.")
         notes_ = []
         for note in notes:
             if isinstance(note, Note):
@@ -583,6 +593,9 @@ class Notes(Note):
         self.names = [note.name for note in self]
         self.fullnames = [str(note) for note in self]
         self._nums = [note.num for note in self]
+        self.duration = duration
+        self.unit = unit
+        self.bpm = bpm
         self.A4 = A4
 
     @property
@@ -627,7 +640,13 @@ class Notes(Note):
             >>> notes
             Notes [Note C4, Note E4, Note G4]
         """
-        self = Notes(self, *note)
+        self = Notes(
+            [self, *note],
+            duration=self.duration,
+            unit=self.unit,
+            bpm=self.bpm,
+            A4=self.A4
+        )
 
 
     def __len__(self):
@@ -656,6 +675,9 @@ class Chord(Notes):
         chord_name: str,
         type: Optional[str] = None,
         octave: int = 4,
+        duration: Union[float, int] = 1.,
+        unit: str = "s",
+        bpm: Union[float, int] = 120,
         A4: float = 440.
     ):
         """
@@ -677,8 +699,6 @@ class Chord(Notes):
                 chord type. Ex. '', 'm7', '7', 'sus4'.
             octave (int, optional):
                 octave of the root note to initialize notes.
-            A4 (float, optional):
-                tuning. frequency of A4 when playing sound.
 
         \Attributes:
             - name (str): chord name
@@ -686,10 +706,13 @@ class Chord(Notes):
             - interval (tuple):
                 interval of the chord. Ex: (0,4,7) for C major
             - type (str): chord type. Ex: "m" for C minor
-            - A4 (float): tuning. frequency of A4 when playing sound.
             - names (tuple): note names of the chord.
             - notes (List[Note]): notes of the chord.
             - idxs (int): index of the root note.
+            - duration (float): default duration when rendering
+            - unit (str): default unit of duration when rendering
+            - bpm (float): default BPM when rendering
+            - A4 (float): tuning. frequency of A4 when playing sound.
 
         Examples:
             >>> import musicnotes as mn
@@ -718,7 +741,13 @@ class Chord(Notes):
         self._interval = interval
         self.root = root
         self._idxs = [(self.root.idx + i) % 12 for i in self.interval]
-        super().__init__(*[self.root.num + i for i in self.interval], A4=A4)
+        super().__init__(
+            [self.root.num + i for i in self.interval],
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            A4=A4
+        )
 
     @property
     def type(self):
