@@ -372,7 +372,6 @@ class Note:
         y = self.render(waveform, duration, unit, bpm, sr, **kwargs)
         return IPython.display.Audio(y, rate=sr)
 
-
     def transpose(self, n_semitones: int) -> None:
         """
         Transpose note.
@@ -458,7 +457,6 @@ class Note:
         return self.num >= other
 
 
-
 class Rest(Note):
     def __init__(self):
         """
@@ -508,7 +506,6 @@ class Rest(Note):
 
     def __repr__(self):
         return 'Rest'
-
 
 
 class Notes(Note):
@@ -604,7 +601,6 @@ class Notes(Note):
     def nums(self, value):
         raise Exception("nums is read only")
 
-
     def transpose(self, n_semitones: int) -> None:
         super().transpose(n_semitones)
         self.names = [note.name for note in self.notes]
@@ -622,7 +618,6 @@ class Notes(Note):
             notes.
         """
         self.A4 = A4_freq
-
 
     def append(self, *note: Union[Note, int]) -> None:
         """
@@ -646,7 +641,6 @@ class Notes(Note):
             A4=self.A4
         )
 
-
     def __len__(self):
         return len(self.notes)
 
@@ -664,7 +658,6 @@ class Notes(Note):
 
     def __str__(self):
         return ' '.join(self.fullnames)
-
 
 
 class Chord(Notes):
@@ -781,7 +774,6 @@ class Chord(Notes):
     def idxs(self, value):
         raise Exception("idxs is read only")
 
-
     def transpose(self, n_semitones: int):
         """
         Transpose chord
@@ -794,7 +786,6 @@ class Chord(Notes):
         """
         super().transpose(n_semitones)
         self.root = self.notes[0]
-
 
     def append(self, value) -> None:
         raise Exception("Chord class does not support append()")
