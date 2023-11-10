@@ -64,6 +64,9 @@ class Note:
             - num (int): MIDI note number
             - freq (float): frequency of the note
             - A4 (float): tuning. freqency of A4
+            - duration (float): default duration when rendering
+            - unit (str): default unit of duration when rendering
+            - bpm (float): default BPM when rendering
 
         Examples:
             >>> import munotes as mn
