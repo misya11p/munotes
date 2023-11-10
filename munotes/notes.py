@@ -11,6 +11,7 @@ NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
+SUPPOERTED_UNITS = ["s", "ms", "ql"]
 PLAY_SR = 22050 # sampling rate for play()
 
 
@@ -20,7 +21,10 @@ class Note:
         self,
         query: Union[str, int],
         octave: int = 4,
-        A4: float = 440.
+        A4: float = 440.,
+        duration: Union[float, int] = 1.,
+        unit: str = "s",
+        bpm: Union[float, int] = 120
     ):
         """
         Note class.
@@ -35,9 +39,23 @@ class Note:
             octave (int, optional):
                 octave of the note. This argument is ignored if octave
                 is specified in the note name string, or if query is
-                int.
+                int. Defaults to 4.
             A4 (float, optional):
-                tuning. freqency of A4.
+                tuning. freqency of A4. Defaults to 440..
+            duration (float, optional):
+                duration. This value becomes the default value when
+                rendering the waveform. Defaults to 1..
+            unit (str, optional):
+                unit of duration. This value becomes the default value
+                when rendering the waveform. Supported units:
+                    - 's': seconds
+                    - 'ms': milliseconds
+                    - 'ql': quarter length (bpm is required)
+                Defaults to 's'.
+            bpm (float, optional):
+                BPM (beats per minute). If unit is not 'ql', this
+                argument is ignored. This value becomes the default
+                value when rendering the waveform. Defaults to 120.
 
         \Attributes:
             - name (str): note name
@@ -81,6 +99,9 @@ class Note:
         self._A4 = A4
         self._freq = self._A4 * 2**((self.num - NUM_A4)/12)
         self._notes = [self]
+        self.duration = duration
+        self.unit = unit
+        self.bpm = bpm
 
     @property
     def num(self) -> int:
@@ -132,67 +153,27 @@ class Note:
         idx = (idx + ('#' in self.name) - ('b' in self.name)) % 12
         return idx
 
-
-    def sin(self, sec: float = 1., sr: int = 22050) -> np.ndarray:
+    def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
         """
-        Generate sin wave of the note
+        Generate time axis from duration and sampling rate
 
         Args:
-            sec (float, optional): duration in seconds.
-            sr (int, optional): sampling rate.
+            sec (float): duration in seconds
+            sr (int): sampling rate
 
         Returns:
-            np.ndarray: sin wave of the note
-
-        Examples:
-            >>> note = mn.Note("C4")
-            >>> note.sin()
-            array([ 0.        ,  0.07448499,  0.14855616, ..., -0.59706869,
-                   -0.65516123, -0.70961388])
+            np.ndarray: Time axis
         """
-        t = self._return_time_axis(sec, sr)
-        return np.sum(np.sin(t), axis=0)
-
-    def square(
-        self,
-        sec: float = 1.,
-        sr: int = 22050,
-        duty: float = 0.5
-    ) -> np.ndarray:
-        """
-        Generate square wave of the note with scipy.signal.square.
-        kwargs of scipy.signal.square are supported.
-        """
-        t = self._return_time_axis(sec, sr)
-        return np.sum(sp.signal.square(t, duty), axis=0)
-
-    def sawtooth(
-        self,
-        sec: float = 1.,
-        sr: int = 22050,
-        width: float = 1.
-    ) -> np.ndarray:
-        """
-        Generate sawtooth wave of the note with scipy.signal.sawtooth.
-        kwargs of scipy.signal.sawtooth are supported.
-        """
-        t = self._return_time_axis(sec, sr)
-        return np.sum(sp.signal.sawtooth(t, width), axis=0)
-
-    def triangle(
-        self,
-        sec: float = 1.,
-        sr: int = 22050,
-    ) -> np.ndarray:
-        """
-        Generate triangle wave of the note with self.sawtooth.
-        """
-        return self.sawtooth(sec, sr, width=0.5)
+        freqs = np.array([note.freq for note in self._notes])
+        t = np.linspace(0, 2*np.pi * sec * freqs, int(sr*sec), axis=1)
+        return t
 
     def render(
         self,
         waveform: Union[str, Callable] = 'sin',
-        sec: float = 1.,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm = None,
         sr: int = 22050,
         **kwargs
     ) -> np.ndarray:
@@ -201,17 +182,22 @@ class Note:
 
         Args:
             waveform (Union[str, Callable], Optional):
-                waveform.
-                spported waveform types:
+                waveform type. spported waveform types:
                     - 'sin'
                     - 'square'
                     - 'sawtooth'
                     - 'triangle'
                     - user-defined waveform function
-            sec (float, optional):
-                duration in seconds.
-            sr (int, optional):
-                sampling rate.
+            duration (float, optional):
+                duration of the note. if None, Note.duration is used.
+            unit (str, optional):
+                unit of duration. supported units:
+                    - 's': seconds
+                    - 'ms': milliseconds
+                    - 'ql': quarter length (bpm is required)
+            bpm (float, optional):
+                BPM (beats per minute). Required when unit is 'ql'.
+            sr (int, optional): sampling rate.
             **kwargs (optional):
                 keyword arguments for waveform function. 'duty' for
                 'square', 'width' for 'sawtooth' and any args for
@@ -236,50 +222,154 @@ class Note:
             generating a waveform by calling the method directly, as in
             ``note.sin()``.
         """
-        if isinstance(waveform, str):
-            assert waveform in SUPPOERTED_WAVEFORMS, \
-                f"waveform string must be in {SUPPOERTED_WAVEFORMS}"
-            return getattr(self, waveform)(sec, sr, **kwargs)
+        duration = duration if duration is not None else self.duration
+        unit = unit or self.unit
+        bpm = bpm or self.bpm
+        if unit == "s":
+            sec = duration
+        elif unit == "ms":
+            sec = duration / 1000
+        elif unit == "ql":
+            sec = duration * 60 / bpm
         else:
-            t = self._return_time_axis(sec, sr)
-            return np.sum(waveform(t, **kwargs), axis=0)
+            raise ValueError(f"unit must be in {SUPPOERTED_UNITS}, but got '{unit}'")
 
-    def _return_time_axis(self, sec: float, sr: int) -> np.ndarray:
+        t = self._return_time_axis(sec, sr)
+        if isinstance(waveform, str):
+            if waveform == "sin":
+                y = np.sum(np.sin(t), axis=0)
+            elif waveform == "square":
+                duty = kwargs.get("duty", 0.5)
+                y = np.sum(sp.signal.square(t, duty=duty), axis=0)
+            elif waveform == "sawtooth":
+                width = kwargs.get("width", 1.)
+                y = np.sum(sp.signal.sawtooth(t, width=width), axis=0)
+            elif waveform == "triangle":
+                y = np.sum(sp.signal.sawtooth(t, width=0.5), axis=0)
+            else:
+                raise ValueError(f"waveform string must be in {SUPPOERTED_WAVEFORMS}, but got '{waveform}'")
+        else:
+            y = np.sum([waveform(ti, **kwargs) for ti in t], axis=0)
+        return y
+
+    def sin(
+        self,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
+        sr: int = 22050
+    ) -> np.ndarray:
         """
-        Generate time axis from duration and sampling rate
+        Generate sin wave of the note. It is the same as 
+        ``Note.render('sin')``.
 
         Args:
-            sec (float): duration in seconds
-            sr (int): sampling rate
+            duration (float, optional): duration
+            unit (str, optional): unit of duration
+            bpm (float, optional): BPM (beats per minute)
+            sr (int, optional): sampling rate
 
         Returns:
-            np.ndarray: Time axis
+            np.ndarray: sin wave of the note
         """
-        freqs = np.array([note.freq for note in self._notes])
-        t = np.linspace(0, 2*np.pi * sec * freqs, int(sr*sec), axis=1)
-        return t
+        return self.render('sin', duration, unit, bpm, sr)
+
+    def square(
+        self,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
+        duty: float = 0.5,
+        sr: int = 22050
+    ) -> np.ndarray:
+        """
+        Generate square wave of the note. It is the same as
+        ``Note.render('square')``.
+
+        Args:
+            duration (float, optional): duration
+            unit (str, optional): unit of duration
+            bpm (float, optional): BPM (beats per minute)
+            duty (float, optional): duty cycle
+            sr (int, optional): sampling rate
+
+        Returns:
+            np.ndarray: square wave of the note
+        """
+        return self.render('square', duration, unit, bpm, sr, duty=duty)
+
+    def sawtooth(
+        self,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
+        width: float = 1.,
+        sr: int = 22050
+    ) -> np.ndarray:
+        """
+        Generate sawtooth wave of the note. It is the same as
+        ``Note.render('sawtooth')``.
+
+        Args:
+            duration (float, optional): duration
+            unit (str, optional): unit of duration
+            bpm (float, optional): BPM (beats per minute)
+            width (float, optional): width of sawtooth
+            sr (int, optional): sampling rate
+
+        Returns:
+            np.ndarray: sawtooth wave of the note
+        """
+        return self.render('sawtooth', duration, unit, bpm, sr, width=width)
+
+    def triangle(
+        self,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
+        sr: int = 22050
+    ) -> np.ndarray:
+        """
+        Generate triangle wave of the note. It is the same as
+        ``Note.render('triangle')``, ``note.sawtooth(width=0.5)``.
+
+        Args:
+            duration (float, optional): duration
+            unit (str, optional): unit of duration
+            bpm (float, optional): BPM (beats per minute)
+            sr (int, optional): sampling rate
+
+        Returns:
+            np.ndarray: triangle wave of the note
+        """
+        return self.render('triangle', duration, unit, bpm, sr)
 
     def play(
         self,
         waveform: Union[str, Callable] = 'sin',
-        sec: float = 1.,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
+        sr: int = 22050,
         **kwargs
     ) -> IPython.display.Audio:
         """
-        Play note sound in IPython notebook.
-        Return IPython.display.Audio object.
+        Play note sound in IPython notebook. Return
+        IPython.display.Audio object. This wave is generated by
+        ``Note.render()``.
 
         Args:
-            waveform (Union[str, Callables], optional):
-                waveform type or waveform function.
-            sec (float, optional):
-                duration in seconds.
+            waveform (Union[str, Callables], optional): waveform type.
+            duration (float, optional): duration.
+            unit (str, optional): unit of duration.
+            bpm (float, optional):BPM (beats per minute).
+            sr (int, optional): sampling rate.
 
         Returns:
             IPython.display.Audio: audio object
         """
-        y = self.render(waveform, sec, PLAY_SR, **kwargs)
-        return IPython.display.Audio(y, rate=PLAY_SR)
+        y = self.render(waveform, duration, unit, bpm, sr, **kwargs)
+        return IPython.display.Audio(y, rate=sr)
 
 
     def transpose(self, n_semitones: int) -> None:
@@ -371,8 +461,8 @@ class Note:
 class Rest(Note):
     def __init__(self):
         """
-        Rest class for Track and Stream class.
-        Returns 0 in ``sec * sr`` in all cases.
+        Rest class for Track and Stream class. Return zeros array when
+        rendering.
 
         Examples:
             >>> rest = mn.Rest()
@@ -403,20 +493,8 @@ class Rest(Note):
     def freq(self, value):
         pass
 
-    def sin(self, sec=1., sr=22050) -> np.ndarray:
-        return np.zeros(int(sr*sec))
-
-    def square(self, sec=1., sr=22050) -> np.ndarray:
-        return np.zeros(int(sr*sec))
-
-    def sawtooth(self, sec=1., sr=22050) -> np.ndarray:
-        return np.zeros(int(sr*sec))
-
-    def triangle(self, sec=1., sr=22050) -> np.ndarray:
-        return np.zeros(int(sr*sec))
-
-    def render(self, waveform=None, sec=1., sr=22050, **kwargs) -> np.ndarray:
-        return np.zeros(int(sr*sec))
+    def render(self, *args, **kwargs):
+        return np.zeros_like(super().render(*args, **kwargs))
 
     def transpose(self, *args, **kwargs):
         pass
