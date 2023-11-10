@@ -12,8 +12,6 @@ NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
 SUPPOERTED_UNITS = ["s", "ms", "ql"]
-PLAY_SR = 22050 # sampling rate for play()
-
 
 
 class Note:
