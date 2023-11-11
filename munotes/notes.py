@@ -19,6 +19,7 @@ class Note:
         self,
         query: Union[str, int],
         octave: int = 4,
+        waveform: Union[str, Callable] = 'sin',
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
@@ -38,6 +39,15 @@ class Note:
                 octave of the note. This argument is ignored if octave
                 is specified in the note name string, or if query is
                 int. Defaults to 4.
+            waveform (Union[str, Callable], optional):
+                waveform type. This value becomes the default value
+                when render() and play(). spported waveform types:
+                    - 'sin'
+                    - 'square'
+                    - 'sawtooth'
+                    - 'triangle'
+                    - user-defined waveform function
+                Defaults to 'sin'.
             duration (float, optional):
                 duration. This value becomes the default value when
                 rendering the waveform. Defaults to 1..
@@ -61,10 +71,11 @@ class Note:
             - idx (int): index of the note name when C as 0
             - num (int): MIDI note number
             - freq (float): frequency of the note
-            - A4 (float): tuning. freqency of A4
+            - waveform (Union[str, Callable]): default waveform type
             - duration (float): default duration when rendering
             - unit (str): default unit of duration when rendering
             - bpm (float): default BPM when rendering
+            - A4 (float): tuning. freqency of A4
 
         Examples:
             >>> import munotes as mn
@@ -97,12 +108,13 @@ class Note:
         else:
             raise ValueError("Input must be a string or an integer")
 
-        self._A4 = A4
-        self._freq = self._A4 * 2**((self.num - NUM_A4)/12)
-        self._notes = [self]
+        self.waveform = waveform
         self.duration = duration
         self.unit = unit
         self.bpm = bpm
+        self._A4 = A4
+        self._freq = self._A4 * 2**((self.num - NUM_A4)/12)
+        self._notes = [self]
 
     @property
     def num(self) -> int:
@@ -171,7 +183,7 @@ class Note:
 
     def render(
         self,
-        waveform: Union[str, Callable] = 'sin',
+        waveform: Optional[Union[str, Callable]] = None,
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm = None,
@@ -182,7 +194,7 @@ class Note:
         Rendering waveform of the note.
 
         Args:
-            waveform (Union[str, Callable], Optional):
+            waveform (Union[str, Callable], optional):
                 waveform type. spported waveform types:
                     - 'sin'
                     - 'square'
@@ -223,6 +235,7 @@ class Note:
             generating a waveform by calling the method directly, as in
             ``note.sin()``.
         """
+        waveform = waveform or self.waveform
         duration = duration if duration is not None else self.duration
         unit = unit or self.unit
         bpm = bpm or self.bpm
@@ -347,7 +360,7 @@ class Note:
 
     def play(
         self,
-        waveform: Union[str, Callable] = 'sin',
+        waveform: Optional[Union[str, Callable]] = None,
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
