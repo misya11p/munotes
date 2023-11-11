@@ -275,7 +275,6 @@ class Note:
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
-        sr: Optional[int] = None
     ) -> np.ndarray:
         """
         Generate sin wave of the note. It is the same as 
@@ -285,12 +284,11 @@ class Note:
             duration (float, optional): duration
             unit (str, optional): unit of duration
             bpm (float, optional): BPM (beats per minute)
-            sr (int, optional): sampling rate
 
         Returns:
             np.ndarray: sin wave of the note
         """
-        return self.render('sin', duration, unit, bpm, sr)
+        return self.render('sin', duration=duration, unit=unit, bpm=bpm)
 
     def square(
         self,
@@ -366,12 +364,7 @@ class Note:
         Returns:
             np.ndarray: triangle wave of the note
         """
-        return self.render(
-            'triangle',
-            duration=duration,
-            unit=unit,
-            bpm=bpm,
-        )
+        return self.render('triangle', duration=duration, unit=unit, bpm=bpm)
 
     def play(
         self,
