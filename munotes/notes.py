@@ -76,10 +76,10 @@ class Note:
             - num (int): MIDI note number
             - freq (float): frequency of the note
             - waveform (Union[str, Callable]): default waveform type
-            - duration (float): default duration when rendering
-            - unit (str): default unit of duration when rendering
-            - bpm (float): default BPM when rendering
-            - sr (int): default sampling rate when rendering
+            - duration (float): default duration
+            - unit (str): default unit of duration
+            - bpm (float): default BPM
+            - sr (int): default sampling rate
             - A4 (float): tuning. freqency of A4
 
         Examples:
@@ -537,15 +537,17 @@ class Notes(Note):
     def __init__(
         self,
         notes: List[Union[Note, int, str]],
+        waveform: Union[str, Callable] = 'sin',
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
+        sr: int = 22050,
         A4: float = 440.
     ):
         """
-        Notes class. Manage multiple notes at once. Some arguments set
-        in each Note are ignored and the values set in this class are
-        used: duration, unit, bpm, A4.
+        Notes class. Manage multiple notes at once. Some arguments
+        (waveform, duration, unit, bpm, sr, A4) set in each Note are
+        ignored and the values set in this class are used.
 
         Args:
             notes (List[Union[Note, int, str]]):
@@ -553,19 +555,19 @@ class Notes(Note):
                     - Note (mn.Note, mn.Notes, etc.)
                     - str (note name)
                     - int (midi note number)
+            waveform, duration, unit, bpm, sr, A4:
+                These arguments are the same as in the Note class.
 
         \Attributes:
             - notes (List[Note]): list of notes
             - names (List[str]): list of note names
             - fullnames (List[str]): list of note fullnames
             - nums (List[int]): list of MIDI note numbers
-            - duration (float): default duration when rendering
-            - unit (str): default unit of duration when rendering
-            - bpm (float): default BPM when rendering
-            - A4 (float): tuning. frequency of A4.
+            - waveform, duration, unit, bpm, sr, A4:
+                These attributes are the same as in the Note class.
 
         Inherited Methods:
-            **These methods is the same as in the mn.Note**
+            **These methods is the same as in the ``Note``**
 
             - sin: Generate sin wave of the notes
             - square: Generate square wave of the notes
@@ -613,9 +615,11 @@ class Notes(Note):
         self.names = [note.name for note in self]
         self.fullnames = [str(note) for note in self]
         self._nums = [note.num for note in self]
+        self.waveform = waveform
         self.duration = duration
         self.unit = unit
         self.bpm = bpm
+        self.sr = sr
         self.A4 = A4
 
     @property
@@ -691,9 +695,11 @@ class Chord(Notes):
         chord_name: str,
         type: Optional[str] = None,
         octave: int = 4,
+        waveform: Union[str, Callable] = 'sin',
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
+        sr: int = 22050,
         A4: float = 440.
     ):
         """
@@ -715,6 +721,9 @@ class Chord(Notes):
                 chord type. Ex. '', 'm7', '7', 'sus4'.
             octave (int, optional):
                 octave of the root note to initialize notes.
+            waveform, duration, unit, bpm, sr, A4:
+                These arguments are the same as in the Note class.
+
 
         \Attributes:
             - name (str): chord name
@@ -725,10 +734,8 @@ class Chord(Notes):
             - names (tuple): note names of the chord.
             - notes (List[Note]): notes of the chord.
             - idxs (int): index of the root note.
-            - duration (float): default duration when rendering
-            - unit (str): default unit of duration when rendering
-            - bpm (float): default BPM when rendering
-            - A4 (float): tuning. frequency of A4 when playing sound.
+            - waveform, duration, unit, bpm, sr, A4:
+                These attributes are the same as in the Note class.
 
         Examples:
             >>> import musicnotes as mn
@@ -759,9 +766,11 @@ class Chord(Notes):
         self._idxs = [(self.root.idx + i) % 12 for i in self.interval]
         super().__init__(
             [self.root.num + i for i in self.interval],
+            waveform=waveform,
             duration=duration,
             unit=unit,
             bpm=bpm,
+            sr=sr,
             A4=A4
         )
 
