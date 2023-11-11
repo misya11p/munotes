@@ -448,7 +448,6 @@ class Note:
             for note in self._notes:
                 note.freq = freq
 
-
     def __add__(self, other):
         if isinstance(other, str):
             return str(self) + other
@@ -545,9 +544,9 @@ class Notes(Note):
         A4: float = 440.
     ):
         """
-        Notes class. Manage multiple notes at once. Some arguments
+        Notes class. Manage multiple notes at once. Default attributes
         (waveform, duration, unit, bpm, sr, A4) set in each Note are
-        ignored and the values set in this class are used.
+        ignored and the attributes set in this class are used.
 
         Args:
             notes (List[Union[Note, int, str]]):
@@ -555,8 +554,6 @@ class Notes(Note):
                     - Note (mn.Note, mn.Notes, etc.)
                     - str (note name)
                     - int (midi note number)
-            waveform, duration, unit, bpm, sr, A4:
-                These arguments are the same as in the Note class.
 
         \Attributes:
             - notes (List[Note]): list of notes
@@ -564,7 +561,7 @@ class Notes(Note):
             - fullnames (List[str]): list of note fullnames
             - nums (List[int]): list of MIDI note numbers
             - waveform, duration, unit, bpm, sr, A4:
-                These attributes are the same as in the Note class.
+                Default attributes for rendering waveform
 
         Inherited Methods:
             **These methods is the same as in the ``Note``**
@@ -721,9 +718,6 @@ class Chord(Notes):
                 chord type. Ex. '', 'm7', '7', 'sus4'.
             octave (int, optional):
                 octave of the root note to initialize notes.
-            waveform, duration, unit, bpm, sr, A4:
-                These arguments are the same as in the Note class.
-
 
         \Attributes:
             - name (str): chord name
@@ -735,7 +729,7 @@ class Chord(Notes):
             - notes (List[Note]): notes of the chord.
             - idxs (int): index of the root note.
             - waveform, duration, unit, bpm, sr, A4:
-                These attributes are the same as in the Note class.
+                Default attributes for rendering waveform
 
         Examples:
             >>> import musicnotes as mn
