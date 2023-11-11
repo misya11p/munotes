@@ -250,7 +250,9 @@ class Note:
         elif unit == "ql":
             sec = duration * 60 / bpm
         else:
-            raise ValueError(f"unit must be in {SUPPOERTED_UNITS}, but got '{unit}'")
+            raise ValueError(
+                f"unit must be in {SUPPOERTED_UNITS}, but got '{unit}'"
+            )
 
         t = self._return_time_axis(sec)
         if isinstance(waveform, str):
@@ -265,7 +267,10 @@ class Note:
             elif waveform == "triangle":
                 y = np.sum(sp.signal.sawtooth(t, width=0.5), axis=0)
             else:
-                raise ValueError(f"waveform string must be in {SUPPOERTED_WAVEFORMS}, but got '{waveform}'")
+                raise ValueError(
+                    f"waveform string must be in {SUPPOERTED_WAVEFORMS}, "
+                    f"but got '{waveform}'"
+                )
         else:
             y = np.sum([waveform(ti, **kwargs) for ti in t], axis=0)
         return y
@@ -454,7 +459,10 @@ class Note:
         elif isinstance(other, (Note, Notes)):
             return Notes(self, other)
         else:
-            raise TypeError(f"unsupported operand type(s) for +: 'Note' and '{type(other)}'")
+            raise TypeError(
+                "unsupported operand type(s) for +: 'Note' and "
+                f"'{type(other)}'"
+            )
 
     def __str__(self):
         return f'{self.name}{self.octave}'
@@ -598,7 +606,10 @@ class Notes(Note):
             Notes [Note C4, Note E4, Note G4, Note C5]
         """
         if isinstance(notes, Note):
-            raise TypeError("The Notes class does not support Note classes as input. Enter a list of notes at once as an argument.")
+            raise TypeError(
+                "The Notes class does not support Note classes as input."
+                "Enter a list of notes at once as an argument."
+            )
         notes_ = []
         for note in notes:
             if isinstance(note, Note):
