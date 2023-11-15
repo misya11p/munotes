@@ -339,22 +339,6 @@ class Rest(Note):
         self._A4 = 440.
         self._notes = [self]
 
-    @property
-    def A4(self) -> float:
-        return self._A4
-
-    @A4.setter
-    def A4(self, value):
-        self._A4 = value
-
-    @property
-    def freq(self):
-        return self._freq
-
-    @freq.setter
-    def freq(self, value):
-        pass
-
     def render(self, *args, **kwargs):
         return np.zeros_like(super().render(*args, **kwargs))
 
