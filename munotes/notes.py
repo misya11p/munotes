@@ -1,10 +1,10 @@
 from __future__ import annotations
-from .name_strings import note_name_formatting, chord_name_formatting
-from .chord_names import chord_names
+from typing import Optional, Union, Callable, List
 import numpy as np
 import scipy as sp
-import IPython
-from typing import Optional, Union, Callable, List
+from ._base import BaseNotes
+from .name_strings import note_name_formatting, chord_name_formatting
+from .chord_names import chord_names
 
 
 NUM_C0 = 12 # MIDI note number of C0
@@ -14,7 +14,7 @@ SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
 SUPPOERTED_UNITS = ["s", "ms", "ql"]
 
 
-class Note:
+class Note(BaseNotes):
     def __init__(
         self,
         query: Union[str, int],
@@ -111,16 +111,19 @@ class Note:
             self._idx = self._return_name_idx()
             self._octave = (self.num - NUM_C0) // 12
         else:
-            raise ValueError("Input must be a string or an integer")
+            raise ValueError(
+                "Input must be a string or an integer, "
+                f"but got '{type(query)}'"
+            )
 
-        self.waveform = waveform
-        self.duration = duration
-        self.unit = unit
-        self.bpm = bpm
-        self.sr = sr
-        self._A4 = A4
-        self._freq = self._A4 * 2**((self.num - NUM_A4)/12)
-        self._notes = [self]
+        super().__init__(
+            waveform=waveform,
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            sr=sr,
+            A4=A4
+        )
 
     @property
     def num(self) -> int:
@@ -152,10 +155,7 @@ class Note:
 
     @A4.setter
     def A4(self, value):
-        self._A4 = value
-        for note in self._notes:
-            note._A4 = value
-            note._freq = note.A4 * 2**((note.num - NUM_A4)/12)
+        raise Exception("A4 is read only")
 
     @property
     def freq(self) -> float:
@@ -163,8 +163,7 @@ class Note:
 
     @freq.setter
     def freq(self, value):
-        for note in self._notes:
-            note.A4 = value / 2**((note.num - NUM_A4)/12)
+        raise Exception("freq is read only")
 
     def _return_name_idx(self) -> int:
         """Return index of the note name in KEY_NAMES"""
@@ -275,189 +274,11 @@ class Note:
             y = np.sum([waveform(ti, **kwargs) for ti in t], axis=0)
         return y
 
-    def sin(
-        self,
-        duration: Optional[float] = None,
-        unit: Optional[str] = None,
-        bpm: Optional[float] = None,
-    ) -> np.ndarray:
-        """
-        Generate sin wave of the note. It is the same as 
-        ``Note.render('sin')``.
-
-        Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
-
-        Returns:
-            np.ndarray: sin wave of the note
-        """
-        return self.render('sin', duration=duration, unit=unit, bpm=bpm)
-
-    def square(
-        self,
-        duration: Optional[float] = None,
-        unit: Optional[str] = None,
-        bpm: Optional[float] = None,
-        duty: float = 0.5
-    ) -> np.ndarray:
-        """
-        Generate square wave of the note. It is the same as
-        ``Note.render('square')``.
-
-        Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
-            duty (float, optional): duty cycle
-
-        Returns:
-            np.ndarray: square wave of the note
-        """
-        return self.render(
-            'square',
-            duration=duration,
-            unit=unit,
-            bpm=bpm,
-            duty=duty
-        )
-
-    def sawtooth(
-        self,
-        duration: Optional[float] = None,
-        unit: Optional[str] = None,
-        bpm: Optional[float] = None,
-        width: float = 1.,
-    ) -> np.ndarray:
-        """
-        Generate sawtooth wave of the note. It is the same as
-        ``Note.render('sawtooth')``.
-
-        Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
-            width (float, optional): width of sawtooth
-
-        Returns:
-            np.ndarray: sawtooth wave of the note
-        """
-        return self.render(
-            'sawtooth',
-            duration=duration,
-            unit=unit,
-            bpm=bpm,
-            width=width
-        )
-
-    def triangle(
-        self,
-        duration: Optional[float] = None,
-        unit: Optional[str] = None,
-        bpm: Optional[float] = None,
-    ) -> np.ndarray:
-        """
-        Generate triangle wave of the note. It is the same as
-        ``Note.render('triangle')``, ``note.sawtooth(width=0.5)``.
-
-        Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
-
-        Returns:
-            np.ndarray: triangle wave of the note
-        """
-        return self.render('triangle', duration=duration, unit=unit, bpm=bpm)
-
-    def play(
-        self,
-        waveform: Optional[Union[str, Callable]] = None,
-        duration: Optional[float] = None,
-        unit: Optional[str] = None,
-        bpm: Optional[float] = None,
-        **kwargs
-    ) -> IPython.display.Audio:
-        """
-        Play note sound in IPython notebook. Return
-        IPython.display.Audio object. This wave is generated by
-        ``Note.render()``.
-
-        Args:
-            waveform (Union[str, Callables], optional): waveform type.
-            duration (float, optional): duration.
-            unit (str, optional): unit of duration.
-            bpm (float, optional):BPM (beats per minute).
-
-        Returns:
-            IPython.display.Audio: audio object
-        """
-        y = self.render(
-            waveform,
-            duration=duration,
-            unit=unit,
-            bpm=bpm,
-            **kwargs
-        )
-        return IPython.display.Audio(y, rate=self.sr)
-
-    def transpose(self, n_semitones: int) -> None:
-        """
-        Transpose note.
-
-        Args:
-            n_semitones (int): number of semitones to transpose
-
-        Examples:
-            >>> note = mn.Note("C4")
-            >>> note.transpose(1)
-            >>> print(note)
-            C#4
-        """
-        for note in self._notes:
-            note._idx = (note.idx + n_semitones) % 12
-            note.name = KEY_NAMES[note.idx]
-            note._num += n_semitones
-            note._octave = (note.num - NUM_C0) // 12
-            note._freq = note._A4 * 2**((note.num - NUM_A4)/12)
-
-    def tuning(self, freq: float = 440., stand_A4: bool = False) -> None:
-        """
-        Tuning.
-
-        Args:
-            freq (float, optional): freqency of note.
-            stand_A4 (bool, optional):
-                if True, the tuning standard is A4.
-
-        Examples:
-            >>> note = mn.Note("C4")
-            >>> print(note.freq)
-            >>> note.tuning(270.)
-            >>> print(note.freq)
-            261.6255653005986
-            270.0
-
-            >>> note = mn.Note("C4")
-            >>> print(note.freq)
-            >>> note.tuning(450., stand_A4=True)
-            >>> print(note.freq)
-            261.6255653005986
-            267.5716008756122
-        """
-        if stand_A4:
-            for note in self._notes:
-                note.A4 = freq
-        else:
-            for note in self._notes:
-                note.freq = freq
-
     def __add__(self, other):
         if isinstance(other, str):
             return str(self) + other
-        elif isinstance(other, (Note, Notes)):
-            return Notes(self, other)
+        elif isinstance(other, Note):
+            return Notes([self, *other._notes])
         else:
             raise TypeError(
                 "unsupported operand type(s) for +: 'Note' and "
@@ -474,19 +295,29 @@ class Note:
         return self.num
 
     def __eq__(self, other):
-        return self.num == other.num
+        if isinstance(other, str):
+            return str(self) == other
+        elif isinstance(other, int):
+            return int(self) == other
+        elif isinstance(other, Note):
+            return self.num == other.num
+        else:
+            raise TypeError(
+                "unsupported operand type(s) for ==: 'Note' and "
+                f"'{type(other)}'"
+            )
 
     def __lt__(self, other):
-        return self.num < other
+        return int(self) < other
 
     def __le__(self, other):
-        return self.num <= other
+        return int(self) <= other
 
     def __gt__(self, other):
-        return self.num > other
+        return int(self) > other
 
     def __ge__(self, other):
-        return self.num >= other
+        return int(self) >= other
 
 
 class Rest(Note):
@@ -623,12 +454,15 @@ class Notes(Note):
         self.names = [note.name for note in self]
         self.fullnames = [str(note) for note in self]
         self._nums = [note.num for note in self]
+
         self.waveform = waveform
         self.duration = duration
         self.unit = unit
         self.bpm = bpm
+        self._sr = sr
         self.sr = sr
-        self.A4 = A4
+        self._A4 = A4
+        self.tuning(A4, stand_A4=True)
 
     @property
     def nums(self):
@@ -642,19 +476,6 @@ class Notes(Note):
         super().transpose(n_semitones)
         self.names = [note.name for note in self.notes]
         self._nums = [note.num for note in self.notes]
-
-    def tuning(self, A4_freq: float):
-        """
-        Tuning based on A4.
-
-        Args:
-            A4_freq (float): frequency of A4.
-
-        Note:
-            In this class, does not supported tuning based on other
-            notes.
-        """
-        self.A4 = A4_freq
 
     def append(self, *note: Union[Note, int]) -> None:
         """
@@ -688,7 +509,7 @@ class Notes(Note):
         return iter(self.notes)
 
     def __add__(self, other):
-        return Notes(self, other)
+        return Notes([self, other])
 
     def __repr__(self):
         return f'Notes {self.notes}'

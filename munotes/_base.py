@@ -3,6 +3,10 @@ import numpy as np
 import IPython.display as ipd
 
 
+NUM_C0 = 12 # MIDI note number of C0
+NUM_A4 = 69 # MIDI note number of A4
+KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
 
 class BaseNotes:
     def __init__(
@@ -14,12 +18,86 @@ class BaseNotes:
         sr: int = 22050,
         A4: float = 440.
     ):
+        if not hasattr(self, '_notes'):
+            self._notes = [self]
         self.waveform = waveform
         self.duration = duration
         self.unit = unit
         self.bpm = bpm
+        self._sr = sr
         self.sr = sr
-        self.A4 = A4
+        self._A4 = A4
+        self.tuning(A4, stand_A4=True)
+
+    @property
+    def sr(self):
+        return self._sr
+
+    @sr.setter
+    def sr(self, value):
+        for note in self._notes:
+            note._sr = value
+
+    def transpose(self, n_semitones: int) -> None:
+        """
+        Transpose note.
+
+        Args:
+            n_semitones (int): number of semitones to transpose
+
+        Examples:
+            >>> note = mn.Note("C4")
+            >>> note.transpose(1)
+            >>> print(note)
+            C#4
+        """
+        for note in self._notes:
+            note._idx = (note.idx + n_semitones) % 12
+            note.name = KEY_NAMES[note.idx]
+            note._num += n_semitones
+            note._octave = (note.num - NUM_C0) // 12
+            note._freq = note._A4 * 2** ((note.num - NUM_A4) / 12)
+
+    def tuning(self, freq: float = 440., stand_A4: bool = True) -> None:
+        """
+        Tuning.
+
+        Args:
+            freq (float, optional): freqency of note.
+            stand_A4 (bool, optional):
+                if True, the tuning standard is A4.
+
+        Examples:
+            >>> note = mn.Note("C4")
+            >>> print(note.freq)
+            >>> note.tuning(270.)
+            >>> print(note.freq)
+            261.6255653005986
+            270.0
+
+            >>> note = mn.Note("C4")
+            >>> print(note.freq)
+            >>> note.tuning(450., stand_A4=True)
+            >>> print(note.freq)
+            261.6255653005986
+            267.5716008756122
+        """
+        if len(self._notes) == 1:
+            note = self._notes[0]
+            if stand_A4:
+                note._A4 = freq
+                note._freq = note._A4 * 2 ** ((note.num - NUM_A4) / 12)
+            else:
+                note._freq = freq
+                note._A4 = note._freq / 2 ** ((note.num - NUM_A4) / 12)
+        else:
+            if not stand_A4:
+                raise ValueError(
+                    "``stand_A4=False`` is not supported when handling "
+                    "multiple notes."
+                )
+            for note in self._notes:
+                note.tuning(freq, stand_A4=True)
 
     def render(self):
         pass
