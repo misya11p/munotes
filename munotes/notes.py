@@ -3,7 +3,7 @@ from typing import Optional, Union, Callable, List
 import numpy as np
 import scipy as sp
 from ._base import BaseNotes
-from .name_strings import note_name_formatting, chord_name_formatting
+from ._utils import note_name_formatting, chord_name_formatting
 from .chord_names import chord_names
 
 
