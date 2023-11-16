@@ -437,24 +437,16 @@ class Notes(Note):
         self._notes = self.notes
         self.names = [note.name for note in self]
         self.fullnames = [str(note) for note in self]
-        self._nums = [note.num for note in self]
+        self.nums = [note.num for note in self]
 
-        self.waveform = waveform
-        self.duration = duration
-        self.unit = unit
-        self.bpm = bpm
-        self._sr = sr
-        self.sr = sr
-        self._A4 = A4
-        self.tuning(A4, stand_A4=True)
-
-    @property
-    def nums(self):
-        return self._nums
-
-    @nums.setter
-    def nums(self, value):
-        raise Exception("nums is read only")
+        self._init_attr(
+            waveform=waveform,
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            sr=sr,
+            A4=A4
+        )
 
     def transpose(self, n_semitones: int) -> None:
         super().transpose(n_semitones)
