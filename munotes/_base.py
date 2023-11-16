@@ -6,10 +6,11 @@ import IPython.display as ipd
 NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+SPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 class BaseNotes:
-    def __init__(
+    def _init_attr(
         self,
         waveform: Union[str, Callable] = 'sin',
         duration: Union[float, int] = 1.,
@@ -20,6 +21,7 @@ class BaseNotes:
     ):
         if not hasattr(self, '_notes'):
             self._notes = [self]
+        assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
         self.waveform = waveform
         self.duration = duration
         self.unit = unit

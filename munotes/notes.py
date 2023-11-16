@@ -116,7 +116,7 @@ class Note(BaseNotes):
                 f"but got '{type(query)}'"
             )
 
-        super().__init__(
+        self._init_attr(
             waveform=waveform,
             duration=duration,
             unit=unit,
