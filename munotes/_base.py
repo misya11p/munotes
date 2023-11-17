@@ -74,6 +74,8 @@ class BaseNotes:
             C#4
         """
         for note in self._notes:
+            if not note.num:
+                continue
             note._idx = (note.idx + n_semitones) % 12
             note.name = KEY_NAMES[note.idx]
             note._num += n_semitones

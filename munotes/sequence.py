@@ -85,7 +85,6 @@ class Track(BaseNotes):
             >>> track
             Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]
         """
-        assert sequence, "sequence must not be empty"
         self.sequence = sequence
         self._notes = flatten_notes(self.sequence)
         self._init_attrs(

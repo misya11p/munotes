@@ -184,7 +184,7 @@ class Note(BaseNotes):
             np.ndarray: Time axis
         """
         freqs = np.array([note.freq for note in self._notes])
-        t = np.linspace(0, 2*np.pi * sec * freqs, int(self.sr*sec), axis=1)
+        t = np.linspace(0, 2*np.pi * sec * freqs, int(self.sr * sec), axis=1)
         return t
 
     def render(
@@ -280,7 +280,9 @@ class Note(BaseNotes):
         else:
             y = np.sum([waveform(ti, **kwargs) for ti in t], axis=0)
         y = self._normalize(y)
-        y *= envelope.get_window(sec)
+        window = envelope.get_window(sec)
+        window = np.append(window, np.zeros(len(y) - len(window)))
+        y *= window
         return y
 
     def __add__(self, other):
