@@ -10,12 +10,12 @@ SUPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 class BaseNotes:
-    def _init_attr(
+    def _init_attrs(
         self,
-        waveform: Union[str, Callable] = 'sin',
-        duration: Union[float, int] = 1.,
-        unit: str = "s",
-        bpm: Union[float, int] = 120,
+        waveform: Optional[Union[str, Callable]] = 'sin',
+        duration: Optional[Union[float, int]] = 1.,
+        unit: Optional[str] = "s",
+        bpm: Optional[Union[float, int]] = 120,
         sr: int = 22050,
         A4: float = 440.
     ):
