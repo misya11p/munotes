@@ -114,6 +114,7 @@ class Track(BaseNotes):
                 **kwargs
             )
             y = np.append(y, y_note)
+        y = self._normalize(y)
         return y
 
     def append(self, *notes: Note) -> None:
@@ -250,6 +251,7 @@ class Stream(BaseNotes):
             else:
                 y_track = np.append(y_track, np.zeros(len(y) - len(y_track)))
             y += y_track
+        y = self._normalize(y)
         return y
 
     def append(self, *tracks: Track) -> None:

@@ -55,6 +55,11 @@ class BaseNotes:
             )
         return waveform, sec
 
+    @staticmethod
+    def _normalize(y: np.ndarray):
+        """Normalize waveform"""
+        return y / np.max(np.abs(y))
+
     @property
     def sr(self):
         return self._sr
@@ -135,7 +140,7 @@ class BaseNotes:
         bpm: Optional[float] = None,
     ) -> np.ndarray:
         """
-        Generate sin wave of the note. It is the same as 
+        Generate sin wave of the note. It is the same as
         ``Note.render('sin')``.
 
         Args:

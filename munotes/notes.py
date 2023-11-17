@@ -262,6 +262,7 @@ class Note(BaseNotes):
                 )
         else:
             y = np.sum([waveform(ti, **kwargs) for ti in t], axis=0)
+        y = self._normalize(y)
         return y
 
     def __add__(self, other):
