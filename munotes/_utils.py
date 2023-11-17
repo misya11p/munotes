@@ -99,5 +99,5 @@ def flatten_notes(notes: List[Note]) -> List[Note]:
         if len(note.notes) == 1:
             flattened_notes.append(note)
         else:
-            flattened_notes.extend(flatten(note._notes))
+            flattened_notes.extend(flatten_notes(note._notes))
     return flattened_notes
