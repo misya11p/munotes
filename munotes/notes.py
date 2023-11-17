@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import Optional, Union, Callable, List
 import numpy as np
 import scipy as sp
@@ -115,7 +114,7 @@ class Note(BaseNotes):
                 f"but got '{type(query)}'"
             )
 
-        self._init_attr(
+        self._init_attrs(
             waveform=waveform,
             duration=duration,
             unit=unit,
@@ -430,7 +429,7 @@ class Notes(Note):
         self.fullnames = [str(note) for note in self]
         self.nums = [note.num for note in self]
 
-        self._init_attr(
+        self._init_attrs(
             waveform=waveform,
             duration=duration,
             unit=unit,
@@ -463,6 +462,7 @@ class Notes(Note):
             duration=self.duration,
             unit=self.unit,
             bpm=self.bpm,
+            sr=self.sr,
             A4=self.A4
         )
 

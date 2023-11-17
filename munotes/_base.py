@@ -21,7 +21,6 @@ class BaseNotes:
     ):
         if not hasattr(self, '_notes'):
             self._notes = [self]
-        assert unit in SUPPORTED_UNITS, f"unit must be in {SUPPORTED_UNITS}"
         self.waveform = waveform
         self.duration = duration
         self.unit = unit
@@ -41,6 +40,8 @@ class BaseNotes:
         waveform = waveform or self.waveform
         duration = duration if duration is not None else self.duration
         unit = unit or self.unit
+        assert unit in SUPPORTED_UNITS, \
+            f"unit must be in {SUPPORTED_UNITS} but got '{unit}'"
         bpm = bpm or self.bpm
         if unit == "s":
             sec = duration

@@ -1,10 +1,14 @@
-import warnings
 from typing import List, Tuple, Union, Optional, Callable, Iterable
-import copy
 import numpy as np
 from ._base import BaseNotes
-from .notes import Note, Notes
-from ._utils import flatten_notes
+from .notes import Note
+
+
+def flatten_notes(notes: List[Note]) -> List[Note]:
+    flat_notes = []
+    for notes_ in notes:
+        flat_notes.extend(notes_._notes)
+    return flat_notes
 
 
 class Track(BaseNotes):
@@ -13,7 +17,7 @@ class Track(BaseNotes):
         sequence: List[Note],
         waveform: Optional[Union[str, Callable]] = None,
         duration: Optional[float] = None,
-        unit: str = "s",
+        unit: Optional[str] = None,
         bpm: Optional[float] = None,
         sr: int = 22050,
         A4: float = 440,
@@ -80,45 +84,9 @@ class Track(BaseNotes):
             Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]
         """
         assert sequence, "sequence must not be empty"
-        if not isinstance(sequence[0], Note):
-            warnings.warn(
-                "This input type is not recommended. "
-                "Please input notes as Note class and make input type "
-                "List[Note]."
-            )
-            if bpm == None:
-                if unit == "ql":
-                    raise Exception("bpm is required when unit is 'ql'")
-            else:
-                if unit != "ql":
-                    warnings.warn("bpm is not required when unit is not 'ql'")
-                assert bpm > 0, "bpm must be greater than 0"
-
-            sequence_ = []
-            for note, duration in sequence:
-                if isinstance(note, (str, int)):
-                    note = Note(
-                        note,
-                        duration=duration,
-                        unit=unit,
-                        bpm=bpm,
-                        A4=A4
-                    )
-                elif isinstance(note, Note):
-                    note = copy.deepcopy(note)
-                    note.duration = duration
-                    note.unit = unit
-                    note.bpm = bpm
-                    note.A4 = A4
-                else:
-                    raise ValueError("note must be Note, str or int")
-                sequence_.append(note)
-        else:
-            sequence_ = sequence
-
-        self.sequence = sequence_
+        self.sequence = sequence
         self._notes = flatten_notes(self.sequence)
-        super().__init__(
+        self._init_attrs(
             waveform=waveform,
             duration=duration,
             unit=unit,
@@ -145,10 +113,6 @@ class Track(BaseNotes):
                 bpm=bpm,
                 **kwargs
             )
-            # release = min(len(y_note), release)
-            # if release:
-            #     window = np.linspace(1, 0, release)
-            #     y_note[-release:] *= window
             y = np.append(y, y_note)
         return y
 
@@ -168,9 +132,8 @@ class Track(BaseNotes):
             >>> track
             Track [(C4, 1), (D4, 1), (E4, 1)]
         """
-        for note in notes:
-            self.sequence.append(note)
-            self._notes = flatten_notes(self.sequence)
+        self.sequence.extend(notes)
+        self._notes = flatten_notes(self.sequence)
 
     def __len__(self) -> int:
         return len(self.sequence)
@@ -185,10 +148,17 @@ class Track(BaseNotes):
         return f"Track {self.sequence}"
 
 
-Waveforms = List[Union[str, Callable]]
-
-class Stream(Track):
-    def __init__(self, tracks: List[Track], A4: float = 440.):
+class Stream(BaseNotes):
+    def __init__(
+        self,
+        tracks: List[Track],
+        waveform: Optional[Union[str, Callable]] = None,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
+        sr: int = 22050,
+        A4: float = 440,
+    ):
         """
         Stream class. Manage multiple tracks as a stream.
 
@@ -235,33 +205,23 @@ class Stream(Track):
             array([ 1.        ,  1.83660002,  2.64969075, ..., -0.05431521,
                    -0.02542138,  0.        ])
         """
-        self._tracks = tracks
-        self.A4 = A4
-
-    @property
-    def tracks(self):
-        return self._tracks
-
-    @tracks.setter
-    def tracks(self, value):
-        raise Exception("Cannot set tracks directly")
-
-    @property
-    def A4(self):
-        return self._A4
-
-    @A4.setter
-    def A4(self, value):
-        self._A4 = value
-        for track in self.tracks:
-            track.A4 = value
-
+        self.tracks = tracks
+        self._notes = flatten_notes(self.tracks)
+        self._init_attrs(
+            waveform=waveform,
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            sr=sr,
+            A4=A4
+        )
 
     def render(
         self,
-        waveform: Union[str, Callable, Waveforms] = 'sin',
-        sr: int = 22050,
-        release: int = 200,
+        waveform: Optional[Union[str, Callable]] = None,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
         **kwargs
     ) -> np.ndarray:
         """
@@ -276,39 +236,15 @@ class Stream(Track):
             kwargs, only 'duty' for 'square' and 'width' for 'sawtooth'
             are supported if input multiple waveforms.
         """
-        return super().render(waveform, sr, release, **kwargs)
-
-
-    def _gen_y(
-        self,
-        waveform: Union[str, Callable, Waveforms],
-        sr: int,
-        release: int,
-        **kwargs
-    ) -> np.array:
-        """Generate waveform of the note from various query types"""
-        if isinstance(waveform, str) or callable(waveform):
-            waveforms = [waveform] * len(self)
-        elif hasattr(waveform, '__iter__'):
-            assert len(waveform) == len(self), \
-                f"If input multiple waveforms, its length must have the same as the number of tracks: {len(self)}"
-            if kwargs:
-                assert all(kwarg in ['duty', 'width'] for kwarg in kwargs), \
-                    "If input multiple waveforms, only 'duty' for 'square' and 'width' for 'sawtooth' are supported for kwargs."
-            waveforms = waveform
-        else:
-            raise Exception("Invalid waveform type. Must be str, callable, or list of str or callable.")
-
         y = np.array([])
-        for track, waveform in zip(self.tracks, waveforms):
-            if waveform == 'square':
-                kwarg = {'duty': kwargs['duty']} if 'duty' in kwargs else {}
-            elif waveform == 'sawtooth':
-                kwarg = {'width': kwargs['width']} if 'width' in kwargs else {}
-            else:
-                kwarg = {}
-
-            y_track = track.render(waveform, sr, release, **kwarg)
+        for track in self:
+            y_track = track.render(
+                waveform=waveform,
+                duration=duration,
+                unit=unit,
+                bpm=bpm,
+                **kwargs
+            )
             if len(y_track) > len(y):
                 y = np.append(y, np.zeros(len(y_track) - len(y)))
             else:
@@ -316,15 +252,9 @@ class Stream(Track):
             y += y_track
         return y
 
-
-    def transpose(self, semitone: int) -> None:
-        """Transpose notes"""
-        for note in self.tracks:
-            note.transpose(semitone)
-
-
-    def append(self, *track: Track) -> None:
-        self._tracks += Stream(track, self.A4).tracks
+    def append(self, *tracks: Track) -> None:
+        self.tracks.extend(tracks)
+        self._notes = flatten_notes(self.tracks)
 
     def __len__(self) -> int:
         return len(self.tracks)

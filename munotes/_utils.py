@@ -1,7 +1,7 @@
 import re
-from typing import Optional, Tuple, List, Union
+from typing import Optional, Tuple
 from .chord_names import chord_names
-from .notes import Note, Notes
+
 
 NOTE_NAME_PATTERN = "[A-G][#b]?"
 NOTE_PATTERN = f"{NOTE_NAME_PATTERN}\d*"
@@ -82,22 +82,3 @@ def string_formatting(name_string: str) -> str:
     name_string = name_string.replace('-', 'b')
     name_string = name_string.replace('♭', 'b')
     return name_string
-
-
-def flatten_notes(notes: List[Note]) -> List[Note]:
-    """
-    Flatten notes.
-
-    Args:
-        notes (List[Note]): list of notes within Notes
-
-    Returns:
-        List[Note]: flattened list of notes only with Note
-    """
-    flattened_notes = []
-    for note in notes:
-        if len(note.notes) == 1:
-            flattened_notes.append(note)
-        else:
-            flattened_notes.extend(flatten_notes(note._notes))
-    return flattened_notes
