@@ -297,6 +297,9 @@ class Note(BaseNotes):
                 f"'{type(other)}'"
             )
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __lt__(self, other):
         return int(self) < other
 
