@@ -30,16 +30,18 @@ class BaseNotes:
         self.sr = sr
         self._A4 = A4
         self.tuning(A4, stand_A4=True)
-        self.envelope = envelope or Envelope(
-            attack=0.,
-            decay=0.,
-            sustain=1.,
-            release=0.,
-            hold=0.,
-            sr=sr
-        )
-        assert self.envelope.sr == self.sr, \
-            "Sample rate of envelope and note must be the same."
+
+        self.envelope = envelope or self._default_envelope
+        self.envelope.sr = self.sr
+        self.release = self.envelope.release
+
+    _default_envelope = Envelope(
+        attack=0.,
+        decay=0.,
+        sustain=1.,
+        release=0.,
+        hold=0.,
+    )
 
     @staticmethod
     def _normalize(y: np.ndarray):

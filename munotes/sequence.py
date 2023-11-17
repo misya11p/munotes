@@ -2,6 +2,7 @@ from typing import List, Tuple, Union, Optional, Callable, Iterable
 import numpy as np
 from ._base import BaseNotes
 from .notes import Note
+from .envelope import Envelope
 
 
 def flatten_notes(notes: List[Note]) -> List[Note]:
@@ -19,6 +20,7 @@ class Track(BaseNotes):
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         sr: int = 22050,
         A4: float = 440,
     ):
@@ -91,9 +93,18 @@ class Track(BaseNotes):
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             sr=sr,
             A4=A4
         )
+
+    _default_envelope = Envelope(
+        attack=0.,
+        decay=0.,
+        sustain=1.,
+        release=0.01,
+        hold=0.,
+    )
 
     def render(
         self,
@@ -101,19 +112,26 @@ class Track(BaseNotes):
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         **kwargs
     ) -> np.ndarray:
         """Rendering waveform of the track"""
         y = np.array([])
         for note in self:
             y_note = note.render(
-                waveform=waveform,
-                duration=duration,
-                unit=unit,
-                bpm=bpm,
+                waveform=waveform or self.waveform,
+                duration=duration or self.duration,
+                unit=unit or self.unit,
+                bpm=bpm or self.bpm,
+                envelope=envelope or self.envelope,
                 **kwargs
             )
-            y = np.append(y, y_note)
+            if len(y):
+                release = int(self.sr * self.release)
+                y = np.append(y, np.zeros(len(y_note) - release))
+                y[-len(y_note):] += y_note
+            else:
+                y = y_note
         y = self._normalize(y)
         return y
 
@@ -157,6 +175,7 @@ class Stream(BaseNotes):
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         sr: int = 22050,
         A4: float = 440,
     ):
@@ -213,6 +232,7 @@ class Stream(BaseNotes):
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             sr=sr,
             A4=A4
         )
@@ -223,6 +243,7 @@ class Stream(BaseNotes):
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         **kwargs
     ) -> np.ndarray:
         """
@@ -244,6 +265,7 @@ class Stream(BaseNotes):
                 duration=duration,
                 unit=unit,
                 bpm=bpm,
+                envelope=envelope,
                 **kwargs
             )
             if len(y_track) > len(y):
