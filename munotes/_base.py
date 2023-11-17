@@ -6,7 +6,7 @@ import IPython.display as ipd
 NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-SPPORTED_UNITS = ["s", "ms", "ql"]
+SUPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 class BaseNotes:
@@ -21,7 +21,7 @@ class BaseNotes:
     ):
         if not hasattr(self, '_notes'):
             self._notes = [self]
-        assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
+        assert unit in SUPPORTED_UNITS, f"unit must be in {SUPPORTED_UNITS}"
         self.waveform = waveform
         self.duration = duration
         self.unit = unit
@@ -30,6 +30,29 @@ class BaseNotes:
         self.sr = sr
         self._A4 = A4
         self.tuning(A4, stand_A4=True)
+
+    def _set_render_params(
+        self,
+        waveform: Optional[Union[str, Callable]] = None,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
+    ) -> None:
+        waveform = waveform or self.waveform
+        duration = duration if duration is not None else self.duration
+        unit = unit or self.unit
+        bpm = bpm or self.bpm
+        if unit == "s":
+            sec = duration
+        elif unit == "ms":
+            sec = duration / 1000
+        elif unit == "ql":
+            sec = duration * 60 / bpm
+        else:
+            raise ValueError(
+                f"unit must be in {SUPPORTED_UNITS}, but got '{unit}'"
+            )
+        return waveform, sec
 
     @property
     def sr(self):
