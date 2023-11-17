@@ -1,50 +1,39 @@
-from .notes import Note, Notes
-import numpy as np
-import IPython
-from typing import List, Tuple, Union, Optional, Callable, Iterable
 import warnings
+from typing import List, Tuple, Union, Optional, Callable, Iterable
+import copy
+import numpy as np
+from ._base import BaseNotes
+from .notes import Note, Notes
+from ._utils import flatten_notes
 
-PLAY_SR = 22050 # sample rate for play()
-SPPORTED_UNITS = ["s", "ms", "ql"]
 
-
-
-class Track:
+class Track(BaseNotes):
     def __init__(
         self,
-        sequence: List[Tuple[Union[Note, str, int], float]],
+        sequence: List[Note],
+        waveform: Optional[Union[str, Callable]] = None,
+        duration: Optional[float] = None,
         unit: str = "s",
         bpm: Optional[float] = None,
+        sr: int = 22050,
         A4: float = 440,
     ):
         """
-        Track class.
-        Input notes and durations to manage multiple notes as a track.
+        Track class. Manage multiple notes as a sequence. If inputed
+        specific arguments or set default attributes, these apply to all
+        notes in the sequence when rendering. If not, each note will be
+        rendered with its own attributes.
 
         Args:
-            sequence (List[Tuple[Union[Note, str, int], float]]):
-                sequence of notes and durations. notes type can be
-                Note(, Notes, Rest), str or int.
-            unit (str, optional):
-                unit of duration.
-                supported units:
-                    - 's': second
-                    - 'ms': millisecond
-                    - 'ql': quarter length (bpm is required)
-            bpm (Optional[float], optional):
-                BPM (beats per minute). Required when unit is 'ql'.
-            A4 (float, optional):
-                tuning. frequency of A4.
+            sequence (List[Note]): sequence of notes.
 
         \Attributes:
-            - sequence (List[Tuple[Note, float]]): sequence of notes and
-              durations.
-            - unit (str): unit of duration.
-            - bpm (Optional[float]): BPM (beats per minute).
-            - A4 (float): tuning. frequency of A4.
+            - sequence (List[Note]): sequence of notes.
+            - waveform, duration, unit, bpm, A4:
+                Default attributes for rendering waveform
 
         Main Methods:
-            **These methods is the same as in the mn.Notes.**
+            **These methods is the same as in the ``Note``.**
 
             - sin: Generate sin wave of the notes
             - square: Generate square wave of the notes
@@ -90,160 +79,85 @@ class Track:
             >>> track
             Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]
         """
-        assert unit in SPPORTED_UNITS, f"unit must be in {SPPORTED_UNITS}"
-        if bpm == None:
-            if unit == "ql":
-                raise Exception("bpm is required when unit is 'ql'")
-        else:
-            if unit != "ql":
-                warnings.warn("bpm is not required when unit is not 'ql'")
-            assert bpm > 0, "bpm must be greater than 0"
-
-        sequence_ = []
-        for note, duration in sequence:
-            if isinstance(note, (str, int)):
-                note = Note(note)
-            elif isinstance(note, Note):
-                pass
+        assert sequence, "sequence must not be empty"
+        if not isinstance(sequence[0], Note):
+            warnings.warn(
+                "This input type is not recommended. "
+                "Please input notes as Note class and make input type "
+                "List[Note]."
+            )
+            if bpm == None:
+                if unit == "ql":
+                    raise Exception("bpm is required when unit is 'ql'")
             else:
-                raise ValueError("note must be Note, str or int")
-            sequence_.append((note, duration))
+                if unit != "ql":
+                    warnings.warn("bpm is not required when unit is not 'ql'")
+                assert bpm > 0, "bpm must be greater than 0"
 
-        self._sequence = sequence_
-        self._unit = unit
-        self.bpm = bpm
-        self.A4 = A4
+            sequence_ = []
+            for note, duration in sequence:
+                if isinstance(note, (str, int)):
+                    note = Note(
+                        note,
+                        duration=duration,
+                        unit=unit,
+                        bpm=bpm,
+                        A4=A4
+                    )
+                elif isinstance(note, Note):
+                    note = copy.deepcopy(note)
+                    note.duration = duration
+                    note.unit = unit
+                    note.bpm = bpm
+                    note.A4 = A4
+                else:
+                    raise ValueError("note must be Note, str or int")
+                sequence_.append(note)
+        else:
+            sequence_ = sequence
 
-    @property
-    def sequence(self):
-        return self._sequence
-
-    @sequence.setter
-    def sequence(self, value):
-        raise Exception("Cannot set sequence directly")
-
-    @property
-    def unit(self):
-        return self._unit
-
-    @unit.setter
-    def unit(self, value):
-        raise Exception("unit can not be changed.")
-
-    @property
-    def A4(self):
-        return self._A4
-
-    @A4.setter
-    def A4(self, value):
-        self._A4 = value
-        for note, _ in self.sequence:
-            note.A4 = value
-
-
-    def sin(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        """Generate sin wave of the track"""
-        return self._gen_y("sin", sr, release)
-
-    def square(
-        self,
-        sr: int = 22050,
-        release: int = 200,
-        duty: float = 0.5
-    ) -> np.ndarray:
-        """Generate square wave of the note with scipy.signal.square"""
-        return self._gen_y("square", sr, release, duty=duty)
-
-    def sawtooth(
-        self,
-        sr: int = 22050,
-        release: int = 200,
-        width: float = 1.
-    ) -> np.ndarray:
-        """Generate sawtooth wave of the note"""
-        return self._gen_y("sawtooth", sr, release, width=width)
-
-    def triangle(self, sr: int = 22050, release: int = 200) -> np.ndarray:
-        """Generate triangle wave of the note"""
-        return self._gen_y("triangle", sr, release)
+        self.sequence = sequence_
+        self._notes = flatten_notes(self.sequence)
+        super().__init__(
+            waveform=waveform,
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            sr=sr,
+            A4=A4
+        )
 
     def render(
         self,
-        waveform: Union[str, Callable] = 'sin',
-        sr: int = 22050,
-        release: int = 200,
+        waveform: Optional[Union[str, Callable]] = None,
+        duration: Optional[float] = None,
+        unit: Optional[str] = None,
+        bpm: Optional[float] = None,
         **kwargs
     ) -> np.ndarray:
         """Rendering waveform of the track"""
-        return self._gen_y(waveform, sr, release, **kwargs)
-
-    def _gen_y(
-        self,
-        waveform: Union[str, Callable],
-        sr: int = 22050,
-        release: int = 200,
-        **kwargs
-    ) -> np.ndarray:
-        """
-        Generate waveform of the note from various query types.
-
-        Args:
-            waveform (Union[str, Callable]):
-                waveform type. str or callable object.
-            sr (int, optional): sampling rate.
-            release (int, optional): release time in samples.
-            **kwargs: keyword arguments for waveform function.
-
-        Returns:
-            np.ndarray: waveform of the note
-        """
         y = np.array([])
-        for note, duration in self.sequence:
-            sec = self._to_sec(duration)
-            y_note = note.render(waveform, sec, sr, **kwargs)
-            release = min(len(y_note), release)
-            if release:
-                window = np.linspace(1, 0, release)
-                y_note[-release:] *= window
+        for note in self:
+            y_note = note.render(
+                waveform=waveform,
+                duration=duration,
+                unit=unit,
+                bpm=bpm,
+                **kwargs
+            )
+            # release = min(len(y_note), release)
+            # if release:
+            #     window = np.linspace(1, 0, release)
+            #     y_note[-release:] *= window
             y = np.append(y, y_note)
         return y
 
-    def _to_sec(self, duration: float) -> float:
-        """Transform duration to second based on unit"""
-        if self.unit == "s":
-            return duration
-        elif self.unit == "ms":
-            return duration * 1000
-        elif self.unit == "ql":
-            return duration * 60 / self.bpm
-
-    def play(
-        self,
-        waveform: Union[str, Callable] = 'sin',
-        release: int = 200,
-        **kwargs
-    ) -> IPython.display.Audio:
-        """Play note sound in IPython notebook"""
-        y = self.render(waveform, PLAY_SR, release, **kwargs)
-        return IPython.display.Audio(y, rate=PLAY_SR)
-
-
-    def tuning(self, A4_freq: float = 440.) -> None:
-        """Tuning"""
-        self.A4 = A4_freq
-
-    def transpose(self, semitone: int) -> None:
-        """Transpose notes"""
-        for note, _ in self.sequence:
-            note.transpose(semitone)
-
-
-    def append(self, *note: Tuple[Union[Note, str, int], float]) -> None:
+    def append(self, *notes: Note) -> None:
         """
-        Append notes.
+        Append notes to the track.
 
         Args:
-            *note (Tuple[Note, float]): note
+            *notes (Note): notes to append
 
         Example:
             >>> track = mn.Track([
@@ -254,7 +168,9 @@ class Track:
             >>> track
             Track [(C4, 1), (D4, 1), (E4, 1)]
         """
-        self._sequence += Track(note, self.unit, self.bpm, self.A4).sequence
+        for note in notes:
+            self.sequence.append(note)
+            self._notes = flatten_notes(self.sequence)
 
     def __len__(self) -> int:
         return len(self.sequence)
@@ -267,7 +183,6 @@ class Track:
 
     def __repr__(self) -> str:
         return f"Track {self.sequence}"
-
 
 
 Waveforms = List[Union[str, Callable]]
