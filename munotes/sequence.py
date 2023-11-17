@@ -264,11 +264,11 @@ class Stream(BaseNotes):
         y = np.array([])
         for track in self:
             y_track = track.render(
-                waveform=waveform,
-                duration=duration,
-                unit=unit,
-                bpm=bpm,
-                envelope=envelope,
+                waveform=waveform or self.waveform,
+                duration=duration or self.duration,
+                unit=unit or self.unit,
+                bpm=bpm or self.bpm,
+                envelope=envelope or self.envelope,
                 **kwargs
             )
             if len(y_track) > len(y):

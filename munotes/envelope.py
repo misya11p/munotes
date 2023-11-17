@@ -22,11 +22,15 @@ class Envelope:
         trans_orders = trans_orders or 1
         if isinstance(trans_orders, (int, float)):
             trans_orders = {
-                'attack': trans_orders,
-                'decay': trans_orders,
-                'release': trans_orders
+                "attack": trans_orders,
+                "decay": trans_orders,
+                "release": trans_orders
             }
-        self.trans_orders = trans_orders
+        self.trans_orders = {
+            "attack": trans_orders.get("attack", 1),
+            "decay": trans_orders.get("decay", 1),
+            "release": trans_orders.get("release", 1),
+        }
 
     def get_window(self, sec:float) -> np.ndarray:
         n = int(sec * self.sr)
@@ -39,9 +43,9 @@ class Envelope:
         rt = int(self.sr * self.release)
 
         # orders
-        ao = self.trans_orders['attack']
-        do = self.trans_orders['decay']
-        ro = self.trans_orders['release']
+        ao = self.trans_orders["attack"]
+        do = self.trans_orders["decay"]
+        ro = self.trans_orders["release"]
 
         # windows
         aw = np.linspace(0, 1, at) ** ao
