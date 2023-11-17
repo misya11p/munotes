@@ -1,12 +1,12 @@
 from typing import Optional, Union, Callable
 import numpy as np
 import IPython.display as ipd
+from .envelope import Envelope
 
 
 NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-SUPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 class BaseNotes:
@@ -16,6 +16,7 @@ class BaseNotes:
         duration: Optional[Union[float, int]] = 1.,
         unit: Optional[str] = "s",
         bpm: Optional[Union[float, int]] = 120,
+        envelope: Optional[Envelope] = None,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -29,31 +30,16 @@ class BaseNotes:
         self.sr = sr
         self._A4 = A4
         self.tuning(A4, stand_A4=True)
-
-    def _set_render_params(
-        self,
-        waveform: Optional[Union[str, Callable]] = None,
-        duration: Optional[float] = None,
-        unit: Optional[str] = None,
-        bpm: Optional[float] = None,
-    ) -> None:
-        waveform = waveform or self.waveform
-        duration = duration if duration is not None else self.duration
-        unit = unit or self.unit
-        assert unit in SUPPORTED_UNITS, \
-            f"unit must be in {SUPPORTED_UNITS} but got '{unit}'"
-        bpm = bpm or self.bpm
-        if unit == "s":
-            sec = duration
-        elif unit == "ms":
-            sec = duration / 1000
-        elif unit == "ql":
-            sec = duration * 60 / bpm
-        else:
-            raise ValueError(
-                f"unit must be in {SUPPORTED_UNITS}, but got '{unit}'"
-            )
-        return waveform, sec
+        self.envelope = envelope or Envelope(
+            attack=0.,
+            decay=0.,
+            sustain=1.,
+            release=0.,
+            hold=0.,
+            sr=sr
+        )
+        assert self.envelope.sr == self.sr, \
+            "Sample rate of envelope and note must be the same."
 
     @staticmethod
     def _normalize(y: np.ndarray):
@@ -138,6 +124,7 @@ class BaseNotes:
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None
     ) -> np.ndarray:
         """
         Generate sin wave of the note. It is the same as
@@ -151,13 +138,20 @@ class BaseNotes:
         Returns:
             np.ndarray: sin wave of the note
         """
-        return self.render('sin', duration=duration, unit=unit, bpm=bpm)
+        return self.render(
+            'sin',
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            envelope=envelope
+        )
 
     def square(
         self,
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         duty: float = 0.5
     ) -> np.ndarray:
         """
@@ -178,6 +172,7 @@ class BaseNotes:
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             duty=duty
         )
 
@@ -186,6 +181,7 @@ class BaseNotes:
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         width: float = 1.,
     ) -> np.ndarray:
         """
@@ -206,6 +202,7 @@ class BaseNotes:
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             width=width
         )
 
@@ -214,6 +211,7 @@ class BaseNotes:
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None
     ) -> np.ndarray:
         """
         Generate triangle wave of the note. It is the same as
@@ -227,7 +225,13 @@ class BaseNotes:
         Returns:
             np.ndarray: triangle wave of the note
         """
-        return self.render('triangle', duration=duration, unit=unit, bpm=bpm)
+        return self.render(
+            'triangle',
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            envelope=envelope
+        )
 
     def play(
         self,
@@ -235,6 +239,7 @@ class BaseNotes:
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         **kwargs
     ) -> ipd.Audio:
         """
@@ -256,6 +261,7 @@ class BaseNotes:
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             **kwargs
         )
         return ipd.Audio(y, rate=self.sr)

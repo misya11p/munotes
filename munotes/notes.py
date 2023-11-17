@@ -4,12 +4,14 @@ import scipy as sp
 from ._base import BaseNotes
 from ._utils import note_name_formatting, chord_name_formatting
 from .chord_names import chord_names
+from .envelope import Envelope
 
 
 NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 SUPPORTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
+SUPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 class Note(BaseNotes):
@@ -21,6 +23,7 @@ class Note(BaseNotes):
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
+        envelope: Optional[Envelope] = None,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -119,6 +122,7 @@ class Note(BaseNotes):
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             sr=sr,
             A4=A4
         )
@@ -189,6 +193,7 @@ class Note(BaseNotes):
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
+        envelope: Optional[Envelope] = None,
         **kwargs
     ) -> np.ndarray:
         """
@@ -236,14 +241,26 @@ class Note(BaseNotes):
             generating a waveform by calling the method directly, as in
             ``note.sin()``.
         """
+        waveform = waveform or self.waveform
+        duration = duration if duration is not None else self.duration
+        unit = unit or self.unit
+        assert unit in SUPPORTED_UNITS, \
+            f"unit must be in {SUPPORTED_UNITS} but got '{unit}'"
+        bpm = bpm or self.bpm
+        envelope = envelope or self.envelope
 
-        waveform, sec = self._set_render_params(
-            waveform=waveform,
-            duration=duration,
-            unit=unit,
-            bpm=bpm
-        )
-        t = self._return_time_axis(sec)
+        if unit == "s":
+            sec = duration
+        elif unit == "ms":
+            sec = duration / 1000
+        elif unit == "ql":
+            sec = duration * 60 / bpm
+        else:
+            raise ValueError(
+                f"unit must be in {SUPPORTED_UNITS}, but got '{unit}'"
+            )
+        t = self._return_time_axis(sec + envelope.release)
+
         if isinstance(waveform, str):
             if waveform == "sin":
                 y = np.sum(np.sin(t), axis=0)
@@ -263,6 +280,7 @@ class Note(BaseNotes):
         else:
             y = np.sum([waveform(ti, **kwargs) for ti in t], axis=0)
         y = self._normalize(y)
+        y *= envelope.get_window(sec)
         return y
 
     def __add__(self, other):
@@ -357,6 +375,7 @@ class Notes(Note):
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
+        envelope: Optional[Envelope] = None,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -438,6 +457,7 @@ class Notes(Note):
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             sr=sr,
             A4=A4
         )
@@ -466,6 +486,7 @@ class Notes(Note):
             duration=self.duration,
             unit=self.unit,
             bpm=self.bpm,
+            envelope=self.envelope,
             sr=self.sr,
             A4=self.A4
         )
@@ -499,6 +520,7 @@ class Chord(Notes):
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
+        envelope: Optional[Envelope] = None,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -567,6 +589,7 @@ class Chord(Notes):
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=envelope,
             sr=sr,
             A4=A4
         )
