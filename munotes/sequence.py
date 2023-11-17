@@ -99,7 +99,7 @@ class Track(BaseNotes):
         )
 
     _default_envelope = Envelope(
-        attack=0.,
+        attack=0.01,
         decay=0.,
         sustain=1.,
         release=0.01,
@@ -117,6 +117,11 @@ class Track(BaseNotes):
     ) -> np.ndarray:
         """Rendering waveform of the track"""
         y = np.array([])
+        if envelope:
+            release = envelope.release
+        else:
+            release = self.release
+        release_samples = int(self.sr * release)
         for note in self:
             y_note = note.render(
                 waveform=waveform or self.waveform,
@@ -127,8 +132,7 @@ class Track(BaseNotes):
                 **kwargs
             )
             if len(y):
-                release = int(self.sr * self.release)
-                y = np.append(y, np.zeros(len(y_note) - release))
+                y = np.append(y, np.zeros(len(y_note) - release_samples))
                 y[-len(y_note):] += y_note
             else:
                 y = y_note
