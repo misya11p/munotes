@@ -10,8 +10,7 @@ from .chord_names import chord_names
 NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
 KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-SUPPOERTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
-SUPPOERTED_UNITS = ["s", "ms", "ql"]
+SUPPORTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
 
 
 class Note(BaseNotes):
@@ -238,21 +237,13 @@ class Note(BaseNotes):
             generating a waveform by calling the method directly, as in
             ``note.sin()``.
         """
-        waveform = waveform or self.waveform
-        duration = duration if duration is not None else self.duration
-        unit = unit or self.unit
-        bpm = bpm or self.bpm
-        if unit == "s":
-            sec = duration
-        elif unit == "ms":
-            sec = duration / 1000
-        elif unit == "ql":
-            sec = duration * 60 / bpm
-        else:
-            raise ValueError(
-                f"unit must be in {SUPPOERTED_UNITS}, but got '{unit}'"
-            )
 
+        waveform, sec = self._set_render_params(
+            waveform=waveform,
+            duration=duration,
+            unit=unit,
+            bpm=bpm
+        )
         t = self._return_time_axis(sec)
         if isinstance(waveform, str):
             if waveform == "sin":
@@ -267,7 +258,7 @@ class Note(BaseNotes):
                 y = np.sum(sp.signal.sawtooth(t, width=0.5), axis=0)
             else:
                 raise ValueError(
-                    f"waveform string must be in {SUPPOERTED_WAVEFORMS}, "
+                    f"waveform string must be in {SUPPORTED_WAVEFORMS}, "
                     f"but got '{waveform}'"
                 )
         else:
