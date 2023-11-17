@@ -46,7 +46,10 @@ class BaseNotes:
     @staticmethod
     def _normalize(y: np.ndarray):
         """Normalize waveform"""
-        return y / np.max(np.abs(y))
+        if y.max():
+            return y / np.max(np.abs(y))
+        else:
+            return y
 
     @property
     def sr(self):

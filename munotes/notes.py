@@ -333,7 +333,12 @@ class Note(BaseNotes):
 
 
 class Rest(Note):
-    def __init__(self):
+    def __init__(
+        self,
+        duration: Union[float, int] = 1.,
+        unit: str = "s",
+        bpm: Union[float, int] = 120
+    ):
         """
         Rest class for Track and Stream class. Return zeros array when
         rendering.
@@ -348,8 +353,11 @@ class Rest(Note):
         self._freq = 0.
         self._num = None
         self._idx = None
-        self._A4 = 440.
-        self._notes = [self]
+        self._init_attrs(
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+        )
 
     def render(self, *args, **kwargs):
         return np.zeros_like(super().render(*args, **kwargs))
