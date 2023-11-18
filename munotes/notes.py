@@ -48,25 +48,20 @@ class Note(BaseNotes):
                 int. Defaults to 4.
             waveform (Union[str, Callable], optional):
                 Waveform type. This value becomes the default value
-                when render() and play(). Spported waveform types:
-                    - 'sin'
-                    - 'square'
-                    - 'sawtooth'
-                    - 'triangle'
-                    - user-defined waveform function
-                user-defined waveform function must take time axis as
-                an argument and return an array like waveform of the
-                same length. Defaults to 'sin'.
+                when render() and play(). Spported waveform types are
+                'sin', 'square', 'sawtooth', 'triangle' and
+                user-defined waveform function. user-defined waveform
+                function must take time axis as an argument and return
+                an array like waveform of the same length. Defaults to
+                'sin'.
             duration (float, optional):
                 Duration. This value becomes the default value when
                 rendering the waveform. Defaults to 1..
             unit (str, optional):
                 Unit of duration. This value becomes the default value
-                when rendering the waveform. Supported units:
-                    - 's': seconds
-                    - 'ms': milliseconds
-                    - 'ql': quarter length (bpm is required)
-                Defaults to 's'.
+                when rendering the waveform. Supported units are
+                's': seconds, 'ms': milliseconds and
+                'ql': quarter length (bpm is required) Defaults to 's'.
             bpm (float, optional):
                 BPM (beats per minute). If unit is not 'ql', this
                 argument is ignored. This value becomes the default
