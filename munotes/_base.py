@@ -22,7 +22,7 @@ class BaseNotes:
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
         sr: int = 22050,
-        A4: float = 440.
+        A4: float = 440.,
     ):
         """Initialize attributes of notes and sequence."""
         if not hasattr(self, '_notes'):
@@ -132,7 +132,7 @@ class BaseNotes:
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
-        envelope: Optional[Envelope] = None
+        envelope: Optional[Envelope] = None,
     ) -> np.ndarray:
         """
         Generate sin wave of the object. It is the same as
@@ -161,7 +161,7 @@ class BaseNotes:
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
-        duty: float = 0.5
+        duty: float = 0.5,
     ) -> np.ndarray:
         """
         Generate square wave of the object. It is the same as
@@ -222,7 +222,7 @@ class BaseNotes:
         duration: Optional[float] = None,
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
-        envelope: Optional[Envelope] = None
+        envelope: Optional[Envelope] = None,
     ) -> np.ndarray:
         """
         Generate triangle wave of the object. It is the same as
@@ -242,7 +242,7 @@ class BaseNotes:
             duration=duration,
             unit=unit,
             bpm=bpm,
-            envelope=envelope
+            envelope=envelope,
         )
 
     def play(
@@ -281,6 +281,6 @@ class BaseNotes:
             bpm=bpm,
             envelope=envelope,
             duty=duty,
-            width=width
+            width=width,
         )
         return ipd.Audio(y, rate=self.sr)

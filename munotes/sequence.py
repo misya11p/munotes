@@ -1,5 +1,7 @@
 from typing import List, Tuple, Union, Optional, Callable, Iterable
+
 import numpy as np
+
 from ._base import BaseNotes
 from .notes import Note
 from .envelope import Envelope
@@ -34,7 +36,7 @@ class Track(BaseNotes):
         duty: Optional[float] = None,
         width: Optional[float] = None,
         sr: int = 22050,
-        A4: float = 440
+        A4: float = 440,
     ):
         """
         Track class. Manage multiple notes as a sequence. If inputed
@@ -81,7 +83,7 @@ class Track(BaseNotes):
             duty=duty,
             width=width,
             sr=sr,
-            A4=A4
+            A4=A4,
         )
 
     _default_envelope = Envelope(
@@ -174,7 +176,7 @@ class Stream(BaseNotes):
         duty: Optional[float] = None,
         width: Optional[float] = None,
         sr: int = 22050,
-        A4: float = 440
+        A4: float = 440,
     ):
         """
         Stream class. Manage multiple tracks as a stream.
@@ -218,7 +220,7 @@ class Stream(BaseNotes):
             duty=duty,
             width=width,
             sr=sr,
-            A4=A4
+            A4=A4,
         )
 
     def render(

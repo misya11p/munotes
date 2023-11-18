@@ -29,7 +29,7 @@ class Note(BaseNotes):
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
         sr: int = 22050,
-        A4: float = 440.
+        A4: float = 440.,
     ):
         """
         Note class.
@@ -148,7 +148,7 @@ class Note(BaseNotes):
             duty=duty,
             width=width,
             sr=sr,
-            A4=A4
+            A4=A4,
         )
 
     @property
@@ -168,7 +168,7 @@ class Note(BaseNotes):
             duty=self.duty,
             width=self.width,
             sr=self.sr,
-            A4=self.A4
+            A4=self.A4,
         )
 
     @property
@@ -239,7 +239,7 @@ class Note(BaseNotes):
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
-        width: Optional[float] = None
+        width: Optional[float] = None,
     ) -> np.ndarray:
         """
         Rendering waveform of the note. If an argument is not specified,
@@ -407,7 +407,7 @@ class Notes(Note):
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
         sr: int = 22050,
-        A4: float = 440.
+        A4: float = 440.,
     ):
         """
         Notes class. Manage multiple notes at once. Default attributes
@@ -480,7 +480,7 @@ class Notes(Note):
             duty=duty,
             width=width,
             sr=sr,
-            A4=A4
+            A4=A4,
         )
 
     def transpose(self, n_semitones: int) -> None:
@@ -511,7 +511,7 @@ class Notes(Note):
             duty=self.duty,
             width=self.width,
             sr=self.sr,
-            A4=self.A4
+            A4=self.A4,
         )
 
     def __len__(self):
@@ -547,7 +547,7 @@ class Chord(Notes):
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
         sr: int = 22050,
-        A4: float = 440.
+        A4: float = 440.,
     ):
         """
         Chord class.
@@ -612,7 +612,7 @@ class Chord(Notes):
             duty=duty,
             width=width,
             sr=sr,
-            A4=A4
+            A4=A4,
         )
 
     @property
