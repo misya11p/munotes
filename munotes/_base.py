@@ -42,13 +42,7 @@ class BaseNotes:
         self.envelope.sr = self.sr
         self.release = self.envelope.release
 
-    _default_envelope = Envelope(
-        attack=0.,
-        decay=0.,
-        sustain=1.,
-        release=0.,
-        hold=0.,
-    )
+    _default_envelope = Envelope()
 
     @staticmethod
     def _normalize(y: np.ndarray):

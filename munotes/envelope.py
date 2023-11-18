@@ -5,10 +5,10 @@ import numpy as np
 class Envelope:
     def __init__(
         self,
-        attack: float = 0.01,
-        decay: float = 0.1,
-        sustain: float = 0.5,
-        release: float = 0.1,
+        attack: float = 0.,
+        decay: float = 0.,
+        sustain: float = 1.,
+        release: float = 0.,
         hold: float = 0.,
         sr: int = 22050,
         trans_orders: Union[float, Dict[str, float]] = 1
