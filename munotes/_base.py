@@ -40,10 +40,9 @@ class BaseNotes:
         self._A4 = A4
         self.tuning(A4)
 
-        self.envelope = envelope or self._default_envelope
-        self.envelope.sr = self.sr
-
-    _default_envelope = Envelope()
+        self.envelope = envelope
+        if self.envelope:
+            self.envelope.sr = self.sr
 
     @staticmethod
     def _normalize(y: np.ndarray):

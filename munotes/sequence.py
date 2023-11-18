@@ -83,21 +83,19 @@ class Track(BaseNotes):
             duration=duration,
             unit=unit,
             bpm=bpm,
-            envelope=envelope,
+            envelope= envelope or Envelope(
+                attack=0.01,
+                decay=0.,
+                sustain=1.,
+                release=0.01,
+                hold=0.,
+            ),
             duty=duty,
             width=width,
             amp=amp,
             sr=sr,
             A4=A4,
         )
-
-    _default_envelope = Envelope(
-        attack=0.01,
-        decay=0.,
-        sustain=1.,
-        release=0.01,
-        hold=0.,
-    )
 
     def render(
         self,
@@ -231,14 +229,6 @@ class Stream(BaseNotes):
             sr=sr,
             A4=A4,
         )
-
-    _default_envelope = Envelope(
-        attack=0.01,
-        decay=0.,
-        sustain=1.,
-        release=0.01,
-        hold=0.,
-    )
 
     def render(
         self,

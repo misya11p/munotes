@@ -144,7 +144,7 @@ class Note(BaseNotes):
             duration=duration,
             unit=unit,
             bpm=bpm,
-            envelope=envelope,
+            envelope=envelope or Envelope(),
             duty=duty,
             width=width,
             amp=amp,
@@ -433,6 +433,7 @@ class Rest(Note):
             duration=duration,
             unit=unit,
             bpm=bpm,
+            envelope=Envelope(),
         )
 
     def render(self, *args, **kwargs):
@@ -536,7 +537,7 @@ class Notes(Note):
             duration=duration,
             unit=unit,
             bpm=bpm,
-            envelope=envelope,
+            envelope=envelope or Envelope(),
             duty=duty,
             width=width,
             amp=amp,

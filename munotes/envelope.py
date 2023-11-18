@@ -122,7 +122,7 @@ class Envelope:
         y[at + ht + dt:] *= sw
         if rt:
             if inner_release:
-                y[-rt:] *= rw
+                y[-rt:] = rw
             else:
                 y = np.append(y, rw)
         return y
