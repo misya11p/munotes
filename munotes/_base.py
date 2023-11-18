@@ -40,7 +40,7 @@ class BaseNotes:
 
         self.envelope = envelope or self._default_envelope
         self.envelope.sr = self.sr
-        self.release = self.envelope.release
+        self._release = self.envelope.release
 
     _default_envelope = Envelope()
 

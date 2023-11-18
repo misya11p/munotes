@@ -6,6 +6,16 @@ from .envelope import Envelope
 
 
 def flatten_notes(notes: List[Note]) -> List[Note]:
+    """
+    Flatten notes sequence. Changing the list of notes including Notes
+    class to a single list of notes.
+
+    Args:
+        notes (List[Note]): notes sequence
+
+    Returns:
+        List[Note]: notes sequence as List of a single note
+    """
     flat_notes = []
     for notes_ in notes:
         flat_notes.extend(notes_._notes)
@@ -32,60 +42,33 @@ class Track(BaseNotes):
         notes in the sequence when rendering. If not, each note will be
         rendered with its own attributes.
 
+        Similar to the Note class, it is possible to generate waveforms
+        using render() and sin().
+
         Args:
             sequence (List[Note]): sequence of notes.
+            envelope (Envelope, optional):
+                Envelope of the track notes. Defaults to Envelope() with
+                attack=0.01, decay=0., sustain=1., release=0.01,
+                hold=0..
 
         \Attributes:
             - sequence (List[Note]): sequence of notes.
-            - waveform, duration, unit, bpm, A4:
-                Default attributes for rendering waveform
-
-        Main Methods:
-            **These methods is the same as in the ``Note``.**
-
-            - sin: Generate sin wave of the notes
-            - square: Generate square wave of the notes
-            - sawtooth: Generate sawtooth wave of the notes
-            - triangle: Generate triangle wave of the notes
-            - render: Rendering waveform of the note
-            - play: Play note sound
-            - transpose: Transpose notes
-            - tuning: Sound tuning
-
-        Note:
-            There are some changes regarding methods that handle
-            waveforms (``sin()``, ``render()``, etc.).
-
-            1. Remove ``sec`` argument.
-            2. Add ``release: int = 200`` argument. It is release time
-               in samples. Wavefrom will be multiplied by a linear
-               window from 1 to 0 in the last ``release`` samples to
-               connect sounds smoothly.
 
         Examples:
             >>> import munotes as mn
             >>> track = mn.Track([
-            >>>     (mn.Note("C4"), 1),
-            >>>     (mn.Note("D4"), 1),
-            >>>     (mn.Note("E4"), 1),
-            >>>     (mn.Chord("C", 1),
+            >>>     mn.Note("C4"),
+            >>>     mn.Note("D4"),
+            >>>     mn.Note("E4"),
+            >>>     mn.Chord("C",
             >>> ])
             >>> track
-            Track [(Note C4, 1), (Note E4, 1), (Note G4, 1), (Chord C, 1)]
+            Track [Note C4, Note E4, Note G4, Chord C]
 
             >>> track.sin()
             array([ 0.        ,  0.07448499,  0.14855616, ..., -0.01429455,
                 -0.00726152, -0.        ])
-
-            You can also input notes as str or int directly.
-
-            >>> track = mn.Track([
-            >>>     ("C4", 1),
-            >>>     ("D4", 1),
-            >>>     ("E4", 1),
-            >>> ])
-            >>> track
-            Track [(Note C4, 1), (Note E4, 1), (Note G4, 1)]
         """
         self.sequence = sequence
         self._notes = flatten_notes(self.sequence)
@@ -118,14 +101,16 @@ class Track(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
-        **kwargs
     ) -> np.ndarray:
-        """Rendering waveform of the track"""
+        """
+        Rendering waveform of the track. Notes in the track are
+        concatenated and rendered.
+        """
         y = np.array([])
         if envelope:
             release = envelope.release
         else:
-            release = self.release
+            release = self._release
         release_samples = int(self.sr * release)
         for note in self:
             y_note = note.render(
@@ -136,7 +121,6 @@ class Track(BaseNotes):
                 envelope=envelope or self.envelope,
                 duty=duty if duty is not None else self.duty,
                 width=width if width is not None else self.width,
-                **kwargs
             )
             if len(y):
                 y = np.append(y, np.zeros(len(y_note) - release_samples))
@@ -197,35 +181,20 @@ class Stream(BaseNotes):
 
         Args:
             tracks (List[Track]): tracks
-            A4 (float, optional): frequency of A4.
 
-        Inherited Methods:
-            **These methods is the same as in the mn.Note**
-
-            - sin: Generate sin wave of the notes
-            - square: Generate square wave of the notes
-            - sawtooth: Generate sawtooth wave of the notes
-            - triangle: Generate triangle wave of the notes
-            - render: Rendering waveform of the note
-            - play: Play note sound
-            - transpose: Transpose notes
-            - tuning: Sound tuning
-
-        Note:
-            In ``render()`` and ``play()``, waveforms can be specified
-            for each track by inputting as many waveforms as there are
-            tracks.
+        \Attributes:
+            - tracks (List[Track]): tracks
 
         Example:
             >>> melody = mn.Track([
-            >>>     ("C4", 1),
-            >>>     ("D4", 1),
-            >>>     ("E4", 1)
+            >>>     mn.Note("C4"),
+            >>>     mn.Note("D4"),
+            >>>     mn.Note("E4"),
             >>> ])
-            >>> chords = mn.Track([(mn.Chord("C"), 3)])
+            >>> chords = mn.Track([mn.Chord("C", duration=3))])
             >>> stream = mn.Stream([melody, chords])
             >>> stream
-            Stream [Track [(Note C4, 1), (Note D4, 1), (Note E4, 1)], Track [(Chord C, 3)]]
+            Stream [Track [Note C4, Note D4, Note E4], Track [Chord C]]
 
             >>> stream.render('sin')
             array([ 0.        ,  0.35422835,  0.70541282, ..., -0.02489362,
@@ -261,19 +230,10 @@ class Stream(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
-        **kwargs
     ) -> np.ndarray:
         """
-        Rendering waveform of the stream. Spported multiple waveforms.
-
-        Args:
-            waveform (Union[str, Callable, Waveforms], optional):
-                waveform or list of waveforms.
-
-        Note:
-            Basic usage is the same as in the other classes. But in
-            kwargs, only 'duty' for 'square' and 'width' for 'sawtooth'
-            are supported if input multiple waveforms.
+        Rendering waveform of the track. Track in the stream are
+        rendered simultaneously.
         """
         y = np.array([])
         for track in self:
@@ -285,7 +245,6 @@ class Stream(BaseNotes):
                 envelope=envelope or self.envelope,
                 duty=duty if duty is not None else self.duty,
                 width=width if width is not None else self.width,
-                **kwargs
             )
             if len(y_track) > len(y):
                 y = np.append(y, np.zeros(len(y_track) - len(y)))
