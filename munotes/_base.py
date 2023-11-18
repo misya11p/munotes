@@ -17,6 +17,8 @@ class BaseNotes:
         unit: Optional[str] = "s",
         bpm: Optional[Union[float, int]] = 120,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = 0.5,
+        width: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -26,6 +28,8 @@ class BaseNotes:
         self.duration = duration
         self.unit = unit
         self.bpm = bpm
+        self.duty = duty
+        self.width = width
         self._sr = sr
         self.sr = sr
         self._A4 = A4
@@ -46,7 +50,7 @@ class BaseNotes:
     @staticmethod
     def _normalize(y: np.ndarray):
         """Normalize waveform"""
-        if y.max():
+        if np.max(np.abs(y)):
             return y / np.max(np.abs(y))
         else:
             return y

@@ -24,6 +24,8 @@ class Note(BaseNotes):
         unit: str = "s",
         bpm: Union[float, int] = 120,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = 0.5,
+        width: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -123,6 +125,8 @@ class Note(BaseNotes):
             unit=unit,
             bpm=bpm,
             envelope=envelope,
+            duty=duty,
+            width=width,
             sr=sr,
             A4=A4
         )
@@ -194,7 +198,8 @@ class Note(BaseNotes):
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
-        **kwargs
+        duty: Optional[float] = None,
+        width: Optional[float] = None
     ) -> np.ndarray:
         """
         Rendering waveform of the note.
@@ -248,6 +253,8 @@ class Note(BaseNotes):
             f"unit must be in {SUPPORTED_UNITS} but got '{unit}'"
         bpm = bpm or self.bpm
         envelope = envelope or self.envelope
+        duty = duty or self.duty
+        width = width or self.width
 
         if unit == "s":
             sec = duration
@@ -265,10 +272,8 @@ class Note(BaseNotes):
             if waveform == "sin":
                 y = np.sum(np.sin(t), axis=0)
             elif waveform == "square":
-                duty = kwargs.get("duty", 0.5)
                 y = np.sum(sp.signal.square(t, duty=duty), axis=0)
             elif waveform == "sawtooth":
-                width = kwargs.get("width", 1.)
                 y = np.sum(sp.signal.sawtooth(t, width=width), axis=0)
             elif waveform == "triangle":
                 y = np.sum(sp.signal.sawtooth(t, width=0.5), axis=0)
@@ -278,7 +283,7 @@ class Note(BaseNotes):
                     f"but got '{waveform}'"
                 )
         else:
-            y = np.sum([waveform(ti, **kwargs) for ti in t], axis=0)
+            y = np.sum([waveform(ti) for ti in t], axis=0)
         y = self._normalize(y)
         window = envelope.get_window(sec)
         window = np.append(window, np.zeros(len(y) - len(window)))
@@ -386,6 +391,8 @@ class Notes(Note):
         unit: str = "s",
         bpm: Union[float, int] = 120,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = 0.5,
+        width: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -468,6 +475,8 @@ class Notes(Note):
             unit=unit,
             bpm=bpm,
             envelope=envelope,
+            duty=duty,
+            width=width,
             sr=sr,
             A4=A4
         )
@@ -531,6 +540,8 @@ class Chord(Notes):
         unit: str = "s",
         bpm: Union[float, int] = 120,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = 0.5,
+        width: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.
     ):
@@ -600,6 +611,8 @@ class Chord(Notes):
             unit=unit,
             bpm=bpm,
             envelope=envelope,
+            duty=duty,
+            width=width,
             sr=sr,
             A4=A4
         )

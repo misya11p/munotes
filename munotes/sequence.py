@@ -21,8 +21,10 @@ class Track(BaseNotes):
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = None,
+        width: Optional[float] = None,
         sr: int = 22050,
-        A4: float = 440,
+        A4: float = 440
     ):
         """
         Track class. Manage multiple notes as a sequence. If inputed
@@ -93,6 +95,8 @@ class Track(BaseNotes):
             unit=unit,
             bpm=bpm,
             envelope=envelope,
+            duty=duty,
+            width=width,
             sr=sr,
             A4=A4
         )
@@ -179,8 +183,10 @@ class Stream(BaseNotes):
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = None,
+        width: Optional[float] = None,
         sr: int = 22050,
-        A4: float = 440,
+        A4: float = 440
     ):
         """
         Stream class. Manage multiple tracks as a stream.
@@ -236,6 +242,8 @@ class Stream(BaseNotes):
             unit=unit,
             bpm=bpm,
             envelope=envelope,
+            duty=duty,
+            width=width,
             sr=sr,
             A4=A4
         )
@@ -247,6 +255,8 @@ class Stream(BaseNotes):
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = None,
+        width: Optional[float] = None,
         **kwargs
     ) -> np.ndarray:
         """
@@ -269,6 +279,8 @@ class Stream(BaseNotes):
                 unit=unit or self.unit,
                 bpm=bpm or self.bpm,
                 envelope=envelope or self.envelope,
+                duty=duty or self.duty,
+                width=width or self.width,
                 **kwargs
             )
             if len(y_track) > len(y):
