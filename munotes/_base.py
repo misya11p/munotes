@@ -21,7 +21,7 @@ class BaseNotes:
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
-        amp: Optional[float] = None,
+        amp: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.,
     ):

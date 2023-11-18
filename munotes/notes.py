@@ -28,7 +28,7 @@ class Note(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
-        amp: Optional[float] = None,
+        amp: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.,
     ):
@@ -86,7 +86,7 @@ class Note(BaseNotes):
                 Defaults to 1..
             amp (float, optional):
                 Amplitude. This value becomes the default value when
-                rendering the waveform. Defaults to None.
+                rendering the waveform. Defaults to 1..
             sr (int, optional):
                 Sampling rate. This value becomes the default value
                 when rendering the waveform. Defaults to 22050.
@@ -329,6 +329,7 @@ class Note(BaseNotes):
         envelope = envelope or self.envelope
         duty = duty or self.duty
         width = width or self.width
+        amp = amp if amp is not None else self.amp
 
         if unit == "s":
             sec = duration
@@ -344,27 +345,23 @@ class Note(BaseNotes):
 
         if isinstance(waveform, str):
             if waveform == "sin":
-                y = np.sum(np.sin(t), axis=0)
+                y = np.sum(amp * np.sin(t), axis=0)
             elif waveform == "square":
-                y = np.sum(sp.signal.square(t, duty=duty), axis=0)
+                y = np.sum(amp * sp.signal.square(t, duty=duty), axis=0)
             elif waveform == "sawtooth":
-                y = np.sum(sp.signal.sawtooth(t, width=width), axis=0)
+                y = np.sum(amp * sp.signal.sawtooth(t, width=width), axis=0)
             elif waveform == "triangle":
-                y = np.sum(sp.signal.sawtooth(t, width=0.5), axis=0)
+                y = np.sum(amp * sp.signal.sawtooth(t, width=0.5), axis=0)
             else:
                 raise ValueError(
                     f"waveform string must be in {SUPPORTED_WAVEFORMS}, "
                     f"but got '{waveform}'"
                 )
         else:
-            y = np.sum([waveform(ti) for ti in t], axis=0)
+            y = np.sum([amp * waveform(ti) for ti in t], axis=0)
 
         window = envelope.get_window(len(y), unit="sample", inner_release=True)
         y *= window
-        amp = amp if amp is not None else self.amp
-        if amp is not None:
-            y = self._normalize(y)
-            y *= amp
         return y
 
     def __add__(self, other):
@@ -470,7 +467,7 @@ class Notes(Note):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
-        amp: Optional[float] = None,
+        amp: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.,
     ):
@@ -613,7 +610,7 @@ class Chord(Notes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
-        amp: Optional[float] = None,
+        amp: Optional[float] = 1.,
         sr: int = 22050,
         A4: float = 440.,
     ):

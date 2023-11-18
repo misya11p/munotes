@@ -124,16 +124,13 @@ class Track(BaseNotes):
                 envelope=envelope or self.envelope,
                 duty=duty if duty is not None else self.duty,
                 width=width if width is not None else self.width,
+                amp = amp if amp is not None else self.amp,
             )
             if len(y):
                 y = np.append(y, np.zeros(len(y_note) - release_samples))
                 y[-len(y_note):] += y_note
             else:
                 y = y_note
-        amp = amp if amp is not None else self.amp
-        if amp is not None:
-            y = self._normalize(y)
-            y *= amp
         return y
 
     def append(self, *notes: Note) -> None:
@@ -179,6 +176,7 @@ class Stream(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
+        amp: Optional[float] = None,
         sr: int = 22050,
         A4: float = 440,
     ):
@@ -223,6 +221,7 @@ class Stream(BaseNotes):
             envelope=envelope,
             duty=duty,
             width=width,
+            amp=amp,
             sr=sr,
             A4=A4,
         )
@@ -260,16 +259,13 @@ class Stream(BaseNotes):
                 envelope=envelope or self.envelope,
                 duty=duty if duty is not None else self.duty,
                 width=width if width is not None else self.width,
+                amp = amp if amp is not None else self.amp,
             )
             if len(y_track) > len(y):
                 y = np.append(y, np.zeros(len(y_track) - len(y)))
             else:
                 y_track = np.append(y_track, np.zeros(len(y) - len(y_track)))
             y += y_track
-        amp = amp if amp is not None else self.amp
-        if amp is not None:
-            y = self._normalize(y)
-            y *= amp
         return y
 
     def append(self, *tracks: Track) -> None:
