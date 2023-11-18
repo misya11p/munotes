@@ -1,6 +1,8 @@
 from typing import Optional, Union, Callable
+
 import numpy as np
 import IPython.display as ipd
+
 from .envelope import Envelope
 
 
@@ -22,6 +24,7 @@ class BaseNotes:
         sr: int = 22050,
         A4: float = 440.
     ):
+        """Initialize attributes of notes and sequence."""
         if not hasattr(self, '_notes'):
             self._notes = [self]
         self.waveform = waveform
@@ -49,7 +52,7 @@ class BaseNotes:
 
     @staticmethod
     def _normalize(y: np.ndarray):
-        """Normalize waveform"""
+        """Normalize waveform."""
         if np.max(np.abs(y)):
             return y / np.max(np.abs(y))
         else:
@@ -66,10 +69,11 @@ class BaseNotes:
 
     def transpose(self, n_semitones: int) -> None:
         """
-        Transpose note.
+        Transpose notes. If there are multiple notes, all notes are
+        transposed by the same number of semitones.
 
         Args:
-            n_semitones (int): number of semitones to transpose
+            n_semitones (int): Number of semitones to transpose.
 
         Examples:
             >>> note = mn.Note("C4")
@@ -91,9 +95,12 @@ class BaseNotes:
         Tuning.
 
         Args:
-            freq (float, optional): freqency of note.
+            freq (float, optional):
+                Freqency of the note or A4. Defaults to 440..
             stand_A4 (bool, optional):
-                if True, the tuning standard is A4.
+                If True, the tuning standard is A4. If False, the note
+                frequency is changed to ``freq``, and it is only
+                supported when handling a single note.
 
         Examples:
             >>> note = mn.Note("C4")
@@ -110,22 +117,18 @@ class BaseNotes:
             261.6255653005986
             267.5716008756122
         """
-        if len(self._notes) == 1:
-            note = self._notes[0]
+        for note in self._notes:
             if stand_A4:
                 note._A4 = freq
                 note._freq = note._A4 * 2 ** ((note.num - NUM_A4) / 12)
             else:
+                if len(self._notes) > 1:
+                    raise ValueError(
+                        "``stand_A4=False`` is not supported when handling "
+                        "multiple notes."
+                    )
                 note._freq = freq
                 note._A4 = note._freq / 2 ** ((note.num - NUM_A4) / 12)
-        else:
-            if not stand_A4:
-                raise ValueError(
-                    "``stand_A4=False`` is not supported when handling "
-                    "multiple notes."
-                )
-            for note in self._notes:
-                note.tuning(freq, stand_A4=True)
 
     def render(self):
         pass
@@ -138,16 +141,17 @@ class BaseNotes:
         envelope: Optional[Envelope] = None
     ) -> np.ndarray:
         """
-        Generate sin wave of the note. It is the same as
-        ``Note.render('sin')``.
+        Generate sin wave of the object. It is the same as
+        ``obj.render('sin')``.
 
         Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
+            duration (float, optional): Duration.
+            unit (str, optional): Unit of duration.
+            bpm (float, optional): BPM (beats per minute).
+            envelope (Envelope, optional): Envelope.
 
         Returns:
-            np.ndarray: sin wave of the note
+            np.ndarray: Sin wave of the object.
         """
         return self.render(
             'sin',
@@ -166,17 +170,18 @@ class BaseNotes:
         duty: float = 0.5
     ) -> np.ndarray:
         """
-        Generate square wave of the note. It is the same as
-        ``Note.render('square')``.
+        Generate square wave of the object. It is the same as
+        ``obj.render('square')``.
 
         Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
-            duty (float, optional): duty cycle
+            duration (float, optional): Duration.
+            unit (str, optional): Unit of duration.
+            bpm (float, optional): BPM (beats per minute).
+            envelope (Envelope, optional): Envelope.
+            duty (float, optional): Duty cycle.
 
         Returns:
-            np.ndarray: square wave of the note
+            np.ndarray: Square wave of the object.
         """
         return self.render(
             'square',
@@ -196,17 +201,18 @@ class BaseNotes:
         width: float = 1.,
     ) -> np.ndarray:
         """
-        Generate sawtooth wave of the note. It is the same as
-        ``Note.render('sawtooth')``.
+        Generate sawtooth wave of the object. It is the same as
+        ``obj.render('sawtooth')``.
 
         Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
-            width (float, optional): width of sawtooth
+            duration (float, optional): Duration.
+            unit (str, optional): Unit of duration.
+            bpm (float, optional): BPM (beats per minute).
+            envelope (Envelope, optional): Envelope.
+            width (float, optional): Width of sawtooth.
 
         Returns:
-            np.ndarray: sawtooth wave of the note
+            np.ndarray: Sawtooth wave of the object.
         """
         return self.render(
             'sawtooth',
@@ -225,16 +231,17 @@ class BaseNotes:
         envelope: Optional[Envelope] = None
     ) -> np.ndarray:
         """
-        Generate triangle wave of the note. It is the same as
-        ``Note.render('triangle')``, ``note.sawtooth(width=0.5)``.
+        Generate triangle wave of the object. It is the same as
+        ``obj.render('triangle')``, ``obj.sawtooth(width=0.5)``.
 
         Args:
-            duration (float, optional): duration
-            unit (str, optional): unit of duration
-            bpm (float, optional): BPM (beats per minute)
+            duration (float, optional): Duration.
+            unit (str, optional): Unit of duration.
+            bpm (float, optional): BPM (beats per minute).
+            envelope (Envelope, optional): Envelope.
 
         Returns:
-            np.ndarray: triangle wave of the note
+            np.ndarray: Triangle wave of the object.
         """
         return self.render(
             'triangle',
@@ -251,21 +258,27 @@ class BaseNotes:
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
-        **kwargs
+        duty: Optional[float] = None,
+        width: Optional[float] = None,
     ) -> ipd.Audio:
         """
-        Play note sound in IPython notebook. Return
+        Play the object sound in IPython notebook. Return
         IPython.display.Audio object. This wave is generated by
-        ``Note.render()``.
+        ``obj.render()``.
 
         Args:
-            waveform (Union[str, Callables], optional): waveform type.
-            duration (float, optional): duration.
-            unit (str, optional): unit of duration.
+            waveform (Union[str, Callables], optional): Waveform type.
+            duration (float, optional): Duration.
+            unit (str, optional): Unit of duration.
             bpm (float, optional):BPM (beats per minute).
+            envelope (Envelope, optional): Envelope.
+            duty (float, optional):
+                Duty cycle for when waveform is 'square'.
+            width (float, optional):
+                Width for when waveform is 'sawtooth'.
 
         Returns:
-            ipd.Audio: IPython.display.Audio object.
+            ipd.Audio: IPython.display.Audio object to IPython notebook.
         """
         y = self.render(
             waveform,
@@ -273,6 +286,7 @@ class BaseNotes:
             unit=unit,
             bpm=bpm,
             envelope=envelope,
-            **kwargs
+            duty=duty,
+            width=width
         )
         return ipd.Audio(y, rate=self.sr)
