@@ -99,17 +99,17 @@ class BaseNotes:
         Examples:
             >>> note = mn.Note("C4")
             >>> print(note.freq)
-            >>> note.tuning(270.)
-            >>> print(note.freq)
-            261.6255653005986
-            270.0
-
-            >>> note = mn.Note("C4")
-            >>> print(note.freq)
-            >>> note.tuning(450., stand_A4=True)
+            >>> note.tuning(450.)
             >>> print(note.freq)
             261.6255653005986
             267.5716008756122
+
+            >>> note = mn.Note("C4")
+            >>> print(note.freq)
+            >>> note.tuning(270., stand_A4=False)
+            >>> print(note.freq)
+            261.6255653005986
+            270.0
         """
         for note in self._notes:
             if stand_A4:
