@@ -28,6 +28,7 @@ class Note(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
+        amp: Optional[float] = None,
         sr: int = 22050,
         A4: float = 440.,
     ):
@@ -83,6 +84,9 @@ class Note(BaseNotes):
                 Width for when waveform is 'sawtooth'. This value
                 becomes the default value when rendering the waveform.
                 Defaults to 1..
+            amp (float, optional):
+                Amplitude. This value becomes the default value when
+                rendering the waveform. Defaults to None.
             sr (int, optional):
                 Sampling rate. This value becomes the default value
                 when rendering the waveform. Defaults to 22050.
@@ -102,6 +106,7 @@ class Note(BaseNotes):
             - envelope (Envelope): default envelope
             - duty (float): default duty
             - width (float): default width
+            - amp (float): default amplitude
             - sr (int): default sampling rate
             - A4 (float): tuning. freqency of A4
 
@@ -147,6 +152,7 @@ class Note(BaseNotes):
             envelope=envelope,
             duty=duty,
             width=width,
+            amp=amp,
             sr=sr,
             A4=A4,
         )
@@ -167,6 +173,7 @@ class Note(BaseNotes):
             envelope=self.envelope,
             duty=self.duty,
             width=self.width,
+            amp=self.amp,
             sr=self.sr,
             A4=self.A4,
         )
@@ -293,6 +300,7 @@ class Note(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
+        amp: Optional[float] = None,
     ) -> np.ndarray:
         """
         Rendering waveform of the note. If an argument is not specified,
@@ -350,9 +358,13 @@ class Note(BaseNotes):
                 )
         else:
             y = np.sum([waveform(ti) for ti in t], axis=0)
-        y = self._normalize(y)
+
         window = envelope.get_window(len(y), unit="sample", inner_release=True)
         y *= window
+        amp = amp if amp is not None else self.amp
+        if amp is not None:
+            y = self._normalize(y)
+            y *= amp
         return y
 
     def __add__(self, other):
@@ -458,6 +470,7 @@ class Notes(Note):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
+        amp: Optional[float] = None,
         sr: int = 22050,
         A4: float = 440.,
     ):
@@ -531,6 +544,7 @@ class Notes(Note):
             envelope=envelope,
             duty=duty,
             width=width,
+            amp=amp,
             sr=sr,
             A4=A4,
         )
@@ -562,6 +576,7 @@ class Notes(Note):
             envelope=self.envelope,
             duty=self.duty,
             width=self.width,
+            amp=self.amp,
             sr=self.sr,
             A4=self.A4,
         )
@@ -598,6 +613,7 @@ class Chord(Notes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
+        amp: Optional[float] = None,
         sr: int = 22050,
         A4: float = 440.,
     ):
@@ -664,6 +680,7 @@ class Chord(Notes):
             envelope=envelope,
             duty=duty,
             width=width,
+            amp=amp,
             sr=sr,
             A4=A4,
         )

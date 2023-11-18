@@ -35,6 +35,7 @@ class Track(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
+        amp: Optional[float] = None,
         sr: int = 22050,
         A4: float = 440,
     ):
@@ -82,6 +83,7 @@ class Track(BaseNotes):
             envelope=envelope,
             duty=duty,
             width=width,
+            amp=amp,
             sr=sr,
             A4=A4,
         )
@@ -103,6 +105,7 @@ class Track(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
+        amp: Optional[float] = None,
     ) -> np.ndarray:
         """
         Rendering waveform of the track. Notes in the track are
@@ -127,7 +130,10 @@ class Track(BaseNotes):
                 y[-len(y_note):] += y_note
             else:
                 y = y_note
-        y = self._normalize(y)
+        amp = amp if amp is not None else self.amp
+        if amp is not None:
+            y = self._normalize(y)
+            y *= amp
         return y
 
     def append(self, *notes: Note) -> None:
@@ -238,6 +244,7 @@ class Stream(BaseNotes):
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
+        amp: Optional[float] = None,
     ) -> np.ndarray:
         """
         Rendering waveform of the track. Track in the stream are
@@ -259,7 +266,10 @@ class Stream(BaseNotes):
             else:
                 y_track = np.append(y_track, np.zeros(len(y) - len(y_track)))
             y += y_track
-        y = self._normalize(y)
+        amp = amp if amp is not None else self.amp
+        if amp is not None:
+            y = self._normalize(y)
+            y *= amp
         return y
 
     def append(self, *tracks: Track) -> None:

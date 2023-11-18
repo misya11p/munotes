@@ -21,6 +21,7 @@ class BaseNotes:
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = 0.5,
         width: Optional[float] = 1.,
+        amp: Optional[float] = None,
         sr: int = 22050,
         A4: float = 440.,
     ):
@@ -33,6 +34,7 @@ class BaseNotes:
         self.bpm = bpm
         self.duty = duty
         self.width = width
+        self.amp = amp
         self._sr = sr
         self.sr = sr
         self._A4 = A4
@@ -105,6 +107,7 @@ class BaseNotes:
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
+        amp: Optional[float] = None,
     ) -> np.ndarray:
         """
         Generate sin wave of the object. It is the same as
@@ -115,6 +118,7 @@ class BaseNotes:
             unit (str, optional): Unit of duration.
             bpm (float, optional): BPM (beats per minute).
             envelope (Envelope, optional): Envelope.
+            amp (float, optional): Amplitude.
 
         Returns:
             np.ndarray: Sin wave of the object.
@@ -134,6 +138,7 @@ class BaseNotes:
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
         duty: float = 0.5,
+        amp: Optional[float] = None,
     ) -> np.ndarray:
         """
         Generate square wave of the object. It is the same as
@@ -145,6 +150,7 @@ class BaseNotes:
             bpm (float, optional): BPM (beats per minute).
             envelope (Envelope, optional): Envelope.
             duty (float, optional): Duty cycle.
+            amp (float, optional): Amplitude.
 
         Returns:
             np.ndarray: Square wave of the object.
@@ -164,6 +170,7 @@ class BaseNotes:
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
+        amp: Optional[float] = None,
         width: float = 1.,
     ) -> np.ndarray:
         """
@@ -176,6 +183,7 @@ class BaseNotes:
             bpm (float, optional): BPM (beats per minute).
             envelope (Envelope, optional): Envelope.
             width (float, optional): Width of sawtooth.
+            amp (float, optional): Amplitude.
 
         Returns:
             np.ndarray: Sawtooth wave of the object.
@@ -195,6 +203,7 @@ class BaseNotes:
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
+        amp: Optional[float] = None,
     ) -> np.ndarray:
         """
         Generate triangle wave of the object. It is the same as
@@ -205,6 +214,7 @@ class BaseNotes:
             unit (str, optional): Unit of duration.
             bpm (float, optional): BPM (beats per minute).
             envelope (Envelope, optional): Envelope.
+            amp (float, optional): Amplitude.
 
         Returns:
             np.ndarray: Triangle wave of the object.
@@ -226,6 +236,7 @@ class BaseNotes:
         envelope: Optional[Envelope] = None,
         duty: Optional[float] = None,
         width: Optional[float] = None,
+        amp: Optional[float] = None,
     ) -> ipd.Audio:
         """
         Play the object sound in IPython notebook. Return
@@ -242,6 +253,7 @@ class BaseNotes:
                 Duty cycle for when waveform is 'square'.
             width (float, optional):
                 Width for when waveform is 'sawtooth'.
+            amp (float, optional): Amplitude.
 
         Returns:
             ipd.Audio: IPython.display.Audio object to IPython notebook.
@@ -254,5 +266,6 @@ class BaseNotes:
             envelope=envelope,
             duty=duty,
             width=width,
+            amp=amp,
         )
         return ipd.Audio(y, rate=self.sr)
