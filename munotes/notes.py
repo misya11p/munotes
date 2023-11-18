@@ -1,6 +1,8 @@
-from typing import Optional, Union, Callable, List
+from typing import Optional, Union, List, Callable
+
 import numpy as np
 import scipy as sp
+
 from ._base import BaseNotes
 from ._utils import note_name_formatting, chord_name_formatting
 from .chord_names import chord_names
@@ -36,27 +38,29 @@ class Note(BaseNotes):
 
         Args:
             query (Union[str, int]):
-                string of note name or midi note number. If string is
+                String of note name or midi note number. If string is
                 given, valid string pattern is '[A-Ga-g][#♯+b♭-]?\d*'.
                 Ex: 'C', 'C#', 'Cb', 'C4'
             octave (int, optional):
-                octave of the note. This argument is ignored if octave
+                Octave of the note. This argument is ignored if octave
                 is specified in the note name string, or if query is
                 int. Defaults to 4.
             waveform (Union[str, Callable], optional):
-                waveform type. This value becomes the default value
-                when render() and play(). spported waveform types:
+                Waveform type. This value becomes the default value
+                when render() and play(). Spported waveform types:
                     - 'sin'
                     - 'square'
                     - 'sawtooth'
                     - 'triangle'
                     - user-defined waveform function
-                Defaults to 'sin'.
+                user-defined waveform function must take time axis as
+                an argument and return an array like waveform of the
+                same length. Defaults to 'sin'.
             duration (float, optional):
-                duration. This value becomes the default value when
+                Duration. This value becomes the default value when
                 rendering the waveform. Defaults to 1..
             unit (str, optional):
-                unit of duration. This value becomes the default value
+                Unit of duration. This value becomes the default value
                 when rendering the waveform. Supported units:
                     - 's': seconds
                     - 'ms': milliseconds
@@ -66,8 +70,21 @@ class Note(BaseNotes):
                 BPM (beats per minute). If unit is not 'ql', this
                 argument is ignored. This value becomes the default
                 value when rendering the waveform. Defaults to 120.
+            envelope (Envelope, optional):
+                Envelope of the note. This value becomes the default
+                value when rendering the waveform. Defaults to
+                Envelope() with attack=0., decay=0., sustain=1.,
+                release=0., hold=0..
+            duty (float, optional):
+                Duty cycle for when waveform is 'square'. This value
+                becomes the default value when rendering the waveform.
+                Defaults to 0.5.
+            width (float, optional):
+                Width for when waveform is 'sawtooth'. This value
+                becomes the default value when rendering the waveform.
+                Defaults to 1..
             sr (int, optional):
-                sampling rate. This value becomes the default value
+                Sampling rate. This value becomes the default value
                 when rendering the waveform. Defaults to 22050.
             A4 (float, optional):
                 tuning. freqency of A4. Defaults to 440..
@@ -82,6 +99,9 @@ class Note(BaseNotes):
             - duration (float): default duration
             - unit (str): default unit of duration
             - bpm (float): default BPM
+            - envelope (Envelope): default envelope
+            - duty (float): default duty
+            - width (float): default width
             - sr (int): default sampling rate
             - A4 (float): tuning. freqency of A4
 
@@ -104,13 +124,13 @@ class Note(BaseNotes):
             C4
         """
         if isinstance(query, str):
-            self.name, self._octave = note_name_formatting(query, octave)
+            self._name, self._octave = note_name_formatting(query, octave)
             self._idx = self._return_name_idx()
             self._num = NUM_C0 + 12*self.octave + self.idx
         elif isinstance(query, int):
             assert 0 <= query <= 127, "MIDI note number must be in 0 ~ 127"
             self._num = query
-            self.name = KEY_NAMES[(self.num - NUM_C0) % 12]
+            self._name = KEY_NAMES[(self.num - NUM_C0) % 12]
             self._idx = self._return_name_idx()
             self._octave = (self.num - NUM_C0) // 12
         else:
@@ -132,12 +152,24 @@ class Note(BaseNotes):
         )
 
     @property
-    def num(self) -> int:
-        return self._num
+    def name(self) -> str:
+        return self._name
 
-    @num.setter
-    def num(self, value):
-        raise Exception("num is read only")
+    @name.setter
+    def name(self, value):
+        self = Note(
+            value,
+            octave=self.octave,
+            waveform=self.waveform,
+            duration=self.duration,
+            unit=self.unit,
+            bpm=self.bpm,
+            envelope=self.envelope,
+            duty=self.duty,
+            width=self.width,
+            sr=self.sr,
+            A4=self.A4
+        )
 
     @property
     def idx(self) -> int:
@@ -156,12 +188,12 @@ class Note(BaseNotes):
         self.transpose(12 * (value - self.octave))
 
     @property
-    def A4(self) -> float:
-        return self._A4
+    def num(self) -> int:
+        return self._num
 
-    @A4.setter
-    def A4(self, value):
-        raise Exception("A4 is read only")
+    @num.setter
+    def num(self, value):
+        raise Exception("num is read only")
 
     @property
     def freq(self) -> float:
@@ -171,6 +203,14 @@ class Note(BaseNotes):
     def freq(self, value):
         raise Exception("freq is read only")
 
+    @property
+    def A4(self) -> float:
+        return self._A4
+
+    @A4.setter
+    def A4(self, value):
+        raise Exception("A4 is read only")
+
     def _return_name_idx(self) -> int:
         """Return index of the note name in KEY_NAMES"""
         idx = KEY_NAMES.index(self.name[0])
@@ -179,13 +219,13 @@ class Note(BaseNotes):
 
     def _return_time_axis(self, sec: float) -> np.ndarray:
         """
-        Generate time axis from duration and sampling rate
+        Generate time axis from duration and sampling rate.
 
         Args:
-            sec (float): duration in seconds
+            sec (float): Duration in seconds.
 
         Returns:
-            np.ndarray: Time axis
+            np.ndarray: Time axis.
         """
         freqs = np.array([note.freq for note in self._notes])
         t = np.linspace(0, 2*np.pi * sec * freqs, int(self.sr * sec), axis=1)
@@ -202,33 +242,12 @@ class Note(BaseNotes):
         width: Optional[float] = None
     ) -> np.ndarray:
         """
-        Rendering waveform of the note.
-
-
-        Args:
-            waveform (Union[str, Callable], optional):
-                waveform type. spported waveform types:
-                    - 'sin'
-                    - 'square'
-                    - 'sawtooth'
-                    - 'triangle'
-                    - user-defined waveform function
-            duration (float, optional):
-                duration of the note. if None, Note.duration is used.
-            unit (str, optional):
-                unit of duration. supported units:
-                    - 's': seconds
-                    - 'ms': milliseconds
-                    - 'ql': quarter length (bpm is required)
-            bpm (float, optional):
-                BPM (beats per minute). Required when unit is 'ql'.
-            **kwargs (optional):
-                keyword arguments for waveform function. 'duty' for
-                'square', 'width' for 'sawtooth' and any args for
-                user-defined waveform function are supported.
+        Rendering waveform of the note. If an argument is not specified,
+        its attribute value set on initialization is used as the default
+        value.
 
         Returns:
-            np.ndarray: waveform of the note
+            np.ndarray: Waveform of the note.
 
         Examples:
             >>> note = mn.Note("C4")
@@ -239,12 +258,6 @@ class Note(BaseNotes):
             >>> note.render(lambda t: np.sin(t) + np.sin(2*t))
             array([0.        , 0.23622339, 0.46803688, ..., 1.75357961, 1.72041279,
                    1.66076322])
-
-        Note:
-            Generating a waveform by inputting a string into this
-            method, as in ``note.render('sin')``, is the same as
-            generating a waveform by calling the method directly, as in
-            ``note.sin()``.
         """
         waveform = waveform or self.waveform
         duration = duration if duration is not None else self.duration
@@ -401,32 +414,21 @@ class Notes(Note):
         (waveform, duration, unit, bpm, sr, A4) set in each Note are
         ignored and the attributes set in this class are used.
 
+        Similar to the Note class, it is possible to generate waveforms
+        using render() and sin().
+
         Args:
             notes (List[Union[Note, int, str]]):
                 List of notes. Supported note types:
-                    - Note (mn.Note, mn.Notes, etc.)
-                    - str (note name)
-                    - int (midi note number)
+                    - Note: mn.Note, mn.Notes, etc.
+                    - str: note name.
+                    - int: midi note number.
 
         \Attributes:
             - notes (List[Note]): list of notes
             - names (List[str]): list of note names
             - fullnames (List[str]): list of note fullnames
             - nums (List[int]): list of MIDI note numbers
-            - waveform, duration, unit, bpm, sr, A4:
-                Default attributes for rendering waveform
-
-        Inherited Methods:
-            **These methods is the same as in the ``Note``**
-
-            - sin: Generate sin wave of the notes
-            - square: Generate square wave of the notes
-            - sawtooth: Generate sawtooth wave of the notes
-            - triangle: Generate triangle wave of the notes
-            - render: Rendering waveform of the note
-            - play: Play note sound
-            - transpose: Transpose notes
-            - tuning: Sound tuning
 
         Examples:
             >>> import musicnote as mn
@@ -452,7 +454,7 @@ class Notes(Note):
         """
         if isinstance(notes, Note):
             raise TypeError(
-                "The Notes class does not support Note classes as input."
+                "The Notes class does not support Note classes as input. "
                 "Enter a list of notes at once as an argument."
             )
         notes_ = []
@@ -506,6 +508,8 @@ class Notes(Note):
             unit=self.unit,
             bpm=self.bpm,
             envelope=self.envelope,
+            duty=self.duty,
+            width=self.width,
             sr=self.sr,
             A4=self.A4
         )
@@ -574,8 +578,6 @@ class Chord(Notes):
             - names (tuple): note names of the chord.
             - notes (List[Note]): notes of the chord.
             - idxs (int): index of the root note.
-            - waveform, duration, unit, bpm, sr, A4:
-                Default attributes for rendering waveform
 
         Examples:
             >>> import musicnotes as mn
@@ -589,10 +591,6 @@ class Chord(Notes):
             >>> chord = mn.Chord("C", "black")
             >>> chord.names
             ['C', 'C#', 'D', 'D#', 'E']
-
-        Note:
-            Unlike Note, the argument value takes precedence over the
-            input string.
         """
         root_name, type = chord_name_formatting(chord_name, type)
         root = Note(root_name, octave)
