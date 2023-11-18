@@ -128,7 +128,8 @@ class BaseNotes:
             duration=duration,
             unit=unit,
             bpm=bpm,
-            envelope=envelope
+            envelope=envelope,
+            amp=amp,
         )
 
     def square(
@@ -161,7 +162,8 @@ class BaseNotes:
             unit=unit,
             bpm=bpm,
             envelope=envelope,
-            duty=duty
+            duty=duty,
+            amp=amp,
         )
 
     def sawtooth(
@@ -170,8 +172,8 @@ class BaseNotes:
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
-        amp: Optional[float] = None,
         width: float = 1.,
+        amp: Optional[float] = None,
     ) -> np.ndarray:
         """
         Generate sawtooth wave of the object. It is the same as
@@ -194,7 +196,8 @@ class BaseNotes:
             unit=unit,
             bpm=bpm,
             envelope=envelope,
-            width=width
+            width=width,
+            amp=amp,
         )
 
     def triangle(
@@ -225,6 +228,7 @@ class BaseNotes:
             unit=unit,
             bpm=bpm,
             envelope=envelope,
+            amp=amp,
         )
 
     def play(
