@@ -116,6 +116,8 @@ class Track(BaseNotes):
         unit: Optional[str] = None,
         bpm: Optional[float] = None,
         envelope: Optional[Envelope] = None,
+        duty: Optional[float] = None,
+        width: Optional[float] = None,
         **kwargs
     ) -> np.ndarray:
         """Rendering waveform of the track"""
@@ -132,6 +134,8 @@ class Track(BaseNotes):
                 unit=unit or self.unit,
                 bpm=bpm or self.bpm,
                 envelope=envelope or self.envelope,
+                duty=duty if duty is not None else self.duty,
+                width=width if width is not None else self.width,
                 **kwargs
             )
             if len(y):
@@ -279,8 +283,8 @@ class Stream(BaseNotes):
                 unit=unit or self.unit,
                 bpm=bpm or self.bpm,
                 envelope=envelope or self.envelope,
-                duty=duty or self.duty,
-                width=width or self.width,
+                duty=duty if duty is not None else self.duty,
+                width=width if width is not None else self.width,
                 **kwargs
             )
             if len(y_track) > len(y):
