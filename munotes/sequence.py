@@ -109,10 +109,8 @@ class Track(BaseNotes):
         concatenated and rendered.
         """
         y = np.array([])
-        if envelope:
-            release = envelope.release
-        else:
-            release = self._release
+        envelope = envelope or self.envelope
+        release = envelope.release
         release_samples = int(self.sr * release)
         for note in self:
             y_note = note.render(
@@ -222,6 +220,14 @@ class Stream(BaseNotes):
             sr=sr,
             A4=A4,
         )
+
+    _default_envelope = Envelope(
+        attack=0.01,
+        decay=0.,
+        sustain=1.,
+        release=0.01,
+        hold=0.,
+    )
 
     def render(
         self,

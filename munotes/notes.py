@@ -231,6 +231,59 @@ class Note(BaseNotes):
         t = np.linspace(0, 2*np.pi * sec * freqs, int(self.sr * sec), axis=1)
         return t
 
+    def transpose(self, n_semitones: int) -> None:
+        """
+        Transpose note.
+
+        Args:
+            n_semitones (int): Number of semitones to transpose.
+
+        Examples:
+            >>> note = mn.Note("C4")
+            >>> note.transpose(1)
+            >>> print(note)
+            C#4
+        """
+        for note in self._notes:
+            note._idx = (note.idx + n_semitones) % 12
+            note._name = KEY_NAMES[note.idx]
+            note._num += n_semitones
+            note._octave = (note.num - NUM_C0) // 12
+            note._freq = note._A4 * 2** ((note.num - NUM_A4) / 12)
+
+    def tuning(self, freq: float = 440., stand_A4: bool = True) -> None:
+        """
+        Tuning.
+
+        Args:
+            freq (float, optional):
+                Freqency of the note or A4. Defaults to 440..
+            stand_A4 (bool, optional):
+                If True, the tuning standard is A4. If False, the note
+                frequency is changed to ``freq``.
+        Examples:
+            >>> note = mn.Note("C4")
+            >>> print(note.freq)
+            >>> note.tuning(450.)
+            >>> print(note.freq)
+            261.6255653005986
+            267.5716008756122
+
+            >>> note = mn.Note("C4")
+            >>> print(note.freq)
+            >>> note.tuning(270., stand_A4=False)
+            >>> print(note.freq)
+            261.6255653005986
+            270.0
+        """
+        for note in self._notes:
+            if stand_A4:
+                note._A4 = freq
+                note._freq = note._A4 * 2 ** ((note.num - NUM_A4) / 12)
+            else:
+                note._freq = freq
+                note._A4 = note._freq / 2 ** ((note.num - NUM_A4) / 12)
+
     def render(
         self,
         waveform: Optional[Union[str, Callable]] = None,
@@ -298,8 +351,7 @@ class Note(BaseNotes):
         else:
             y = np.sum([waveform(ti) for ti in t], axis=0)
         y = self._normalize(y)
-        window = envelope.get_window(sec)
-        window = np.append(window, np.zeros(len(y) - len(window)))
+        window = envelope.get_window(len(y), unit="sample", inner_release=True)
         y *= window
         return y
 
@@ -368,7 +420,7 @@ class Rest(Note):
             >>> rest.sin()
             array([0., 0., 0., ..., 0., 0., 0.])
         """
-        self.name = 'Rest'
+        self._name = 'Rest'
         self._octave = None
         self._freq = 0.
         self._num = None
@@ -597,11 +649,12 @@ class Chord(Notes):
         name = root.name + type
         interval = chord_names[type]
 
-        self.name = name
+        self._name = name
         self._type = type
         self._interval = interval
         self.root = root
         self._idxs = [(self.root.idx + i) % 12 for i in self.interval]
+        self._octave = octave
         super().__init__(
             [self.root.num + i for i in self.interval],
             waveform=waveform,
@@ -614,6 +667,14 @@ class Chord(Notes):
             sr=sr,
             A4=A4,
         )
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        raise Exception("name is read only")
 
     @property
     def type(self):
@@ -638,7 +699,7 @@ class Chord(Notes):
     @root.setter
     def root(self, value):
         self._root = value
-        self.name = self.root.name + self.type
+        self._name = self.root.name + self.type
         self._idxs = [(self.root.idx + i) % 12 for i in self.interval]
 
     @property

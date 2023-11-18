@@ -55,7 +55,12 @@ class Envelope:
             "release": trans_orders.get("release", 1),
         }
 
-    def get_window(self, sec: float) -> np.ndarray:
+    def get_window(
+        self,
+        duration: float,
+        unit: str = "second",
+        inner_release: bool = False
+    ) -> np.ndarray:
         """
         Get window of the envelope to apply to the waveform. The window
         is a numpy array of the same length as the waveform. It is
@@ -65,7 +70,13 @@ class Envelope:
         applied to the note's waveform.
 
         Args:
-            sec (float): Length of the waveform in seconds.
+            duration (float): Duration of the waveform.
+            unit (str, optional):
+                Unit of duration. 'second' or 'sample'. Defaults to
+                'second'.
+            inner_release (bool, optional):
+                If True, the release time is included in the input
+                duration.
 
         Returns:
             np.ndarray: Window of the envelope.
@@ -80,7 +91,12 @@ class Envelope:
             >>> note = mn.Note("C4", envelope=envelope)
             >>> note.play()
         """
-        n = int(sec * self.sr)
+        if unit == "second":
+            n = int(duration * self.sr)
+        elif unit == "sample":
+            n = duration
+        else:
+            raise ValueError(f"'{unit}' is invalid. Use 'second' or 'sample'.")
         y = np.ones(n)
 
         # times
@@ -100,8 +116,13 @@ class Envelope:
         sw = self.sustain
         rw = (np.linspace(1, 0, rt) ** ro) * sw
 
+        # apply windows
         y[:at] *= aw
         y[at + ht:at + ht + dt] *= dw
         y[at + ht + dt:] *= sw
-        y = np.append(y, rw)
+        if rt:
+            if inner_release:
+                y[-rt:] *= rw
+            else:
+                y = np.append(y, rw)
         return y

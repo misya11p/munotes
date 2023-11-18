@@ -36,11 +36,10 @@ class BaseNotes:
         self._sr = sr
         self.sr = sr
         self._A4 = A4
-        self.tuning(A4, stand_A4=True)
+        self.tuning(A4)
 
         self.envelope = envelope or self._default_envelope
         self.envelope.sr = self.sr
-        self._release = self.envelope.release
 
     _default_envelope = Envelope()
 
@@ -63,66 +62,39 @@ class BaseNotes:
 
     def transpose(self, n_semitones: int) -> None:
         """
-        Transpose notes. If there are multiple notes, all notes are
-        transposed by the same number of semitones.
+        Transpose notes. All notes are transposed by the same number of
+        semitones.
 
         Args:
             n_semitones (int): Number of semitones to transpose.
 
         Examples:
-            >>> note = mn.Note("C4")
-            >>> note.transpose(1)
-            >>> print(note)
-            C#4
+            >>> notes = mn.Notes(["C4", "D4", "E4"])
+            >>> notes.transpose(1)
+            >>> print(notes)
+            C#4 D#4 F4
         """
         for note in self._notes:
-            if not note.num:
-                continue
-            note._idx = (note.idx + n_semitones) % 12
-            note.name = KEY_NAMES[note.idx]
-            note._num += n_semitones
-            note._octave = (note.num - NUM_C0) // 12
-            note._freq = note._A4 * 2** ((note.num - NUM_A4) / 12)
+            note.transpose(n_semitones)
 
-    def tuning(self, freq: float = 440., stand_A4: bool = True) -> None:
+    def tuning(self, freq: float = 440.) -> None:
         """
-        Tuning.
+        Tuning with A4.
 
         Args:
             freq (float, optional):
-                Freqency of the note or A4. Defaults to 440..
-            stand_A4 (bool, optional):
-                If True, the tuning standard is A4. If False, the note
-                frequency is changed to ``freq``, and it is only
-                supported when handling a single note.
+                Freqency of A4. Defaults to 440..
 
         Examples:
-            >>> note = mn.Note("C4")
-            >>> print(note.freq)
+            >>> note = mn.Notes(["C4", "D4", "E4"])
+            >>> print(notes.A4)
             >>> note.tuning(450.)
-            >>> print(note.freq)
-            261.6255653005986
-            267.5716008756122
-
-            >>> note = mn.Note("C4")
-            >>> print(note.freq)
-            >>> note.tuning(270., stand_A4=False)
-            >>> print(note.freq)
-            261.6255653005986
-            270.0
+            >>> print(notes.A4)
+            440.0
+            450.0
         """
         for note in self._notes:
-            if stand_A4:
-                note._A4 = freq
-                note._freq = note._A4 * 2 ** ((note.num - NUM_A4) / 12)
-            else:
-                if len(self._notes) > 1:
-                    raise ValueError(
-                        "``stand_A4=False`` is not supported when handling "
-                        "multiple notes."
-                    )
-                note._freq = freq
-                note._A4 = note._freq / 2 ** ((note.num - NUM_A4) / 12)
+            note.tuning(freq, stand_A4=True)
 
     def render(self):
         pass
