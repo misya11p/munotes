@@ -54,6 +54,9 @@ class Track(BaseNotes):
                 Envelope of the track notes. Defaults to Envelope() with
                 attack=0.01, decay=0., sustain=1., release=0.01,
                 hold=0..
+            amp (float, optional):
+                Amplitude of each note in the Track. Note that this
+                value is not amplitude of this Track. Defaults to None.
 
         \Attributes:
             - sequence (List[Note]): sequence of notes.
@@ -185,6 +188,9 @@ class Stream(BaseNotes):
 
         Args:
             tracks (List[Track]): tracks
+            amp (float, optional):
+                Amplitude of each note in the Stream. Note that this
+                value is not amplitude of this Stream. Defaults to None.
 
         \Attributes:
             - tracks (List[Track]): tracks

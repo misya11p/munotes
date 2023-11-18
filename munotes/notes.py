@@ -485,6 +485,9 @@ class Notes(Note):
                     - Note: mn.Note, mn.Notes, etc.
                     - str: note name.
                     - int: midi note number.
+            amp (float, optional):
+                Amplitude of each note in the Notes. Note that this
+                value is not amplitude of this Notes. Defaults to 1..
 
         \Attributes:
             - notes (List[Note]): list of notes
