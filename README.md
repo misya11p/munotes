@@ -179,7 +179,7 @@ Methods are the same as other classes.
 - Add `render()` method
 
 ### [1.0.1](https://pypi.org/project/munotes/1.0.1/) (2023-02-12)
-- Fixed a bug that `Rest` could not be put into `Track`.
+- Fix a bug that `Rest` could not be put into `Track`.
 
 ### [1.1.0](https://pypi.org/project/munotes/1.1.0/) (2023-02-16)
 - Waveform parameters can be specified. Ex: `note.sawtooth(width=0.5)`
