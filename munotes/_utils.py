@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Tuple, Iterable
+from typing import Optional, Tuple
 from .chord_names import chord_names
 
 
