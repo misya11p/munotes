@@ -38,7 +38,7 @@ class Track(BaseNotes):
         width: Optional[float] = None,
         amp: Optional[float] = None,
         sr: int = 22050,
-        A4: float = 440,
+        A4: float = 440.,
     ):
         """
         Track class. Manage multiple notes as a sequence. If inputed
@@ -71,7 +71,7 @@ class Track(BaseNotes):
             >>>     mn.Chord("C"),
             >>> ])
             >>> track
-            Track [Note C4, Note E4, Note G4, Chord C]
+            Track (notes: Note C4, Note D4, Note E4, Note C4, Note E4, Note G4)
 
             >>> track.sin()
             array([ 0.        ,  0.07448499,  0.14855616, ..., -0.01429455,
@@ -144,14 +144,13 @@ class Track(BaseNotes):
 
         Example:
             >>> track = mn.Track([
-            >>>     ("C4", 1),
-            >>>     ("D4", 1),
+            >>>     mn.Note("C4", duration=1),
+            >>>     mn.Note("D4", duration=1),
             >>> ])
-            >>> track.append(("E4", 1))
-            >>> track
-            Track [(C4, 1), (D4, 1), (E4, 1)]
+            >>> track.append(mn.Note("E4", duration=1))
+            Track (notes: Note C4, Note D4, Note E4)
         """
-        self.sequence.extend(notes)
+        self.sequence = [*self.sequence, *notes]
         self._notes = flatten_notes(self.sequence)
 
     def __len__(self) -> int:
@@ -200,10 +199,10 @@ class Stream(BaseNotes):
             >>>     mn.Note("D4"),
             >>>     mn.Note("E4"),
             >>> ])
-            >>> chords = mn.Track([mn.Chord("C", duration=3))])
+            >>> chords = mn.Track([mn.Chord("C", duration=3)])
             >>> stream = mn.Stream([melody, chords])
             >>> stream
-            Stream [Track [Note C4, Note D4, Note E4], Track [Chord C]]
+            Stream (notes: Note C4, Note D4, Note E4, Note C4, Note E4, Note G4)
 
             >>> stream.render('sin')
             array([ 0.        ,  0.35422835,  0.70541282, ..., -0.02489362,

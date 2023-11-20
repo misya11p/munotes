@@ -205,14 +205,6 @@ class Note(BaseNotes):
     def freq(self, value):
         raise Exception("freq is read only")
 
-    @property
-    def A4(self) -> float:
-        return self._A4
-
-    @A4.setter
-    def A4(self, value):
-        raise Exception("A4 is read only")
-
     def _return_name_idx(self) -> int:
         """Return index of the note name in KEY_NAMES"""
         idx = KEY_NAMES.index(self.name[0])
@@ -492,32 +484,47 @@ class Notes(Note):
             - nums (List[int]): list of MIDI note numbers
 
         Examples:
-            >>> import musicnote as mn
-            >>> notes = mn.Notes(
+            >>> import munotes as mn
+            >>> notes = mn.Notes([
             >>>     mn.Note("C4"),
             >>>     mn.Note("E4"),
-            >>>     mn.Note("G4")
-            >>> )
+            >>>     mn.Note("G4"),
+            >>> ])
             >>> notes
-            Notes [Note C4, Note E4, Note G4]
+            Notes (notes: Note C4, Note E4, Note G4)
 
-            >>> notes = mn.Notes("C4", "E4", "G4")
+            >>> notes = mn.Notes(["C4", "E4", "G4"])
             >>> notes
-            Notes [Note C4, Note E4, Note G4]
+            Notes (notes: Note C4, Note E4, Note G4)
 
-            >>> notes = mn.Notes(60, 64, 67)
+            >>> notes = mn.Notes([60, 64, 67])
             >>> notes
-            Notes [Note C4, Note E4, Note G4]
+            Notes (notes: Note C4, Note E4, Note G4)
 
-            >>> notes = mn.Notes(60, 64, 67) + mn.Note("C5")
+            >>> notes = mn.Notes([60, 64, 67]) + mn.Note("C5")
             >>> notes
-            Notes [Note C4, Note E4, Note G4, Note C5]
+            Notes (notes: Note C4, Note E4, Note G4, Note C5)
         """
         if isinstance(notes, Note):
             raise TypeError(
                 "The Notes class does not support Note classes as input. "
                 "Enter a list of notes at once as an argument."
             )
+        self._init_notes(notes)
+        self._init_attrs(
+            waveform=waveform,
+            duration=duration,
+            unit=unit,
+            bpm=bpm,
+            envelope=envelope or Envelope(),
+            duty=duty,
+            width=width,
+            amp=amp,
+            sr=sr,
+            A4=A4,
+        )
+
+    def _init_notes(self, notes):
         notes_ = []
         for note in notes:
             if isinstance(note, Note):
@@ -532,18 +539,6 @@ class Notes(Note):
         self.fullnames = [str(note) for note in self]
         self.nums = [note.num for note in self]
 
-        self._init_attrs(
-            waveform=waveform,
-            duration=duration,
-            unit=unit,
-            bpm=bpm,
-            envelope=envelope or Envelope(),
-            duty=duty,
-            width=width,
-            amp=amp,
-            sr=sr,
-            A4=A4,
-        )
 
     def transpose(self, n_semitones: int) -> None:
         super().transpose(n_semitones)
@@ -560,22 +555,11 @@ class Notes(Note):
 
         Examples:
             >>> notes = mn.Notes(mn.Note("C4"))
-            >>> notes.append(mn.Note("E4"), mn.Note("G4"))
+            >>> notes = notes.append(mn.Note("E4"), mn.Note("G4"))
             >>> notes
-            Notes [Note C4, Note E4, Note G4]
+            Notes (notes: Note C4, Note E4, Note G4)
         """
-        self = Notes(
-            [self, *note],
-            duration=self.duration,
-            unit=self.unit,
-            bpm=self.bpm,
-            envelope=self.envelope,
-            duty=self.duty,
-            width=self.width,
-            amp=self.amp,
-            sr=self.sr,
-            A4=self.A4,
-        )
+        self._init_notes([*self.notes, *note])
 
     def __len__(self):
         return len(self.notes)
@@ -655,7 +639,7 @@ class Chord(Notes):
             - idxs (int): index of the root note.
 
         Examples:
-            >>> import musicnotes as mn
+            >>> import munotes as mn
             >>> chord = mn.Chord("C")
             >>> chord.names
             ['C', 'E', 'G']

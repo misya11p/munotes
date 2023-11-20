@@ -61,6 +61,14 @@ class BaseNotes:
         for note in self._notes:
             note._sr = value
 
+    @property
+    def A4(self) -> float:
+        return self._A4
+
+    @A4.setter
+    def A4(self, value):
+        raise Exception("A4 is read only")
+
     def transpose(self, n_semitones: int) -> None:
         """
         Transpose notes. All notes are transposed by the same number of

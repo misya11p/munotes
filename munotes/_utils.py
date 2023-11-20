@@ -97,8 +97,7 @@ def get_repr_notes(obj, name: str = "", sep=", ") -> str:
     Returns:
         str: String representation of notes.
     """
-    repr_obj = name
-    repr_obj += "\n" + "notes: ["
+    repr_obj = name + " (notes: "
     notes = [repr(note) for note in obj._notes]
     n = len(notes)
     if n > LIM_REPR_NOTES:
@@ -106,5 +105,5 @@ def get_repr_notes(obj, name: str = "", sep=", ") -> str:
         repr_obj += " ... "
     else:
         repr_obj += sep.join(notes)
-    repr_obj += "]"
+    repr_obj += ")"
     return repr_obj
