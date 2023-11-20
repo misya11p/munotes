@@ -187,7 +187,10 @@ Methods are the same as other classes.
 - All supported chords can be seen in `mn.chord_names`.
 - Arbitrary chords can be added.
 
-### [2.0.0](https://pypi.org/project/munotes/2.0.0/) (2023-11-19, Latest)
+### [2.0.0](https://pypi.org/project/munotes/2.0.0/) (2023-11-19)
+
+\*We forgot to update PyPI Homepage in this version.
+
 - Add `Envelope` class
 - Modified `sec` argument to `duration`
 - Add default parameters for rendering that can be specified in initialization
@@ -203,3 +206,7 @@ Methods are the same as other classes.
 - Modified input type of `Track` from `Tuple[Note, float]` to `List[Note]`
     - Note.duration is used to duration when rendering
 - Remove `**kwargs` in `render()` method
+
+### [2.0.1](https://pypi.org/project/munotes/2.0.1/) (2023-11-20, Latest)
+- Fix `__add__` method of `Notes` class
+- Modified `__repr__` method
