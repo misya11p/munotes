@@ -1,11 +1,12 @@
 import re
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Iterable
 from .chord_names import chord_names
 
 
 NOTE_NAME_PATTERN = "[A-G][#b]?"
 NOTE_PATTERN = f"{NOTE_NAME_PATTERN}\d*"
 VALID_NOTE_PATTERN = r"[A-Ga-g][#♯+b♭-]?\d*"
+LIM_REPR_NOTES = 6
 
 
 def note_name_formatting(
@@ -82,3 +83,28 @@ def string_formatting(name_string: str) -> str:
     name_string = name_string.replace('-', 'b')
     name_string = name_string.replace('♭', 'b')
     return name_string
+
+
+def get_repr_notes(obj, name: str = "", sep=", ") -> str:
+    """
+    Get string representation that can be used in __repr__ method.
+
+    Args:
+        obj: Object that has '_notes' attribute
+        name (str, optional): Object name.
+        sep (str, optional): Separator. Defaults to ", ".
+
+    Returns:
+        str: String representation of notes.
+    """
+    repr_obj = name
+    repr_obj += "\n" + "notes: ["
+    notes = [repr(note) for note in obj._notes]
+    n = len(notes)
+    if n > LIM_REPR_NOTES:
+        repr_obj += sep.join(notes[:LIM_REPR_NOTES])
+        repr_obj += " ... "
+    else:
+        repr_obj += sep.join(notes)
+    repr_obj += "]"
+    return repr_obj

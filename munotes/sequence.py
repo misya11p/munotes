@@ -3,6 +3,7 @@ from typing import List, Tuple, Union, Optional, Callable, Iterable
 import numpy as np
 
 from ._base import BaseNotes
+from ._utils import get_repr_notes
 from .notes import Note
 from .envelope import Envelope
 
@@ -67,7 +68,7 @@ class Track(BaseNotes):
             >>>     mn.Note("C4"),
             >>>     mn.Note("D4"),
             >>>     mn.Note("E4"),
-            >>>     mn.Chord("C",
+            >>>     mn.Chord("C"),
             >>> ])
             >>> track
             Track [Note C4, Note E4, Note G4, Chord C]
@@ -163,7 +164,7 @@ class Track(BaseNotes):
         return self.sequence[index]
 
     def __repr__(self) -> str:
-        return f"Track {self.sequence}"
+        return get_repr_notes(self, name="Track")
 
 
 class Stream(BaseNotes):
@@ -278,4 +279,4 @@ class Stream(BaseNotes):
         return self.tracks[index]
 
     def __repr__(self) -> str:
-        return f"Stream {self.tracks}"
+        return get_repr_notes(self, name="Stream")

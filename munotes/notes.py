@@ -4,7 +4,7 @@ import numpy as np
 import scipy as sp
 
 from ._base import BaseNotes
-from ._utils import note_name_formatting, chord_name_formatting
+from ._utils import note_name_formatting, chord_name_formatting, get_repr_notes
 from .chord_names import chord_names
 from .envelope import Envelope
 
@@ -587,10 +587,21 @@ class Notes(Note):
         return iter(self.notes)
 
     def __add__(self, other):
-        return self.append(other)
+        return Notes(
+            [self, other],
+            duration=self.duration,
+            unit=self.unit,
+            bpm=self.bpm,
+            envelope=self.envelope,
+            duty=self.duty,
+            width=self.width,
+            amp=self.amp,
+            sr=self.sr,
+            A4=self.A4,
+        )
 
     def __repr__(self):
-        return f'Notes {self.notes}'
+        return get_repr_notes(self, name="Notes")
 
     def __str__(self):
         return ' '.join(self.fullnames)
