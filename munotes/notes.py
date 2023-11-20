@@ -413,7 +413,7 @@ class Rest(Note):
         self,
         duration: Union[float, int] = 1.,
         unit: str = "s",
-        bpm: Union[float, int] = 120
+        bpm: Union[float, int] = 120,
     ):
         """
         Rest class for Track and Stream class. Return zeros array when
@@ -587,7 +587,7 @@ class Notes(Note):
         return iter(self.notes)
 
     def __add__(self, other):
-        return Notes([self, other])
+        return self.append(other)
 
     def __repr__(self):
         return f'Notes {self.notes}'
@@ -738,6 +738,9 @@ class Chord(Notes):
 
     def append(self, value) -> None:
         raise Exception("Chord class does not support append()")
+
+    def __add__(self, other):
+        raise Exception("Chord class does not support + operator")
 
     def __repr__(self):
         return f'Chord {self.name}'
