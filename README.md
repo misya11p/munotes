@@ -209,4 +209,5 @@ Methods are the same as other classes.
 
 ### [2.0.1](https://pypi.org/project/munotes/2.0.1/) (2023-11-20, Latest)
 - Fix `__add__` method of `Notes` class
+- Fix a bug that `append()` method of `Notes` class does not work
 - Modified `__repr__` method
