@@ -77,7 +77,7 @@ class Track(BaseNotes):
                 -0.00726152, -0.        ])
         """
         self.sequence = sequence
-        self._notes = flatten_notes(self.sequence)
+        self._notes = sequence
         self._init_attrs(
             waveform=waveform,
             duration=duration,
