@@ -8,23 +8,6 @@ from .notes import Note
 from .envelope import Envelope
 
 
-def flatten_notes(notes: List[Note]) -> List[Note]:
-    """
-    Flatten notes sequence. Changing the list of notes including Notes
-    class to a single list of notes.
-
-    Args:
-        notes (List[Note]): notes sequence
-
-    Returns:
-        List[Note]: notes sequence as List of a single note
-    """
-    flat_notes = []
-    for notes_ in notes:
-        flat_notes.extend(notes_._notes)
-    return flat_notes
-
-
 class Track(BaseNotes):
     def __init__(
         self,
