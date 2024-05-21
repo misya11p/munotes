@@ -251,7 +251,7 @@ class Note(BaseNotes):
             note._name = KEY_NAMES[note.idx]
             note._num += n_semitones
             note._octave = (note.num - NUM_C0) // 12
-            note._freq = note._A4 * 2** ((note.num - NUM_A4) / 12)
+            note._freq = note._A4 * 2 ** ((note.num - NUM_A4) / 12)
 
     def tuning(self, freq: float = 440., stand_A4: bool = True) -> None:
         """
