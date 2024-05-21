@@ -557,7 +557,7 @@ class Notes(Note):
 
         Examples:
             >>> notes = mn.Notes(mn.Note("C4"))
-            >>> notes = notes.append(mn.Note("E4"), mn.Note("G4"))
+            >>> notes.append(mn.Note("E4"), mn.Note("G4"))
             >>> notes
             Notes (notes: Note C4, Note E4, Note G4)
         """
