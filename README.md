@@ -211,4 +211,4 @@ Methods are the same as other classes.
 
 ### [2.0.1](https://pypi.org/project/munotes/2.0.1/) (2024-05-21, Latest)
 
-- Fix a bug that chord names in `Sequence` ware not updated when transposed.
+- Fix a bug that chord names in `Track` ware not updated when transposed.
