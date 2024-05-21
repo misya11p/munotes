@@ -11,7 +11,7 @@ from .envelope import Envelope
 
 NUM_C0 = 12 # MIDI note number of C0
 NUM_A4 = 69 # MIDI note number of A4
-KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+KEY_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 SUPPORTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
 SUPPORTED_UNITS = ["s", "ms", "ql"]
 
@@ -21,7 +21,7 @@ class Note(BaseNotes):
         self,
         query: Union[str, int],
         octave: int = 4,
-        waveform: Union[str, Callable] = 'sin',
+        waveform: Union[str, Callable] = "sin",
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
@@ -446,17 +446,17 @@ class Rest(Note):
         pass
 
     def __str__(self):
-        return 'Rest'
+        return "Rest"
 
     def __repr__(self):
-        return 'Rest'
+        return "Rest"
 
 
 class Notes(Note):
     def __init__(
         self,
         notes: List[Union[Note, int, str]],
-        waveform: Union[str, Callable] = 'sin',
+        waveform: Union[str, Callable] = "sin",
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
@@ -590,10 +590,10 @@ class Notes(Note):
         return Notes([self, other])
 
     def __repr__(self):
-        return f'Notes {self.notes}'
+        return f"Notes {self.notes}"
 
     def __str__(self):
-        return ' '.join(self.fullnames)
+        return " ".join(self.fullnames)
 
 
 class Chord(Notes):
@@ -602,7 +602,7 @@ class Chord(Notes):
         chord_name: str,
         type: Optional[str] = None,
         octave: int = 4,
-        waveform: Union[str, Callable] = 'sin',
+        waveform: Union[str, Callable] = "sin",
         duration: Union[float, int] = 1.,
         unit: str = "s",
         bpm: Union[float, int] = 120,
@@ -740,7 +740,7 @@ class Chord(Notes):
         raise Exception("Chord class does not support append()")
 
     def __repr__(self):
-        return f'Chord {self.name}'
+        return f"Chord {self.name}"
 
     def __str__(self):
         return self.name
