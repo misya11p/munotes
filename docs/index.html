@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>munotes 1.1.0 documentation</title>
+  <title>munotes 2.0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=3fab433c"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -27,7 +26,11 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> munotes
+
+          
+          
+          <a href="#" class="icon icon-home">
+            munotes
           </a>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -49,8 +52,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">munotes 1.1.0 documentation</li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">munotes 2.0.1 documentation</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -60,7 +63,7 @@
            <div itemprop="articleBody">
              
   <section id="munotes">
-<h1>munotes<a class="headerlink" href="#munotes" title="Permalink to this heading"></a></h1>
+<h1>munotes<a class="headerlink" href="#munotes" title="Link to this heading"></a></h1>
 <p><em>musical-notes</em></p>
 <p>A library for handling notes and chords and their sounds in Python.
 An object can be created by inputting the name of a note or chord.
@@ -90,17 +93,17 @@ They can also be managed as a sequence of objects.</p>
 </ul>
 <div class="toctree-wrapper compound">
 <span id="document-munotes"></span><section id="notes">
-<h2>notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<h2>notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
 <p>Module for handling musical notes.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="munotes.notes.Note">
-<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseNotes</span></code></p>
 <p>Note class.
 Single note. It can be initialized with note name or MIDI note
 number.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>query</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – String of note name or midi note number. If string is
 given, valid string pattern is ‘[A-Ga-g][#♯+b♭-]?d*’.
@@ -183,40 +186,40 @@ when rendering the waveform. Defaults to 22050.</p></li>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="munotes.notes.Note.name">
-<em class="property"><span class="pre">property</span><span class="w">  </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#munotes.notes.Note.name" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#munotes.notes.Note.name" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="munotes.notes.Note.idx">
-<em class="property"><span class="pre">property</span><span class="w">  </span></em><span class="sig-name descname"><span class="pre">idx</span></span><a class="headerlink" href="#munotes.notes.Note.idx" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">idx</span></span><a class="headerlink" href="#munotes.notes.Note.idx" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="munotes.notes.Note.octave">
-<em class="property"><span class="pre">property</span><span class="w">  </span></em><span class="sig-name descname"><span class="pre">octave</span></span><a class="headerlink" href="#munotes.notes.Note.octave" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">octave</span></span><a class="headerlink" href="#munotes.notes.Note.octave" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="munotes.notes.Note.num">
-<em class="property"><span class="pre">property</span><span class="w">  </span></em><span class="sig-name descname"><span class="pre">num</span></span><a class="headerlink" href="#munotes.notes.Note.num" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num</span></span><a class="headerlink" href="#munotes.notes.Note.num" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="munotes.notes.Note.freq">
-<em class="property"><span class="pre">property</span><span class="w">  </span></em><span class="sig-name descname"><span class="pre">freq</span></span><a class="headerlink" href="#munotes.notes.Note.freq" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">freq</span></span><a class="headerlink" href="#munotes.notes.Note.freq" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="munotes.notes.Note.A4">
-<em class="property"><span class="pre">property</span><span class="w">  </span></em><span class="sig-name descname"><span class="pre">A4</span></span><a class="headerlink" href="#munotes.notes.Note.A4" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A4</span></span><a class="headerlink" href="#munotes.notes.Note.A4" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Note.transpose">
-<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_semitones</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.transpose" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_semitones</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.transpose" title="Link to this definition"></a></dt>
 <dd><p>Transpose note.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n_semitones</strong> (<em>int</em>) – Number of semitones to transpose.</p>
 </dd>
 </dl>
@@ -231,10 +234,10 @@ when rendering the waveform. Defaults to 22050.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Note.tuning">
-<span class="sig-name descname"><span class="pre">tuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.tuning" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.tuning" title="Link to this definition"></a></dt>
 <dd><p>Tuning.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>freq</strong> (<em>float</em><em>, </em><em>optional</em>) – Freqency of the note or A4. Defaults to 440..</p></li>
 <li><p><strong>stand_A4</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the tuning standard is A4. If False, the note
@@ -263,15 +266,15 @@ frequency is changed to <code class="docutils literal notranslate"><span class="
 
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Note.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.render" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Note.render" title="Link to this definition"></a></dt>
 <dd><p>Rendering waveform of the note. If an argument is not specified,
 its attribute value set on initialization is used as the default
 value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Waveform of the note.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>np.ndarray</p>
 </dd>
 </dl>
@@ -293,7 +296,7 @@ value.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="munotes.notes.Rest">
-<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Rest" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Rest" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#munotes.notes.Note" title="munotes.notes.Note"><code class="xref py py-class docutils literal notranslate"><span class="pre">Note</span></code></a></p>
 <p>Rest class for Track and Stream class. Return zeros array when
 rendering.</p>
@@ -307,7 +310,7 @@ rendering.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="munotes.notes.Notes">
-<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Notes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Notes" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Notes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Notes" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#munotes.notes.Note" title="munotes.notes.Note"><code class="xref py py-class docutils literal notranslate"><span class="pre">Note</span></code></a></p>
 <p>Notes class. Manage multiple notes at once. Default attributes
 (waveform, duration, unit, bpm, sr, A4) set in each Note are
@@ -315,7 +318,7 @@ ignored and the attributes set in this class are used.</p>
 <p>Similar to the Note class, it is possible to generate waveforms
 using render() and sin().</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>notes</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><a class="reference internal" href="index.html#munotes.notes.Note" title="munotes.notes.Note"><em>Note</em></a><em>, </em><em>int</em><em>, </em><em>str</em><em>]</em><em>]</em>) – <dl class="simple">
 <dt>List of notes. Supported note types:</dt><dd><ul>
@@ -368,10 +371,10 @@ value is not amplitude of this Notes. Defaults to 1..</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Notes.append">
-<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">note</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Notes.append" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">note</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Notes.append" title="Link to this definition"></a></dt>
 <dd><p>Append notes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>note</strong> (<em>Union</em><em>[</em><a class="reference internal" href="index.html#munotes.notes.Note" title="munotes.notes.Note"><em>Note</em></a><em>, </em><em>int</em><em>]</em>) – Note (or Notes or Chord) or midi note number</p>
 </dd>
 </dl>
@@ -388,7 +391,7 @@ value is not amplitude of this Notes. Defaults to 1..</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="munotes.notes.Chord">
-<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Chord" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">munotes.notes.</span></span><span class="sig-name descname"><span class="pre">Chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Chord" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#munotes.notes.Notes" title="munotes.notes.Notes"><code class="xref py py-class docutils literal notranslate"><span class="pre">Notes</span></code></a></p>
 <p>Chord class.
 Estimating notes from chord names and creating a Notes object.</p>
@@ -399,7 +402,7 @@ Ex: {‘’: (0, 4, 7), ‘m’: (0, 3, 7), ‘dim7’: (0, 3, 6, 9), …}.
 You can add your own chord names and intervals to this
 dictionary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>chord_name</strong> (<em>str</em>) – string of chord name. Chord type in the string is
 ignored if ‘type’ argument is specified.</p></li>
@@ -440,7 +443,7 @@ ignored if ‘type’ argument is specified.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.notes.Chord.transpose">
-<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_semitones</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Chord.transpose" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_semitones</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.notes.Chord.transpose" title="Link to this definition"></a></dt>
 <dd><p>Transpose chord</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Chord</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
@@ -455,11 +458,11 @@ ignored if ‘type’ argument is specified.</p></li>
 
 </section>
 <section id="sequence">
-<h2>sequence<a class="headerlink" href="#sequence" title="Permalink to this heading"></a></h2>
+<h2>sequence<a class="headerlink" href="#sequence" title="Link to this heading"></a></h2>
 <p>Module for managing notes as sequences.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="munotes.sequence.Track">
-<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.sequence.</span></span><span class="sig-name descname"><span class="pre">Track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Track" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">munotes.sequence.</span></span><span class="sig-name descname"><span class="pre">Track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Track" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseNotes</span></code></p>
 <p>Track class. Manage multiple notes as a sequence. If inputed
 specific arguments or set default attributes, these apply to all
@@ -468,7 +471,7 @@ rendered with its own attributes.</p>
 <p>Similar to the Note class, it is possible to generate waveforms
 using render() and sin().</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sequence</strong> (<em>List</em><em>[</em><a class="reference internal" href="index.html#munotes.notes.Note" title="munotes.notes.Note"><em>Note</em></a><em>]</em>) – sequence of notes.</p></li>
 <li><p><strong>envelope</strong> (<em>Envelope</em><em>, </em><em>optional</em>) – Envelope of the track notes. Defaults to Envelope() with
@@ -504,10 +507,10 @@ value is not amplitude of this Track. Defaults to None.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="munotes.sequence.Track.append">
-<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">notes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Track.append" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">notes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Track.append" title="Link to this definition"></a></dt>
 <dd><p>Append notes to the track.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>*notes</strong> (<a class="reference internal" href="index.html#munotes.notes.Note" title="munotes.notes.Note"><em>Note</em></a>) – notes to append</p>
 </dd>
 </dl>
@@ -527,11 +530,11 @@ value is not amplitude of this Track. Defaults to None.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="munotes.sequence.Stream">
-<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">munotes.sequence.</span></span><span class="sig-name descname"><span class="pre">Stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Stream" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">munotes.sequence.</span></span><span class="sig-name descname"><span class="pre">Stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envelope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">440</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#munotes.sequence.Stream" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseNotes</span></code></p>
 <p>Stream class. Manage multiple tracks as a stream.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tracks</strong> (<em>List</em><em>[</em><a class="reference internal" href="index.html#munotes.sequence.Track" title="munotes.sequence.Track"><em>Track</em></a><em>]</em>) – tracks</p></li>
 <li><p><strong>amp</strong> (<em>float</em><em>, </em><em>optional</em>) – Amplitude of each note in the Stream. Note that this
