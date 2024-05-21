@@ -209,7 +209,12 @@ Methods are the same as other classes.
     - Note.duration is used to duration when rendering
 - Remove `**kwargs` in `render()` method
 
-### [2.0.1](https://pypi.org/project/munotes/2.0.1/) (2023-11-20, Latest)
+### [2.0.1](https://pypi.org/project/munotes/2.0.1/) (2023-11-20)
+
 - Fix `__add__` method of `Notes` class
 - Fix a bug that `append()` method of `Notes` class does not work
-- Modified `__repr__` method
+- Modify `__repr__` method
+
+### [2.0.2](https://pypi.org/project/munotes/2.0.2/) (2024-05-21, Latest)
+
+- Fix a bug that chord names in `Track` and `Stream` are not update when transposed
