@@ -6,11 +6,6 @@ import IPython.display as ipd
 from .envelope import Envelope
 
 
-NUM_C0 = 12 # MIDI note number of C0
-NUM_A4 = 69 # MIDI note number of A4
-KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-
-
 class BaseNotes:
     def _init_attrs(
         self,

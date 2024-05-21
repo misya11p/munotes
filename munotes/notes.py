@@ -4,16 +4,18 @@ import numpy as np
 import scipy as sp
 
 from ._base import BaseNotes
-from ._utils import note_name_formatting, chord_name_formatting, get_repr_notes
+from ._utils import (
+    note_name_formatting,
+    chord_name_formatting,
+    get_repr_notes,
+    NUM_C0,
+    NUM_A4,
+    KEY_NAMES,
+    SUPPORTED_WAVEFORMS,
+    SUPPORTED_UNITS,
+)
 from .chord_names import chord_names
 from .envelope import Envelope
-
-
-NUM_C0 = 12 # MIDI note number of C0
-NUM_A4 = 69 # MIDI note number of A4
-KEY_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-SUPPORTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
-SUPPORTED_UNITS = ["s", "ms", "ql"]
 
 
 class Note(BaseNotes):
