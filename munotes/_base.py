@@ -26,7 +26,7 @@ class BaseNotes:
         A4: float = 440.,
     ):
         """Initialize attributes of notes and sequence."""
-        if not hasattr(self, '_notes'):
+        if not hasattr(self, "_notes"):
             self._notes = [self]
         self.waveform = waveform
         self.duration = duration
@@ -131,7 +131,7 @@ class BaseNotes:
             np.ndarray: Sin wave of the object.
         """
         return self.render(
-            'sin',
+            "sin",
             duration=duration,
             unit=unit,
             bpm=bpm,
@@ -164,7 +164,7 @@ class BaseNotes:
             np.ndarray: Square wave of the object.
         """
         return self.render(
-            'square',
+            "square",
             duration=duration,
             unit=unit,
             bpm=bpm,
@@ -198,7 +198,7 @@ class BaseNotes:
             np.ndarray: Sawtooth wave of the object.
         """
         return self.render(
-            'sawtooth',
+            "sawtooth",
             duration=duration,
             unit=unit,
             bpm=bpm,
@@ -230,7 +230,7 @@ class BaseNotes:
             np.ndarray: Triangle wave of the object.
         """
         return self.render(
-            'triangle',
+            "triangle",
             duration=duration,
             unit=unit,
             bpm=bpm,
