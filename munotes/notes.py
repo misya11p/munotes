@@ -208,7 +208,7 @@ class Note(BaseNotes):
     def _return_name_idx(self) -> int:
         """Return index of the note name in KEY_NAMES"""
         idx = KEY_NAMES.index(self.name[0])
-        idx = (idx + ('#' in self.name) - ('b' in self.name)) % 12
+        idx = (idx + ("#" in self.name) - ("b" in self.name)) % 12
         return idx
 
     def _return_time_axis(self, sec: float) -> np.ndarray:
@@ -363,10 +363,10 @@ class Note(BaseNotes):
             )
 
     def __str__(self):
-        return f'{self.name}{self.octave}'
+        return f"{self.name}{self.octave}"
 
     def __repr__(self):
-        return f'Note {self.name}{self.octave}'
+        return f"Note {self.name}{self.octave}"
 
     def __int__(self):
         return self.num
@@ -416,7 +416,7 @@ class Rest(Note):
             >>> rest.sin()
             array([0., 0., 0., ..., 0., 0., 0.])
         """
-        self._name = 'Rest'
+        self._name = "Rest"
         self._octave = None
         self._freq = 0.
         self._num = None
