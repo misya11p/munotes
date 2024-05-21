@@ -103,7 +103,7 @@ class BaseNotes:
             450.0
         """
         for note in self._notes:
-            note.tuning(freq, stand_A4=True)
+            note.tuning(freq)
 
     def render(self):
         pass

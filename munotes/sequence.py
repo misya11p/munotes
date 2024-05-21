@@ -151,7 +151,7 @@ class Track(BaseNotes):
             Track (notes: Note C4, Note D4, Note E4)
         """
         self.sequence = [*self.sequence, *notes]
-        self._notes = flatten_notes(self.sequence)
+        self._notes = self.sequence
 
     def __len__(self) -> int:
         return len(self.sequence)
@@ -216,7 +216,7 @@ class Stream(BaseNotes):
                    -0.02542138,  0.        ])
         """
         self.tracks = tracks
-        self._notes = flatten_notes(self.tracks)
+        self._notes = tracks
         self._init_attrs(
             waveform=waveform,
             duration=duration,
@@ -266,7 +266,7 @@ class Stream(BaseNotes):
 
     def append(self, *tracks: Track) -> None:
         self.tracks.extend(tracks)
-        self._notes = flatten_notes(self.tracks)
+        self._notes = self.tracks
 
     def __len__(self) -> int:
         return len(self.tracks)
