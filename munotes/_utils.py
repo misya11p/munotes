@@ -3,6 +3,12 @@ from typing import Optional, Tuple
 from .chord_names import chord_names
 
 
+NUM_C0 = 12 # MIDI note number of C0
+NUM_A4 = 69 # MIDI note number of A4
+KEY_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+SUPPORTED_WAVEFORMS = ["sin", "square", "sawtooth", "triangle"]
+SUPPORTED_UNITS = ["s", "ms", "ql"]
+
 NOTE_NAME_PATTERN = "[A-G][#b]?"
 NOTE_PATTERN = f"{NOTE_NAME_PATTERN}\d*"
 VALID_NOTE_PATTERN = r"[A-Ga-g][#♯+b♭-]?\d*"

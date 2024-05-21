@@ -8,23 +8,6 @@ from .notes import Note
 from .envelope import Envelope
 
 
-def flatten_notes(notes: List[Note]) -> List[Note]:
-    """
-    Flatten notes sequence. Changing the list of notes including Notes
-    class to a single list of notes.
-
-    Args:
-        notes (List[Note]): notes sequence
-
-    Returns:
-        List[Note]: notes sequence as List of a single note
-    """
-    flat_notes = []
-    for notes_ in notes:
-        flat_notes.extend(notes_._notes)
-    return flat_notes
-
-
 class Track(BaseNotes):
     def __init__(
         self,
@@ -78,7 +61,7 @@ class Track(BaseNotes):
                 -0.00726152, -0.        ])
         """
         self.sequence = sequence
-        self._notes = flatten_notes(self.sequence)
+        self._notes = sequence
         self._init_attrs(
             waveform=waveform,
             duration=duration,
@@ -151,7 +134,7 @@ class Track(BaseNotes):
             Track (notes: Note C4, Note D4, Note E4)
         """
         self.sequence = [*self.sequence, *notes]
-        self._notes = flatten_notes(self.sequence)
+        self._notes = self.sequence
 
     def __len__(self) -> int:
         return len(self.sequence)
@@ -216,7 +199,7 @@ class Stream(BaseNotes):
                    -0.02542138,  0.        ])
         """
         self.tracks = tracks
-        self._notes = flatten_notes(self.tracks)
+        self._notes = tracks
         self._init_attrs(
             waveform=waveform,
             duration=duration,
@@ -266,7 +249,7 @@ class Stream(BaseNotes):
 
     def append(self, *tracks: Track) -> None:
         self.tracks.extend(tracks)
-        self._notes = flatten_notes(self.tracks)
+        self._notes = self.tracks
 
     def __len__(self) -> int:
         return len(self.tracks)

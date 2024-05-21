@@ -6,11 +6,6 @@ import IPython.display as ipd
 from .envelope import Envelope
 
 
-NUM_C0 = 12 # MIDI note number of C0
-NUM_A4 = 69 # MIDI note number of A4
-KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-
-
 class BaseNotes:
     def _init_attrs(
         self,
@@ -26,7 +21,7 @@ class BaseNotes:
         A4: float = 440.,
     ):
         """Initialize attributes of notes and sequence."""
-        if not hasattr(self, '_notes'):
+        if not hasattr(self, "_notes"):
             self._notes = [self]
         self.waveform = waveform
         self.duration = duration
@@ -103,7 +98,7 @@ class BaseNotes:
             450.0
         """
         for note in self._notes:
-            note.tuning(freq, stand_A4=True)
+            note.tuning(freq)
 
     def render(self):
         pass
@@ -131,7 +126,7 @@ class BaseNotes:
             np.ndarray: Sin wave of the object.
         """
         return self.render(
-            'sin',
+            "sin",
             duration=duration,
             unit=unit,
             bpm=bpm,
@@ -164,7 +159,7 @@ class BaseNotes:
             np.ndarray: Square wave of the object.
         """
         return self.render(
-            'square',
+            "square",
             duration=duration,
             unit=unit,
             bpm=bpm,
@@ -198,7 +193,7 @@ class BaseNotes:
             np.ndarray: Sawtooth wave of the object.
         """
         return self.render(
-            'sawtooth',
+            "sawtooth",
             duration=duration,
             unit=unit,
             bpm=bpm,
@@ -230,7 +225,7 @@ class BaseNotes:
             np.ndarray: Triangle wave of the object.
         """
         return self.render(
-            'triangle',
+            "triangle",
             duration=duration,
             unit=unit,
             bpm=bpm,
